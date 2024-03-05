@@ -1,62 +1,68 @@
 
 import React, { useState } from 'react';
+import Subtopics from './Subtopics';
 
-export default function Topics({topic,selection,changeSelection,index,allSelected,changeAllSelected,checkAll}) {
-    // const arr = data.map(topic => {
-    //     const subtopicsLength = topic.subtopics.length;
-    //     return Array(subtopicsLength).fill(false);
-    //   });
-      
-    // const [selection,changeSelection] = useState(arr)
+export default function Topics({topic,selection,changeSelection,index1,allSelected,checkAllSelected}) {
+  
 
     function handleSelection(e){
        let arr=[...selection];
-        // for(let i=0;i<selection.length;i++)
-        // {
-        //     for(let j=0;j<selection[i].length;i++)
-        //     {
-        //         arr[i][j] = selection[i][j];
-        //     }
-        // }
-        for (let j = 0; j < selection[index].length; j++) {
-           arr[index][j] = !subjectSelected;
+       
+        for (let j = 0; j < selection[index1].length; j++) {
+           arr[index1][j] = !subjectSelected;
           }
-            
-          changeSubjectSelected(!subjectSelected);
-          changeSelection(arr);
-          changeAllSelected(checkAll());
+           changeSelection(arr);
+
+          checkChildren();
+          console.log(""+subjectSelected+" "+allSelected);
+    }
+
+    function checkChildren()
+    {
+      changeSubjectSelected(checkSubject());
+      
+      checkAllSelected();
     }
     
     function checkSubject()
     {
         let check = true;
-     //   console.log("here"+index);
 
-            for (let j = 0; j < selection[index].length; j++) {
-              check = check && selection[index][j];
+            for (let j = 0; j < selection[index1].length; j++) {
+              check = check && selection[index1][j];
               if(!check)
-              return false;
+              break;
             }
           
-     //     console.log(""+check);
+         // console.log("index"+index1+" "+check);
           return check;
 
     }
-    const[subjectSelected,changeSubjectSelected] = useState(checkSubject())
+    const[subjectSelected,changeSubjectSelected] = useState(checkSubject());
+    const[isOpen,changeIsOpen] = useState(false);
     return (
+      <div>
         <div className='border border-y-black text-start px-4 py-0.5 flex justify-between items-center'>
-            <div className='font-bold '>
+            
+            <div className={`font-bold cursor-pointer ${isOpen ? 'text-blue-500 ' :'text-white'}`} onClick={()=>{console.log("nnn"); changeIsOpen(!isOpen)}} >
 
             {topic.title}
             </div>
-
+            <div>
             <input
                         type="checkbox"
                         id="all"
                         className="mr-2 h-4 w-4"
-                        checked={subjectSelected || allSelected }
+                        checked={allSelected || subjectSelected || checkSubject()}
                         onClick={(e)=>handleSelection(e)}
                     />
+                    </div>
+                  
+        </div>
+          
+          {
+           isOpen && topic.subtopics.map((subtopic,index)=><Subtopics subtopic={subtopic} selection={selection} changeSelection={changeSelection} index1={index1} index2={index} parentSelected={allSelected || subjectSelected} checkParent={checkChildren} />)
+          }
         </div>
     );
 };

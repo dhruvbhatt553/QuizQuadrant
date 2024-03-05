@@ -11,22 +11,29 @@ export default function MockTestSelection() {
 
     function handleAllSelection(e){
        
-        if(!checkAll())
-        {
+      if(!allSelected)
+      {
         const arr1 = arr.map(row =>
             row.map(value => !allSelected)
           );
          // const a = checkAll();
+         changeSelection(arr1);
+
           changeAllSelected(!allSelected);
-          changeSelection(arr1);
-        }
+      }
           
+    }
+
+    function checkChildren()
+    {
+        changeAllSelected(checkAll());
+
     }
 
     function checkAll()
     {
         let check = true;
-        console.log("here check all");
+       // console.log("here check all");
 
         for (let i = 0; i < selection.length; i++) {
             for (let j = 0; j < selection[i].length; j++) {
@@ -64,7 +71,7 @@ export default function MockTestSelection() {
                     
                 </div>
                 {
-                   isOpen &&  data.map((topic, index) => <Topics topic={ topic } selection={ selection } changeSelection={ changeSelection } index={ index } allSelected={allSelected} changeAllSelected={changeAllSelected} checkAll={checkAll} />)
+                   isOpen &&  data.map((topic, index) => <Topics topic={ topic } selection={ selection } changeSelection={ changeSelection } index1={ index } allSelected={allSelected} checkAllSelected={checkChildren} />)
                 }
             </div>
 
