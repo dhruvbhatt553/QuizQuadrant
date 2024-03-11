@@ -31,7 +31,7 @@ export default function MockTestSelection() {
     }
 
     function checkAll()
-    {
+    { 
         let check = true;
        // console.log("here check all");
 
@@ -56,6 +56,26 @@ export default function MockTestSelection() {
                 SELECT TOPICS TO GENERATE MOCK TEST
 
             </div >
+           
+            <div className="w-64 mx-auto">
+            <label htmlFor="dropdown" className="block text-sm font-medium text-gray-700">Select No of questions:</label>
+      <select id="dropdown" 
+              className="mt-1 mx-auto text-black border border-gray-900 block w-fit py-2  sm:text-sm rounded-md"
+
+      >
+        <option value="option1">10</option>
+        <option value="option2">20</option>
+        <option value="option3">50</option>
+        <option value="option3">65</option>
+        <option value="option3">75</option>
+        <option value="option3">100</option>
+        <option value="option3">200</option>
+        <option value="option3">300</option>
+       
+
+      </select>
+      {/* <p>Selected Option: {selectedOption}</p> */}
+            </div>
             <div className="my-8 mx-16 border border-gray-800 shadow-blue-800 bg-green-500">
                 <div className="bg-black text-start px-4 py-2 font-bold flex justify-between" >
                   <div className={`cursor-pointer ${isOpen ? 'text-blue-500 ' :'text-white'}`} onClick={()=>{console.log("nnn"); changeIsOpen(!isOpen)}}>
@@ -73,6 +93,9 @@ export default function MockTestSelection() {
                 {
                    isOpen &&  data.map((topic, index) => <Topics topic={ topic } selection={ selection } changeSelection={ changeSelection } index1={ index } allSelected={allSelected} checkAllSelected={checkChildren} />)
                 }
+            </div>
+            <div onClick={(e)=>{console.log(selection);}} className="cursor-pointer">
+                krmgm
             </div>
 
         </div>

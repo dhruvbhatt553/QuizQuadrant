@@ -53,7 +53,7 @@ export default function Topics({topic,selection,changeSelection,index1,allSelect
                         type="checkbox"
                         id="all"
                         className="mr-2 h-4 w-4"
-                        checked={allSelected || subjectSelected || checkSubject()}
+                        checked={checkSubject() || allSelected || subjectSelected}
                         onClick={(e)=>handleSelection(e)}
                     />
                     </div>
