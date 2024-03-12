@@ -9,9 +9,9 @@ import CreateExam from './components/CreateExam/CreateExam';
 function App() {
   return (
     <div className="App">
-      {/* <CreateQuestion subjectwiseTopics={dummyData} /> */}
+      <CreateQuestion subjectwiseTopics={dummyData} />
       {/* <ExamPage examData={examData} questionData={questionData} /> */}
-      <CreateExam />
+      {/* <CreateExam /> */}
     </div>
   );
 }

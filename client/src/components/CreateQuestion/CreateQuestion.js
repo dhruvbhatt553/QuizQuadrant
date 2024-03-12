@@ -2,203 +2,300 @@ import React, { useState } from 'react';
 
 export default function CreateQuestion(props) {
 
-    // props.subjectwiseTopics
+    const { subjectwiseTopics } = props;
 
+    const [topicList, setTopicList] = useState([]);
     const [questionType, setQuestionType] = useState("mcq");
     const [subject, setSubject] = useState("");
-    const [topic, setTopic] = useState("");
-    const [topicList, setTopicList] = useState([]);
-    
-    const handleQuestionTypeChange = () => {
-        setQuestionType(document.getElementById("questionTypeSelect").value);
-    };
+    const [subtopic, setSubtopic] = useState("");
+    const [question, setQuestion] = useState("");
+    const [questionImage, setQuestionImage] = useState("");
+    const [optionA, setOptionA] = useState("");
+    const [optionAImage, setOptionAImage] = useState("");
+    const [optionB, setOptionB] = useState("");
+    const [optionBImage, setOptionBImage] = useState("");
+    const [optionC, setOptionC] = useState("");
+    const [optionCImage, setOptionCImage] = useState("");
+    const [optionD, setOptionD] = useState("");
+    const [optionDImage, setOptionDImage] = useState("");
+    const [solution, setSolution] = useState("");
+    const [solutionImage, setSolutionImage] = useState("");
+    const [correctAnswer, setCorrectAnswer] = useState(new Set());
 
-    const handleSubjectChange = () => {
-        const tempSubject = document.getElementById("subjectSelect").value;
-        setSubject(tempSubject);
+    const sleep = async (ms) => {
+        await (new Promise(resolve => setTimeout(resolve, ms)));
+    }
+
+    const handleCancelBtn = () => {}
+
+    const handleSaveBtn = () => {}
+
+    const uploadImage = async () => {
+        const url = "https://media.istockphoto.com/id/183412466/photo/eastern-bluebirds-male-and-female.jpg?s=612x612&w=0&k=20&c=6_EQHnGedwdjM9QTUF2c1ce7cC3XtlxvMPpU5HAouhc=";
+        await sleep(2000);
+        return url;
+    }
+
+    const deleteImage = async () => {
+        await sleep(2000);
+    }
+    
+    const handleAddImage = async (baseID) => {
+        document.getElementById(baseID + "Add").classList.add("hidden");
+        document.getElementById(baseID + "Preview").src = '/images/loading.gif';
+        const url = await uploadImage();
+        switch(baseID) {
+            case "questionImage":
+                setQuestionImage(url);
+                break;
+            case "optionAImage":
+                setOptionAImage(url);
+                break;
+            case "optionBImage":
+                setOptionBImage(url);
+                break;
+            case "optionCImage":
+                setOptionCImage(url);
+                break;
+            case "optionDImage":
+                setOptionDImage(url);
+                break;
+            case "solutionImage":
+                setSolutionImage(url);
+                break;
+        }
+        document.getElementById(baseID + "Remove").classList.remove("hidden");
+    }
+
+    const handleRemoveImage = async (baseID) => {
+        document.getElementById(baseID + "Remove").classList.add("hidden");
+        document.getElementById(baseID + "Preview").src = '/images/loading.gif';
+        await deleteImage();
+        switch(baseID) {
+            case "questionImage":
+                setQuestionImage("");
+                break;
+            case "optionAImage":
+                setOptionAImage("");
+                break;
+            case "optionBImage":
+                setOptionBImage("");
+                break;
+            case "optionCImage":
+                setOptionCImage("");
+                break;
+            case "optionDImage":
+                setOptionDImage("");
+                break;
+            case "solutionImage":
+                setSolutionImage("");
+                break;
+        }
+        document.getElementById(baseID + "Add").classList.remove("hidden");
+    }
+
+    const editQuestionType = (e) => {
+        setQuestionType(e.target.value);
+        setCorrectAnswer(new Set());
+    }
+
+    const editSubject = (e) => {
+        setSubject(e.target.value);
         const arr = props.subjectwiseTopics.find((element) => {
-            return (element.title === tempSubject);
+            return (element.title === e.target.value);
         });
         if(arr) {
             setTopicList(arr.subtopics);
         } else {
             setTopicList([]);
         }
-    };
-
-    const handleTopicChange = () => {
-        setSubject(document.getElementById("topicSelect").value);
-    };
-
-    const handleCancel = () => {
-        // TODO some logic to cancel ...
-        console.log("cancel");
-    };
-
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        // TODO some logic to save data ...
-        console.log("save");
     }
 
-    const handleImageChange = (id) => {
-        const element = document.getElementById(id);
-        const labelAdd = document.getElementById(id + "LabelAdd");
-        const labelRemove = document.getElementById(id + "LabelRemove");
-        const imagePreview = document.getElementById(id + "ImagePreview");
-        if(element.value === "") {
-            console.log("empty");
-            labelAdd.classList.remove("hidden");
-            labelRemove.classList.add("hidden");
-            imagePreview.innerHTML = '';
-        } else {
-            // TODO some code to upload image ...
-            console.log("upload image" + element.value);
-            labelAdd.classList.add("hidden");
-            labelRemove.classList.remove("hidden");
-            const fileReader = new FileReader();
-            fileReader.readAsDataURL(element.files[0]);
-            fileReader.addEventListener("load", function() {
-                imagePreview.innerHTML = `<img src=${this.result} />`;
-            });
-        }
-    };
+    const editSubtopic = (e) => {
+        setSubtopic(e.target.value);
+    }
 
-    const removeImage = (id) => {
-        document.getElementById(id).value = "";
-        handleImageChange(id);
-    };
+    const editText = (e) => {
+        switch(e.target.name) {
+            case "question":
+                setQuestion(e.target.value);
+                break;
+            case "optionA":
+                setOptionA(e.target.value);
+                break;
+            case "optionB":
+                setOptionB(e.target.value);
+                break;
+            case "optionC":
+                setOptionC(e.target.value);
+                break;
+            case "optionD":
+                setOptionD(e.target.value);
+                break;
+            case "solution":
+                setSolution(e.target.value);
+                break;
+        }
+    }
+
+    const editCorrectAnswer = (e) => {
+        if(questionType === "mcq") {
+            const temp = new Set();
+            temp.add(e.target.value);
+            setCorrectAnswer(temp);
+        } else {
+            const temp = new Set(correctAnswer);
+            if(temp.has(e.target.value)) temp.delete(e.target.value);
+            else temp.add(e.target.value);
+            setCorrectAnswer(temp);
+        }
+    }
 
     return (
         <>
-            <div className='w-full h-screen p-5'>
-                <form className='w-full h-full' onSubmit={handleSubmit.bind(this)}>
-                    <h1 className='font-bold text-3xl pb-3 mb-10 border-b-2 border-black'>New Question</h1>
-                    <div className='w-full my-2 columns-md'>
-                        <div className='my-2 w-full'>
-                            <label htmlFor='questionTypeSelect' className='font-bold text-lg'>Select question type:</label>
-                            <select className='mx-5 rounded-full px-3 py-1 bg-gray-200 cursor-pointer' id='questionTypeSelect' onChange={handleQuestionTypeChange}>
-                                <option defaultChecked={true} name='mcq' value={"mcq"}>MCQ</option>
-                                <option name='msq' value={"msq"}>MSQ</option>
-                            </select>
+            <div className='w-full h-screen px-10 text-lg'>
+                <div className='w-full my-5 grid grid-cols-3 items-center'>
+                    <button id='cancel' onClick={handleCancelBtn} className='justify-self-start text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center'>Cancel</button>
+                    <span className='font-bold text-xl text-center'>Create New Question</span>
+                    <button id='save' onClick={handleSaveBtn} className='justify-self-end text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center'>Save</button>
+                </div>
+                <div className='w-full my-2 grid grid-cols-3 items-center'>
+                    <div className='justify-self-start'>
+                        <label htmlFor='questionTypeSelect' className='font-bold'>Select question type:</label>
+                        <select onChange={(e) => editQuestionType(e)} className='mx-5 rounded-full px-3 py-1 bg-gray-200 cursor-pointer' id='questionTypeSelect'>
+                            <option name='mcq' value={"mcq"} selected={questionType === "mcq"}>MCQ</option>
+                            <option name='msq' value={"msq"} selected={questionType === "msq"}>MSQ</option>
+                        </select>
+                    </div>
+                    <div className='justify-self-center'>
+                        <label htmlFor='subjectSelect' className='font-bold'>Select subject:</label>
+                        <select onChange={(e) => editSubject(e)} className='mx-5 rounded-full px-3 py-1 bg-gray-200 cursor-pointer' id='subjectSelect'>
+                            <option selected={subject === ""} disabled={true}>Select a subject</option>
+                            {subjectwiseTopics.map((element) => {
+                                return (
+                                    <option key={element.title} name={element.title} value={element.title} selected={subject === element.title}>{element.title}</option>
+                                );
+                            })}
+                        </select>
+                    </div>
+                    <div className='justify-self-end'>
+                        <label htmlFor='subtopicSelect' className='font-bold'>Select subtopic:</label>
+                        <select onChange={(e) => editSubtopic(e)} className='mx-5 rounded-full px-3 py-1 bg-gray-200 cursor-pointer' id='subtopicSelect'>
+                            <option selected={subtopic === ""} disabled={true}>Select a subtopic</option>
+                            {topicList.map((element) => {
+                                return (
+                                    <option key={element} name={element} value={element} selected={subtopic === element}>{element}</option>
+                                );
+                            })}
+                        </select>
+                    </div>
+                </div>
+                <div className='w-full my-2 p-3 bg-gray-200 rounded-lg border-gray-500 border-2'>
+                    <label htmlFor='question' className='float-left font-bold'>Question:</label>
+                    <label htmlFor='questionImage' id='questionImageAdd' className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${questionImage === "" ? "" : "hidden"}`}>Add image</label>
+                    <label id='questionImageRemove' onClick={() => handleRemoveImage("questionImage")} className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${questionImage === "" ? "hidden" : ""}`}>Remove image</label>
+                    <input type='file' accept='image/*' name='questionImage' id='questionImage' onChange={() => handleAddImage("questionImage")} className='hidden' />
+                    <br />
+                    <textarea name='question' id='question' value={question} onChange={(e) => editText(e)} className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-52 focus:shadow-xl'></textarea>
+                    <div className='flex justify-center'>
+                        <img id='questionImagePreview' src={questionImage} />
+                    </div>
+                </div>
+                <div className='w-full my-2 p-3 bg-gray-200 rounded-lg border-gray-500 border-2'>
+                    <label htmlFor='optionA' className='float-start font-bold'>Option - A:</label>
+                    <label htmlFor='optionAImage' id='optionAImageAdd' className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${optionAImage === "" ? "" : "hidden"}`}>Add image</label>
+                    <label id='optionAImageRemove' onClick={() => handleRemoveImage("optionAImage")} className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${optionAImage === "" ? "hidden" : ""}`}>Remove image</label>
+                    <input type='file' accept='image/*' name='optionAImage' id='optionAImage' onChange={() => handleAddImage("optionAImage")} className='hidden' />
+                    <br />
+                    <textarea name='optionA' id='optionA' value={optionA} onChange={(e) => editText(e)} className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
+                    <div className='flex justify-center'>
+                        <img id='optionAImagePreview' src={optionAImage} />
+                    </div>
+                </div>
+                <div className='w-full my-2 p-3 bg-gray-200 rounded-lg border-gray-500 border-2'>
+                    <label htmlFor='optionB' className='float-start font-bold'>Option - B:</label>
+                    <label htmlFor='optionBImage' id='optionBImageAdd' className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${optionBImage === "" ? "" : "hidden"}`}>Add image</label>
+                    <label id='optionBImageRemove' onClick={() => handleRemoveImage("optionBImage")} className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer hidden ${optionBImage === "" ? "hidden" : ""}`}>Remove image</label>
+                    <input type='file' accept='image/*' name='optionBImage' id='optionBImage' onChange={() => handleAddImage("optionBImage")} className='hidden' />
+                    <br />
+                    <textarea name='optionB' id='optionB' value={optionB} onChange={(e) => editText(e)} className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
+                    <div className='flex justify-center'>
+                        <img id='optionBImagePreview' src={optionBImage} />
+                    </div>
+                </div>
+                <div className='w-full my-2 p-3 bg-gray-200 rounded-lg border-gray-500 border-2'>
+                    <label htmlFor='optionC' className='float-start font-bold'>Option - C:</label>
+                    <label htmlFor='optionCImage' id='optionCImageAdd' className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${optionCImage === "" ? "" : "hidden"}`}>Add image</label>
+                    <label id='optionCImageRemove' onClick={() => handleRemoveImage("optionCImage")} className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${optionCImage === "" ? "hidden" : ""}`}>Remove image</label>
+                    <input type='file' accept='image/*' name='optionCImage' id='optionCImage' onChange={() => handleAddImage("optionCImage")} className='hidden' />
+                    <br />
+                    <textarea name='optionC' id='optionC' value={optionC} onChange={(e) => editText(e)} className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
+                    <div className='flex justify-center'>
+                        <img id='optionCImagePreview' src={optionCImage} />
+                    </div>
+                </div>
+                <div className='w-full my-2 p-3 bg-gray-200 rounded-lg border-gray-500 border-2'>
+                    <label htmlFor='optionD' className='float-start font-bold'>Option - D:</label>
+                    <label htmlFor='optionDImage' id='optionDImageAdd' className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${optionDImage === "" ? "" : "hidden"}`}>Add image</label>
+                    <label id='optionDImageRemove' onClick={() => handleRemoveImage("optionDImage")} className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${optionDImage === "" ? "hidden" : ""}`}>Remove image</label>
+                    <input type='file' accept='image/*' name='optionDImage' id='optionDImage' onChange={() => handleAddImage("optionDImage")} className='hidden' />
+                    <br />
+                    <textarea name='optionD' id='optionD' value={optionD} onChange={(e) => editText(e)} className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
+                    <div className='flex justify-center'>
+                        <img id='optionDImagePreview' src={optionDImage} />
+                    </div>
+                </div>
+                <div className='w-full my-2 p-3 bg-gray-200 rounded-lg border-gray-500 border-2'>
+                    <h1 className='font-bold'>Select the correct answer:</h1>
+                    <div className={`${questionType === "mcq" ? "" : "hidden"}`}>
+                        <div className='w-full'>
+                            <input type='radio' value={"A"} name='correctAnswer' id='mcqCorrectOptionA' checked={correctAnswer.has("A")} onChange={(e) => editCorrectAnswer(e)} />
+                            <label htmlFor='mcqCorrectOptionA' className='ms-2'>Option - A</label>
                         </div>
-                        <div className='my-2 w-full'>
-                            <label htmlFor='subjectSelect' className='font-bold text-lg'>Select subject:</label>
-                            <select className='mx-5 rounded-full px-3 py-1 bg-gray-200 cursor-pointer' id='subjectSelect' onChange={handleSubjectChange}>
-                                <option defaultChecked={true} value={null}>Select a subject</option>
-                                {props.subjectwiseTopics.map((element) => {
-                                    return (
-                                        <option key={element.title} name={element.title} value={element.title}>{element.title}</option>
-                                    );
-                                })}
-                            </select>
+                        <div className='w-full'>
+                            <input type='radio' value={"B"} name='correctAnswer' id='mcqCorrectOptionB' checked={correctAnswer.has("B")} onChange={(e) => editCorrectAnswer(e)} />
+                            <label htmlFor='mcqCorrectOptionB' className='ms-2'>Option - B</label>
                         </div>
-                        <div className='my-2 w-full'>
-                            <label htmlFor='topicSelect' className='font-bold text-lg'>Select topic:</label>
-                            <select className='mx-5 rounded-full px-3 py-1 bg-gray-200 cursor-pointer' id='topicSelect' onChange={handleTopicChange}>
-                                <option defaultChecked={true} value={null}>Select a topic</option>
-                                {topicList.map((element) => {
-                                    return (
-                                        <option key={element} name={element} value={element}>{element}</option>
-                                    );
-                                })}
-                            </select>
+                        <div className='w-full'>
+                            <input type='radio' value={"C"} name='correctAnswer' id='mcqCorrectOptionC' checked={correctAnswer.has("C")} onChange={(e) => editCorrectAnswer(e)} />
+                            <label htmlFor='mcqCorrectOptionC' className='ms-2'>Option - C</label>
+                        </div>
+                        <div className='w-full'>
+                            <input type='radio' value={"D"} name='correctAnswer' id='mcqCorrectOptionD' checked={correctAnswer.has("D")} onChange={(e) => editCorrectAnswer(e)} />
+                            <label htmlFor='mcqCorrectOptionD' className='ms-2'>Option - D</label>
                         </div>
                     </div>
-                    <div className='w-full p-2 my-2 border-black border-2 rounded-md bg-gray-200'>
-                        <label className='float-start font-bold text-lg'>Type the question here:</label>
-                        <label htmlFor='question' id='questionLabelAdd' className='float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer'>Add image</label>
-                        <label id='questionLabelRemove' className='float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer hidden' onClick={() => removeImage("question")}>Remove image</label>
-                        <input type='file' accept='image/*' name='question' id='question' className='hidden' onChange={() => handleImageChange("question")} />
-                        <br />
-                        <textarea className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-52 focus:shadow-xl'></textarea>
-                        <div id='questionImagePreview'></div>
-                    </div>
-                    <div className='w-full mb-2 mt-10'>
-                        <h1 className='font-bold text-xl'>OPTIONS</h1>
-                    </div>
-                    <div className='w-full p-2 my-3 border-black border-2 rounded-md bg-gray-200'>
-                        <label className='float-start font-bold text-lg'>Option-A:</label>
-                        <label htmlFor='optionA' id='optionALabelAdd' className='float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer'>Add image</label>
-                        <label id='optionALabelRemove' className='float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer hidden' onClick={() => removeImage("optionA")}>Remove image</label>
-                        <input type='file' accept='image/*' name='optionA' id='optionA' className='hidden' onChange={() => handleImageChange("optionA")} />
-                        <br />
-                        <textarea className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-20 focus:shadow-xl'></textarea>
-                        <div id='optionAImagePreview'></div>
-                    </div>
-                    <div className='w-full p-2 my-3 border-black border-2 rounded-md bg-gray-200'>
-                        <label className='float-start font-bold text-lg'>Option-B:</label>
-                        <label htmlFor='optionB' id='optionBLabelAdd' className='float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer'>Add image</label>
-                        <label id='optionBLabelRemove' className='float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer hidden' onClick={() => removeImage("optionB")}>Remove image</label>
-                        <input type='file' accept='image/*' name='optionB' id='optionB' className='hidden' onChange={() => handleImageChange("optionB")} />
-                        <br />
-                        <textarea className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-20 focus:shadow-xl'></textarea>
-                        <div id='optionBImagePreview'></div>
-                    </div>
-                    <div className='w-full p-2 my-3 border-black border-2 rounded-md bg-gray-200'>
-                        <label className='float-start font-bold text-lg'>Option-C:</label>
-                        <label htmlFor='optionC' id='optionCLabelAdd' className='float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer'>Add image</label>
-                        <label id='optionCLabelRemove' className='float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer hidden' onClick={() => removeImage("optionC")}>Remove image</label>
-                        <input type='file' accept='image/*' name='optionC' id='optionC' className='hidden' onChange={() => handleImageChange("optionC")} />
-                        <br />
-                        <textarea className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-20 focus:shadow-xl'></textarea>
-                        <div id='optionCImagePreview'></div>
-                    </div>
-                    <div className='w-full p-2 my-3 border-black border-2 rounded-md bg-gray-200'>
-                        <label className='float-start font-bold text-lg'>Option-D:</label>
-                        <label htmlFor='optionD' id='optionDLabelAdd' className='float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer'>Add image</label>
-                        <label id='optionDLabelRemove' className='float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer hidden' onClick={() => removeImage("optionD")}>Remove image</label>
-                        <input type='file' accept='image/*' name='optionD' id='optionD' className='hidden' onChange={() => handleImageChange("optionD")} />
-                        <br />
-                        <textarea className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-20 focus:shadow-xl'></textarea>
-                        <div id='optionDImagePreview'></div>
-                    </div>
-                    <div className='w-full mt-10'>
-                        <h1 className='text-left font-bold text-lg block me-5'>Mark the correct answer(s):</h1>
-                    </div>
-                    <div className='w-full my-2 text-left'>
-                        <div id='correctmcq' className={`${questionType === "mcq" ? "" : "hidden"}`}>
-                            <input type='radio' name='correctmcq' id='correctmcqA' />
-                            <label htmlFor='correctmcqA' className='mx-2 text-lg font-semibold cursor-pointer'>Option - A</label>
-                            <br />
-                            <input type='radio' name='correctmcq' id='correctmcqB' />
-                            <label htmlFor='correctmcqB' className='mx-2 text-lg font-semibold cursor-pointer'>Option - B</label>
-                            <br />
-                            <input type='radio' name='correctmcq' id='correctmcqC' />
-                            <label htmlFor='correctmcqC' className='mx-2 text-lg font-semibold cursor-pointer'>Option - C</label>
-                            <br />
-                            <input type='radio' name='correctmcq' id='correctmcqD' />
-                            <label htmlFor='correctmcqD' className='mx-2 text-lg font-semibold cursor-pointer'>Option - D</label>
+                    <div className={`${questionType === "msq" ? "" : "hidden"}`}>
+                        <div className='w-full'>
+                            <input type='checkbox' value={"A"} name='correctAnswer' id='msqCorrectOptionA' checked={correctAnswer.has("A")} onChange={(e) => editCorrectAnswer(e)} />
+                            <label htmlFor='msqCorrectOptionA' className='ms-2'>Option - A</label>
                         </div>
-                        <div id='correctmsq' className={`${questionType === "msq" ? "" : "hidden"}`}>
-                            <input type='checkbox' name='correctmsq' id='correctmsqA' />
-                            <label htmlFor='correctmsqA' className='mx-2 text-lg font-semibold cursor-pointer'>Option - A</label>
-                            <br />
-                            <input type='checkbox' name='correctmsq' id='correctmsqB' />
-                            <label htmlFor='correctmsqB' className='mx-2 text-lg font-semibold cursor-pointer'>Option - B</label>
-                            <br />
-                            <input type='checkbox' name='correctmsq' id='correctmsqC' />
-                            <label htmlFor='correctmsqC' className='mx-2 text-lg font-semibold cursor-pointer'>Option - C</label>
-                            <br />
-                            <input type='checkbox' name='correctmsq' id='correctmsqD' />
-                            <label htmlFor='correctmsqD' className='mx-2 text-lg font-semibold cursor-pointer'>Option - D</label>
+                        <div className='w-full'>
+                            <input type='checkbox' value={"B"} name='correctAnswer' id='msqCorrectOptionB' checked={correctAnswer.has("B")} onChange={(e) => editCorrectAnswer(e)} />
+                            <label htmlFor='msqCorrectOptionB' className='ms-2'>Option - B</label>
+                        </div>
+                        <div className='w-full'>
+                            <input type='checkbox' value={"C"} name='correctAnswer' id='msqCorrectOptionC' checked={correctAnswer.has("C")} onChange={(e) => editCorrectAnswer(e)} />
+                            <label htmlFor='msqCorrectOptionC' className='ms-2'>Option - C</label>
+                        </div>
+                        <div className='w-full'>
+                            <input type='checkbox' value={"D"} name='correctAnswer' id='msqCorrectOptionD' checked={correctAnswer.has("D")} onChange={(e) => editCorrectAnswer(e)} />
+                            <label htmlFor='msqCorrectOptionD' className='ms-2'>Option - D</label>
                         </div>
                     </div>
-                    <div className='w-full p-2 my-5 border-black border-2 rounded-md bg-gray-200'>
-                        <label className='float-start font-bold text-lg'>Type the explanation to solution:</label>
-                        <label htmlFor='explanation' id='explanationLabelAdd' className='float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer'>Add image</label>
-                        <label id='explanationLabelRemove' className='float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer hidden' onClick={() => removeImage("explanation")}>Remove image</label>
-                        <input type='file' accept='image/*' name='explanation' id='explanation' className='hidden' onChange={() => handleImageChange("explanation")} />
-                        <br />
-                        <textarea className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-52 focus:shadow-xl'></textarea>
-                        <div id='explanationImagePreview'></div>
+                </div>
+                <div className='w-full my-2 p-3 bg-gray-200 rounded-lg border-gray-500 border-2'>
+                    <label htmlFor='solution' className='float-start font-bold'>Solution:</label>
+                    <label htmlFor='solutionImage' id='solutionImageAdd' className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${solutionImage === "" ? "" : "hidden"}`}>Add image</label>
+                    <label id='solutionImageRemove' onClick={() => handleRemoveImage("solutionImage")} className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${solutionImage === "" ? "hidden" : ""}`}>Remove image</label>
+                    <input type='file' accept='image/*' name='solutionImage' id='solutionImage' onChange={() => handleAddImage("solutionImage")} className='hidden' />
+                    <br />
+                    <textarea name='solution' id='solution' value={solution} onChange={(e) => editText(e)} className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
+                    <div className='flex justify-center'>
+                        <img id='solutionImagePreview' src={solutionImage} />
                     </div>
-                    <div className='w-full my-10'>
-                        <button type='submit' className='text-lg rounded-full bg-green-700 px-3 py-1 text-white font-bold mx-1 mb-5'>Save</button>
-                        <button type='button' className='text-lg rounded-full bg-red-700 px-3 py-1 text-white font-bold mx-1 mb-5' onClick={handleCancel}>Cancel</button>
-                    </div>
-                </form>
+                </div>
             </div>
         </>
     );
-};
+}
