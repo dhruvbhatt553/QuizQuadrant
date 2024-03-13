@@ -177,7 +177,7 @@ export default function ExamPage(props) {
 
     return (
         <>
-            <div className={`w-full h-screen ${examFinish ? "hidden" : ""}`}>
+            <div className={`w-full h-screen ${examFinish ? "hidden" : ""} absolute top-0`}>
                 <div id='leftDiv' className='w-full lg:w-3/4 h-full float-start'>
                     <div id='titleDiv' className='w-full h-12 flex items-center px-3 bg-gray-400'>
                         <div className='w-full grid grid-cols-4'>

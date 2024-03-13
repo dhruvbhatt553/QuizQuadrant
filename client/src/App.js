@@ -1,4 +1,9 @@
 import './App.css';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route
+} from "react-router-dom";
 import CreateQuestion from './components/CreateQuestion/CreateQuestion';
 import ExamPage from './components/ExamPage/ExamPage';
 import dummyData from './dummy-data/data';
@@ -12,16 +17,23 @@ import Sign from './components/Signin/Sign';
 
 function App() {
   return (
-    <div className="App">
-      <NavBar/>  
-      <CreateQuestion subjectwiseTopics={dummyData} />
-      {/* <ExamPage examData={examData} questionData={questionData} /> */}
-      {/* <CreateExam /> */}
-      {/* <HomePage/> */}
-      {/* <MockTestSelection/> */}
-      <Sign/>
-      
-    </div>
+    <>
+      <Router>
+        <div className="App">
+          <NavBar />
+          <div className='mt-16'>
+            <Routes>
+              <Route exact path="/" element={<HomePage />} />
+              <Route exact path="/auth" element={<Sign />} />
+              <Route exact path="/mock-test" element={<MockTestSelection />} />
+              <Route exact path="/create-exam" element={<CreateExam />} />
+              <Route exact path="/exam" element={<ExamPage examData={examData} questionData={questionData} />} />
+              <Route exact path="/create-question" element={<CreateQuestion subjectwiseTopics={dummyData} />} />
+            </Routes>
+          </div>
+        </div>
+      </Router>
+    </>
   );
 }
 
