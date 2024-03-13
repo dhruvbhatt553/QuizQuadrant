@@ -8,7 +8,7 @@ export default function Container() {
             <span className='flex ms-2 text-orange-500 font-bold text-2xl'>Welcome to our website name </span>
             <span className='flex ms-2 font-light text-xl'>Practice mcqs,msqs topic wise and design tests effectively !</span>
             
-            <div className='flex flex-wrap justify-center px-10 gap-10 py-4'>
+            <div className='flex flex-wrap justify-center px-10 gap-10 py-4 '>
 
         
             {
