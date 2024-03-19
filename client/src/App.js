@@ -14,6 +14,10 @@ import HomePage from './components/HomePage/HomePage';
 import MockTestSelection from './components/MockTestSelection/MockTestSelection';
 import NavBar from './components/NavBar';
 import Sign from './components/Signin/Sign';
+import PracticePage from './components/Practice/PracticePage';
+import data from './dummy-data/data';
+
+
 
 function App() {
   return (
@@ -29,7 +33,11 @@ function App() {
               <Route exact path="/create-exam" element={<CreateExam subjectwiseTopics={dummyData} />} />
               <Route exact path="/exam" element={<ExamPage examData={examData} questionData={questionData} />} />
               <Route exact path="/create-question" element={<CreateQuestion subjectwiseTopics={dummyData} />} />
+              <Route exact path="/practice" element={<PracticePage subtopics={data[0].subtopics}/>} />
+
+
             </Routes>
+
           </div>
         </div>
       </Router>
