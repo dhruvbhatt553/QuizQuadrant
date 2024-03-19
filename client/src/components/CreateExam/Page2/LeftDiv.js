@@ -2,33 +2,46 @@ import React from 'react';
 
 export default function LeftDiv(props) {
 
-    const { examQuestions, setExamQuestions, questionIndex, setQuestionIndex, unsaved } = props;
+    const { examQuestions, setExamQuestions, questionIndex, setQuestionIndex, unsaved, setUnsaved } = props;
 
     const addNewQuestion = () => {
-        const newQuestion = new Object({
-            type: "mcq",
-            question: "",
-            questionImage: "",
-            optionA: "",
-            optionAImage: "",
-            optionB: "",
-            optionBImage: "",
-            optionC: "",
-            optionCImage: "",
-            optionD: "",
-            optionDImage: "",
-            correctAnswer: [""]
-        });
-        const arr = [...examQuestions];
-        arr.push(newQuestion);
-        setExamQuestions(arr);
+        if(!unsaved) {
+            const newQuestion = new Object({
+                type: "",
+                subject: "",
+                subtopic: "",
+                positiveMarks: "",
+                negativeMarks: "",
+                question: "",
+                questionImage: "",
+                optionA: "",
+                optionAImage: "",
+                optionB: "",
+                optionBImage: "",
+                optionC: "",
+                optionCImage: "",
+                optionD: "",
+                optionDImage: "",
+                solution: "",
+                solutionImage: "",
+                correctAnswer: []
+            });
+            const arr = [...examQuestions];
+            arr.push(newQuestion);
+
+            setExamQuestions(arr);
+            setQuestionIndex(arr.length - 1);
+            setUnsaved(true);
+        } else {
+            window.alert("You have some unsaved work on current question. Kindly save the question and try again...");
+        }
     }
 
     const changeDisplayQuestion = (e) => {
-        if(unsaved) {
-            window.alert("You have some unsaved work on current question. Kindly save the question and try again...");
-        } else {
+        if(!unsaved) {
             setQuestionIndex(Number(e.target.value));
+        } else {
+            window.alert("You have some unsaved work on current question. Kindly save the question and try again...");
         }
     }
 

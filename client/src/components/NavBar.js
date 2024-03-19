@@ -3,7 +3,6 @@ import { useLocation } from 'react-router-dom';
 
 export default function NavBar() {
     let path = useLocation().pathname;
-    console.log(path);
     return (
         <div className={`bg-slate-300 h-16 flex  font-semibold text items-center justify-between px-4 fixed w-full top-0 ${path === "/exam" ? "hidden" : ""}`}>
             <p className='text-2xl'>Quiz Quadrant</p>

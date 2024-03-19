@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function CreateQuestion(props) {
 
+    const navigate = useNavigate();
     const { subjectwiseTopics } = props;
 
     const [topicList, setTopicList] = useState([]);
     const [questionType, setQuestionType] = useState("mcq");
     const [subject, setSubject] = useState("");
     const [subtopic, setSubtopic] = useState("");
+    const [positiveMarks, setPositiveMarks] = useState(0);
+    const [negativeMarks, setNegativeMarks] = useState(0);
     const [question, setQuestion] = useState("");
     const [questionImage, setQuestionImage] = useState("");
     const [optionA, setOptionA] = useState("");
@@ -26,9 +30,109 @@ export default function CreateQuestion(props) {
         await (new Promise(resolve => setTimeout(resolve, ms)));
     }
 
-    const handleCancelBtn = () => {}
+    const validateData = () => {
+        let isValid = true;
+        let errorMsg = [];
 
-    const handleSaveBtn = () => {}
+        if(subject === "") {
+            isValid = false;
+            errorMsg.push("Please select subject");
+        }
+        if(subtopic === "") {
+            isValid = false;
+            errorMsg.push("Please select subtopic");
+        }
+        if(positiveMarks <= 0) {
+            isValid = false;
+            errorMsg.push("Please enter appropriate value for positive marks (i.e. greater than 0)");
+        }
+        if(negativeMarks > 0) {
+            isValid = false;
+            errorMsg.push("Please enter appropriate value for negative marks (i.e. less than 0)");
+        }
+        if(question === "" && questionImage === "") {
+            isValid = false;
+            errorMsg.push("Please enter question");
+        }
+        if(optionA === "" && optionAImage === "") {
+            isValid = false;
+            errorMsg.push("Please enter option - A");
+        }
+        if(optionB === "" && optionBImage === "") {
+            isValid = false;
+            errorMsg.push("Please enter option - B");
+        }
+        if(optionC === "" && optionCImage === "") {
+            isValid = false;
+            errorMsg.push("Please enter option - C");
+        }
+        if(optionD === "" && optionDImage === "") {
+            isValid = false;
+            errorMsg.push("Please enter option - D");
+        }
+        if(solution === "" && solutionImage === "") {
+            isValid = false;
+            errorMsg.push("Please enter solution");
+        }
+        if(correctAnswer.size === 0) {
+            isValid = false;
+            errorMsg.push("Please select the correct answer");
+        }
+
+        return {
+            isValid: isValid,
+            errorMsg: errorMsg
+        };
+    }
+
+    const saveQuestion = async (data) => {
+        // TODO API call to save data ...
+        await sleep(2000);
+        console.log(data);
+    }
+
+    const handleCancelBtn = () => {
+        const cancelConfirm = window.confirm("All the data entered will be lost. Are you sure you want to cancel ?");
+        if(cancelConfirm) {
+            navigate("/");
+        }
+    }
+
+    const handleSaveBtn = async () => {
+        const { isValid, errorMsg } = validateData();
+        if(!isValid) {
+            let errorStr = "";
+            errorMsg.forEach((msg, index) => {
+                errorStr += (index + 1) + ". " + msg + "\n";
+            });
+            window.alert("Cannot save the question: \n" + errorStr);
+        } else {
+            const data = {
+                type: questionType,
+                subject: subject,
+                subtopic: subtopic,
+                positiveMarks: positiveMarks,
+                negativeMarks: negativeMarks,
+                question: question,
+                questionImage: questionImage,
+                optionA: optionA,
+                optionAImage: optionAImage,
+                optionB: optionB,
+                optionBImage: optionBImage,
+                optionC: optionC,
+                optionCImage: optionCImage,
+                optionD: optionD,
+                optionDImage: optionDImage,
+                solution: solution,
+                solutionImage: solutionImage,
+                correctAnswer: [...correctAnswer]
+            };
+            document.getElementById("main-div").classList.add("hidden");
+            document.getElementById("loading-div").classList.remove("hidden");
+            await saveQuestion(data);
+            navigate("/");
+        }
+    }
 
     const uploadImage = async () => {
         const url = "https://media.istockphoto.com/id/183412466/photo/eastern-bluebirds-male-and-female.jpg?s=612x612&w=0&k=20&c=6_EQHnGedwdjM9QTUF2c1ce7cC3XtlxvMPpU5HAouhc=";
@@ -117,6 +221,12 @@ export default function CreateQuestion(props) {
 
     const editText = (e) => {
         switch(e.target.name) {
+            case "positiveMarks":
+                setPositiveMarks(e.target.value);
+                break;
+            case "negativeMarks":
+                setNegativeMarks(e.target.value);
+                break;
             case "question":
                 setQuestion(e.target.value);
                 break;
@@ -153,41 +263,59 @@ export default function CreateQuestion(props) {
 
     return (
         <>
-            <div className='w-full h-screen px-10 text-lg'>
+            <div id='loading-div' className='w-full px-10 py-10 text-3xl text-center grid grid-cols-11 hidden'>
+                <div className='col-start-6'>
+                    <img src='images/loading.gif' />
+                    <h1 className='mt-10 text-red-700 font-medium'>Saving ...</h1>
+                </div>
+            </div>
+            <div id='main-div' className='w-full h-screen px-10 py-2 text-lg'>
                 <div className='w-full my-5 grid grid-cols-3 items-center'>
                     <button id='cancel' onClick={handleCancelBtn} className='justify-self-start text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center'>Cancel</button>
                     <span className='font-bold text-xl text-center'>Create New Question</span>
                     <button id='save' onClick={handleSaveBtn} className='justify-self-end text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center'>Save</button>
                 </div>
-                <div className='w-full my-2 grid grid-cols-3 items-center'>
-                    <div className='justify-self-start'>
-                        <label htmlFor='questionTypeSelect' className='font-bold'>Select question type:</label>
-                        <select onChange={(e) => editQuestionType(e)} className='mx-5 rounded-full px-3 py-1 bg-gray-200 cursor-pointer' id='questionTypeSelect'>
-                            <option name='mcq' value={"mcq"} selected={questionType === "mcq"}>MCQ</option>
-                            <option name='msq' value={"msq"} selected={questionType === "msq"}>MSQ</option>
-                        </select>
+                <div className='w-full my-2'>
+                    <label htmlFor='questionTypeSelect' className='font-bold'>Select question type:</label>
+                    <select onChange={(e) => editQuestionType(e)} className='mx-5 rounded-lg px-3 py-1 bg-gray-200 cursor-pointer' id='questionTypeSelect'>
+                        <option name='mcq' value={"mcq"} selected={questionType === "mcq"}>MCQ</option>
+                        <option name='msq' value={"msq"} selected={questionType === "msq"}>MSQ</option>
+                    </select>
+                </div>
+                <div className='w-full my-2 grid grid-cols-4 items-center text-start'>
+                    <div className='col-start-1 col-span-3 grid grid-rows-2'>
+                        <div className='my-1'>
+                            <label htmlFor='subjectSelect' className='font-bold'>Select subject:</label>
+                            <select onChange={(e) => editSubject(e)} className='ms-5 px-3 py-1 bg-gray-200 cursor-pointer rounded-lg' id='subjectSelect'>
+                                <option selected={!subject} disabled={true}>Select a subject</option>
+                                {subjectwiseTopics.map((element) => {
+                                    return (
+                                        <option key={element.title} name={element.title} value={element.title} selected={subject === element.title}>{element.title}</option>
+                                    );
+                                })}
+                            </select>
+                        </div>
+                        <div className='my-1'>
+                            <label htmlFor='subtopicSelect' className='font-bold'>Select subtopic:</label>
+                            <select onChange={(e) => editSubtopic(e)} className='ms-5 px-3 py-1 bg-gray-200 cursor-pointer rounded-lg overflow-auto' id='subtopicSelect'>
+                                <option selected={!subtopic} disabled={true}>Select a subtopic</option>
+                                {topicList.map((element) => {
+                                    return (
+                                        <option key={element} name={element} value={element} selected={subtopic === element}>{element}</option>
+                                    );
+                                })}
+                            </select>
+                        </div>
                     </div>
-                    <div className='justify-self-center'>
-                        <label htmlFor='subjectSelect' className='font-bold'>Select subject:</label>
-                        <select onChange={(e) => editSubject(e)} className='mx-5 rounded-full px-3 py-1 bg-gray-200 cursor-pointer' id='subjectSelect'>
-                            <option selected={subject === ""} disabled={true}>Select a subject</option>
-                            {subjectwiseTopics.map((element) => {
-                                return (
-                                    <option key={element.title} name={element.title} value={element.title} selected={subject === element.title}>{element.title}</option>
-                                );
-                            })}
-                        </select>
-                    </div>
-                    <div className='justify-self-end'>
-                        <label htmlFor='subtopicSelect' className='font-bold'>Select subtopic:</label>
-                        <select onChange={(e) => editSubtopic(e)} className='mx-5 rounded-full px-3 py-1 bg-gray-200 cursor-pointer' id='subtopicSelect'>
-                            <option selected={subtopic === ""} disabled={true}>Select a subtopic</option>
-                            {topicList.map((element) => {
-                                return (
-                                    <option key={element} name={element} value={element} selected={subtopic === element}>{element}</option>
-                                );
-                            })}
-                        </select>
+                    <div className='col-start-4 col-span-1 text-end'>
+                        <div className='my-1'>
+                            <label className='font-bold'>Positive Marks:</label>
+                            <input type='number' name='positiveMarks' id='positiveMarks' value={positiveMarks} min={0} onChange={(e) => editText(e)} className='ms-5 w-20 border-gray-400 border-2 rounded-lg p-1 focus:shadow-xl' />
+                        </div>
+                        <div className='my-1'>
+                            <label className='font-bold'>Negative Marks:</label>
+                            <input type='number' name='negativeMarks' id='negativeMarks' value={negativeMarks} max={0} onChange={(e) => editText(e)} className='ms-5 w-20 border-gray-400 border-2 rounded-lg p-1 focus:shadow-xl' />
+                        </div>
                     </div>
                 </div>
                 <div className='w-full my-2 p-3 bg-gray-200 rounded-lg border-gray-500 border-2'>
@@ -196,7 +324,8 @@ export default function CreateQuestion(props) {
                     <label id='questionImageRemove' onClick={() => handleRemoveImage("questionImage")} className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${questionImage === "" ? "hidden" : ""}`}>Remove image</label>
                     <input type='file' accept='image/*' name='questionImage' id='questionImage' onChange={() => handleAddImage("questionImage")} className='hidden' />
                     <br />
-                    <textarea name='question' id='question' value={question} onChange={(e) => editText(e)} className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-52 focus:shadow-xl'></textarea>
+                    <textarea name='question' id='question' value={question} onChange={(e) => editText(e)} maxLength={4294967295} className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-52 focus:shadow-xl'></textarea>
+                    <p className='text-end mb-2 text-gray-600 text-sm'>{question.length} / {4294967295} characters</p>
                     <div className='flex justify-center'>
                         <img id='questionImagePreview' src={questionImage} />
                     </div>
@@ -207,7 +336,8 @@ export default function CreateQuestion(props) {
                     <label id='optionAImageRemove' onClick={() => handleRemoveImage("optionAImage")} className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${optionAImage === "" ? "hidden" : ""}`}>Remove image</label>
                     <input type='file' accept='image/*' name='optionAImage' id='optionAImage' onChange={() => handleAddImage("optionAImage")} className='hidden' />
                     <br />
-                    <textarea name='optionA' id='optionA' value={optionA} onChange={(e) => editText(e)} className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
+                    <textarea name='optionA' id='optionA' value={optionA} onChange={(e) => editText(e)} maxLength={65535} className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
+                    <p className='text-end mb-2 text-gray-600 text-sm'>{optionA.length} / {65535} characters</p>
                     <div className='flex justify-center'>
                         <img id='optionAImagePreview' src={optionAImage} />
                     </div>
@@ -218,7 +348,8 @@ export default function CreateQuestion(props) {
                     <label id='optionBImageRemove' onClick={() => handleRemoveImage("optionBImage")} className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer hidden ${optionBImage === "" ? "hidden" : ""}`}>Remove image</label>
                     <input type='file' accept='image/*' name='optionBImage' id='optionBImage' onChange={() => handleAddImage("optionBImage")} className='hidden' />
                     <br />
-                    <textarea name='optionB' id='optionB' value={optionB} onChange={(e) => editText(e)} className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
+                    <textarea name='optionB' id='optionB' value={optionB} onChange={(e) => editText(e)} maxLength={65535} className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
+                    <p className='text-end mb-2 text-gray-600 text-sm'>{optionB.length} / {65535} characters</p>
                     <div className='flex justify-center'>
                         <img id='optionBImagePreview' src={optionBImage} />
                     </div>
@@ -229,7 +360,8 @@ export default function CreateQuestion(props) {
                     <label id='optionCImageRemove' onClick={() => handleRemoveImage("optionCImage")} className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${optionCImage === "" ? "hidden" : ""}`}>Remove image</label>
                     <input type='file' accept='image/*' name='optionCImage' id='optionCImage' onChange={() => handleAddImage("optionCImage")} className='hidden' />
                     <br />
-                    <textarea name='optionC' id='optionC' value={optionC} onChange={(e) => editText(e)} className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
+                    <textarea name='optionC' id='optionC' value={optionC} onChange={(e) => editText(e)} maxLength={65535} className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
+                    <p className='text-end mb-2 text-gray-600 text-sm'>{optionC.length} / {65535} characters</p>
                     <div className='flex justify-center'>
                         <img id='optionCImagePreview' src={optionCImage} />
                     </div>
@@ -240,7 +372,8 @@ export default function CreateQuestion(props) {
                     <label id='optionDImageRemove' onClick={() => handleRemoveImage("optionDImage")} className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${optionDImage === "" ? "hidden" : ""}`}>Remove image</label>
                     <input type='file' accept='image/*' name='optionDImage' id='optionDImage' onChange={() => handleAddImage("optionDImage")} className='hidden' />
                     <br />
-                    <textarea name='optionD' id='optionD' value={optionD} onChange={(e) => editText(e)} className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
+                    <textarea name='optionD' id='optionD' value={optionD} onChange={(e) => editText(e)} maxLength={65535} className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
+                    <p className='text-end mb-2 text-gray-600 text-sm'>{optionD.length} / {65535} characters</p>
                     <div className='flex justify-center'>
                         <img id='optionDImagePreview' src={optionDImage} />
                     </div>
@@ -290,7 +423,8 @@ export default function CreateQuestion(props) {
                     <label id='solutionImageRemove' onClick={() => handleRemoveImage("solutionImage")} className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${solutionImage === "" ? "hidden" : ""}`}>Remove image</label>
                     <input type='file' accept='image/*' name='solutionImage' id='solutionImage' onChange={() => handleAddImage("solutionImage")} className='hidden' />
                     <br />
-                    <textarea name='solution' id='solution' value={solution} onChange={(e) => editText(e)} className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
+                    <textarea name='solution' id='solution' value={solution} onChange={(e) => editText(e)} maxLength={4294967295} className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
+                    <p className='text-end mb-2 text-gray-600 text-sm'>{solution.length} / {4294967295} characters</p>
                     <div className='flex justify-center'>
                         <img id='solutionImagePreview' src={solutionImage} />
                     </div>
