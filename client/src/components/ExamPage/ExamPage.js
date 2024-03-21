@@ -277,22 +277,6 @@ export default function ExamPage(props) {
                             <h1 className='h-1/3 px-3 flex items-center border-black border-b-4 font-bold'>Violations Count: {violation}</h1>
                         </div>
                     </div>
-                    {/* <div id='questionStatusDiv' className='flex w-full h-1/6 border-black border-t-4'>
-                        <div className='w-full'>
-                            <div className='h-1/3 w-full p-1 flex px-3'>
-                                <div className='h-full aspect-square bg-gray-500 rounded-full'></div>
-                                <h1 className='grid items-center ms-3'>X - Unvisited</h1>
-                            </div>
-                            <div className='h-1/3 w-full p-1 flex px-3'>
-                                <div className='h-full aspect-square bg-green-500 rounded-full'></div>
-                                <h1 className='grid items-center ms-3'>X - Answered</h1>
-                            </div>
-                            <div className='h-1/3 w-full p-1 flex px-3'>
-                                <div className='h-full aspect-square bg-red-600 rounded-full'></div>
-                                <h1 className='grid items-center ms-3'>X - Not Answered</h1>
-                            </div>
-                        </div>
-                    </div> */}
                     <div id='questionNumberDiv' className='w-full h-[calc(70%)] border-black border-b-4 overflow-auto hidden show-after-start'>
                         {
                             examStart === true ? 

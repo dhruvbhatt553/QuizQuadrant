@@ -2,8 +2,14 @@ import React, { useEffect, useState } from 'react';
 
 export default function RightDiv(props) {
 
-    const { examQuestions, setExamQuestions, questionIndex, unsaved, setUnsaved } = props;
+    const { examQuestions, setExamQuestions, questionIndex, setQuestionIndex, unsaved, setUnsaved, subjectwiseTopics } = props;
+
     const [type, setType] = useState(examQuestions[questionIndex].type);
+    const [subject, setSubject] = useState(examQuestions[questionIndex].subject);
+    const [subtopic, setSubtopic] = useState(examQuestions[questionIndex].subtopic);
+    const [topicList, setTopicList] = useState([]);
+    const [positiveMarks, setPositiveMarks] = useState(examQuestions[questionIndex].positiveMarks);
+    const [negativeMarks, setNegativeMarks] = useState(examQuestions[questionIndex].negativeMarks);
     const [question, setQuestion] = useState(examQuestions[questionIndex].question);
     const [questionImage, setQuestionImage] = useState(examQuestions[questionIndex].questionImage);
     const [optionA, setOptionA] = useState(examQuestions[questionIndex].optionA);
@@ -14,12 +20,19 @@ export default function RightDiv(props) {
     const [optionCImage, setOptionCImage] = useState(examQuestions[questionIndex].optionCImage);
     const [optionD, setOptionD] = useState(examQuestions[questionIndex].optionD);
     const [optionDImage, setOptionDImage] = useState(examQuestions[questionIndex].optionDImage);
+    const [solution, setSolution] = useState("");
+    const [solutionImage, setSolutionImage] = useState("");
     const [correctAnswer, setCorrectAnswer] = useState(new Set(examQuestions[questionIndex].correctAnswer));
     const [saving, setSaving] = useState(false);
     const [deleting, setDeleting] = useState(false);
 
     React.useEffect(() => {
         setType(examQuestions[questionIndex].type);
+        setSubject(examQuestions[questionIndex].subject);
+        setSubtopic(examQuestions[questionIndex].subtopic);
+        editTopicList(examQuestions[questionIndex].subject);
+        setPositiveMarks(examQuestions[questionIndex].positiveMarks);
+        setNegativeMarks(examQuestions[questionIndex].negativeMarks);
         setQuestion(examQuestions[questionIndex].question);
         setQuestionImage(examQuestions[questionIndex].questionImage);
         setOptionA(examQuestions[questionIndex].optionA);
@@ -30,6 +43,8 @@ export default function RightDiv(props) {
         setOptionCImage(examQuestions[questionIndex].optionCImage);
         setOptionD(examQuestions[questionIndex].optionD);
         setOptionDImage(examQuestions[questionIndex].optionDImage);
+        setSolution(examQuestions[questionIndex].solution);
+        setSolutionImage(examQuestions[questionIndex].solutionImage);
         setCorrectAnswer(new Set(examQuestions[questionIndex].correctAnswer));
     }, [questionIndex, examQuestions]);
 
@@ -55,26 +70,92 @@ export default function RightDiv(props) {
     const deleteQuestion = () => {
         const arr = examQuestions.filter((question, index) => (questionIndex != index));
         setExamQuestions(arr);
+        if(arr.length === questionIndex) {
+            setQuestionIndex((questionIndex) => (questionIndex - 1));
+        }
     }
 
-    const saveQuestion = () => {
-        const data = examQuestions[questionIndex];
-        data.type = type;
-        data.question = question;
-        data.questionImage = questionImage;
-        data.optionA = optionA;
-        data.optionAImage = optionAImage;
-        data.optionB = optionB;
-        data.optionBImage = optionBImage;
-        data.optionC = optionC;
-        data.optionCImage = optionCImage;
-        data.optionD = optionD;
-        data.optionDImage = optionDImage;
-        data.correctAnswer = [...correctAnswer];
+    const validateData = () => {
+        let isValid = true;
+        let errorMsg = [];
 
-        const arr = examQuestions;
+        if(subject === "") {
+            isValid = false;
+            errorMsg.push("Please select subject");
+        }
+        if(subtopic === "") {
+            isValid = false;
+            errorMsg.push("Please select subtopic");
+        }
+        if(positiveMarks <= 0) {
+            isValid = false;
+            errorMsg.push("Please enter appropriate value for positive marks (i.e. greater than 0)");
+        }
+        if(negativeMarks > 0) {
+            isValid = false;
+            errorMsg.push("Please enter appropriate value for negative marks (i.e. less than 0)");
+        }
+        if(question === "" && questionImage === "") {
+            isValid = false;
+            errorMsg.push("Please enter question");
+        }
+        if(optionA === "" && optionAImage === "") {
+            isValid = false;
+            errorMsg.push("Please enter option - A");
+        }
+        if(optionB === "" && optionBImage === "") {
+            isValid = false;
+            errorMsg.push("Please enter option - B");
+        }
+        if(optionC === "" && optionCImage === "") {
+            isValid = false;
+            errorMsg.push("Please enter option - C");
+        }
+        if(optionD === "" && optionDImage === "") {
+            isValid = false;
+            errorMsg.push("Please enter option - D");
+        }
+        if(solution === "" && solutionImage === "") {
+            isValid = false;
+            errorMsg.push("Please enter solution");
+        }
+        if(correctAnswer.size === 0) {
+            isValid = false;
+            errorMsg.push("Please select the correct answer");
+        }
+
+        return {
+            isValid: isValid,
+            errorMsg: errorMsg
+        };
+    }
+
+    const saveQuestion = async () => {
+        const data = {
+            type: type,
+            subject: subject,
+            subtopic: subtopic,
+            positiveMarks: positiveMarks,
+            negativeMarks: negativeMarks,
+            question: question,
+            questionImage: questionImage,
+            optionA: optionA,
+            optionAImage: optionAImage,
+            optionB: optionB,
+            optionBImage: optionBImage,
+            optionC: optionC,
+            optionCImage: optionCImage,
+            optionD: optionD,
+            optionDImage: optionDImage,
+            solution: solution,
+            solutionImage: solutionImage,
+            correctAnswer: [...correctAnswer]
+        };
         examQuestions[questionIndex] = data;
-        setExamQuestions(arr);
+
+        setExamQuestions(examQuestions);
+
+        await sleep(2000);
     }
 
     const handleDeleteBtn = async () => {
@@ -85,12 +166,20 @@ export default function RightDiv(props) {
     }
 
     const handleSaveBtn = async () => {
-        setSaving((saving) => (!saving));
-        await sleep(2000);
-        saveQuestion();
-        setSaving((saving) => (!saving));
-        setUnsaved(false);
-        document.addEventListener("change", updateUnsavedState);
+        const { isValid, errorMsg } = validateData();
+        if(!isValid) {
+            let errorStr = "";
+            errorMsg.forEach((msg, index) => {
+                errorStr += (index + 1) + ". " + msg + "\n";
+            });
+            window.alert("Cannot save the question: \n" + errorStr);
+        } else {
+            setSaving((saving) => (!saving));
+            await saveQuestion();
+            setSaving((saving) => (!saving));
+            setUnsaved(false);
+            document.addEventListener("change", updateUnsavedState);
+        }
     }
 
     const handleAddImage = async (baseID) => {
@@ -112,6 +201,9 @@ export default function RightDiv(props) {
                 break;
             case "optionDImage":
                 setOptionDImage(url);
+                break;
+            case "solutionImage":
+                setSolutionImage(url);
                 break;
         }
         document.getElementById(baseID + "Remove").classList.remove("hidden");
@@ -137,6 +229,9 @@ export default function RightDiv(props) {
             case "optionDImage":
                 setOptionDImage("");
                 break;
+            case "solutionImage":
+                setSolutionImage("");
+                break;
         }
         document.getElementById(baseID + "Add").classList.remove("hidden");
     }
@@ -146,8 +241,35 @@ export default function RightDiv(props) {
         setCorrectAnswer(new Set());
     }
 
+    const editSubject = (e) => {
+        setSubject(e.target.value);
+        editTopicList(e.target.value);
+    }
+
+    const editTopicList = (subject) => {
+        console.log("sjdbvkjbsf");
+        const arr = props.subjectwiseTopics.find((element) => {
+            return (element.title === subject);
+        });
+        if(arr) {
+            setTopicList(arr.subtopics);
+        } else {
+            setTopicList([]);
+        }
+    }
+
+    const editSubtopic = (e) => {
+        setSubtopic(e.target.value);
+    }
+
     const editText = (e) => {
         switch(e.target.name) {
+            case "positiveMarks":
+                setPositiveMarks(e.target.value);
+                break;
+            case "negativeMarks":
+                setNegativeMarks(e.target.value);
+                break;
             case "question":
                 setQuestion(e.target.value);
                 break;
@@ -162,6 +284,9 @@ export default function RightDiv(props) {
                 break;
             case "optionD":
                 setOptionD(e.target.value);
+                break;
+            case "solution":
+                setSolution(e.target.value);
                 break;
         }
     }
@@ -186,12 +311,48 @@ export default function RightDiv(props) {
                 <span className='font-bold text-center'>Question - {questionIndex + 1}</span>
                 <button id='save' onClick={handleSaveBtn} className={`disabled:cursor-not-allowed justify-self-end text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center`} disabled={saving || !unsaved}>{saving ? (<><span>Saving...</span><img src='./images/loading.gif' className='inline h-5 ms-2' /></>) : "Save"}</button>
             </div>
-            <div className='w-full my-2'>
-                <label htmlFor='questionTypeSelect' className='font-bold text-lg'>Select question type:</label>
-                <select onChange={(e) => editQuestionType(e)} className='mx-5 rounded-full px-3 py-1 bg-gray-200 cursor-pointer' id='questionTypeSelect'>
+            <div className='w-full my-2 text-center'>
+                <label htmlFor='questionTypeSelect' className='font-bold'>Select question type:</label>
+                <select onChange={(e) => editQuestionType(e)} className='mx-5 rounded-lg px-3 py-1 bg-gray-200 cursor-pointer' id='questionTypeSelect'>
                     <option name='mcq' value={"mcq"} selected={type === "mcq"}>MCQ</option>
                     <option name='msq' value={"msq"} selected={type === "msq"}>MSQ</option>
                 </select>
+            </div>
+            <div className='w-full my-2 grid grid-cols-4 items-center text-start'>
+                <div className='col-start-1 col-span-3 grid grid-rows-2'>
+                    <div className='my-1'>
+                        <label htmlFor='subjectSelect' className='font-bold'>Select subject:</label>
+                        <select onChange={(e) => editSubject(e)} className='ms-5 px-3 py-1 bg-gray-200 cursor-pointer rounded-lg' id='subjectSelect'>
+                            <option selected={!subject} disabled={true}>Select a subject</option>
+                            {subjectwiseTopics.map((element) => {
+                                return (
+                                    <option key={element.title} name={element.title} value={element.title} selected={subject === element.title}>{element.title}</option>
+                                );
+                            })}
+                        </select>
+                    </div>
+                    <div className='my-1'>
+                        <label htmlFor='subtopicSelect' className='font-bold'>Select subtopic:</label>
+                        <select onChange={(e) => editSubtopic(e)} className='ms-5 px-3 py-1 bg-gray-200 cursor-pointer rounded-lg overflow-auto' id='subtopicSelect'>
+                            <option selected={!subtopic} disabled={true}>Select a subtopic</option>
+                            {topicList.map((element) => {
+                                return (
+                                    <option key={element} name={element} value={element} selected={subtopic === element}>{element}</option>
+                                );
+                            })}
+                        </select>
+                    </div>
+                </div>
+                <div className='col-start-4 col-span-1 text-end'>
+                    <div className='my-1'>
+                        <label className='font-bold'>Positive Marks:</label>
+                        <input type='number' name='positiveMarks' id='positiveMarks' value={positiveMarks} onChange={(e) => editText(e)} min={0} className='ms-5 w-20 border-gray-400 border-2 rounded-lg p-1 focus:shadow-xl' />
+                    </div>
+                    <div className='my-1'>
+                        <label className='font-bold'>Negative Marks:</label>
+                        <input type='number' name='negativeMarks' id='negativeMarks' value={negativeMarks} onChange={(e) => editText(e)} max={0} className='ms-5 w-20 border-gray-400 border-2 rounded-lg p-1 focus:shadow-xl' />
+                    </div>
+                </div>
             </div>
             <div className='w-full my-2 p-3 bg-gray-200 rounded-lg border-gray-500 border-2'>
                 <label htmlFor='question' className='font-bold'>Question:</label>
@@ -200,6 +361,7 @@ export default function RightDiv(props) {
                 <input type='file' accept='image/*' name='questionImage' id='questionImage' onChange={() => handleAddImage("questionImage")} className='hidden' />
                 <br />
                 <textarea name='question' id='question' value={question} onChange={(e) => editText(e)} className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-52 focus:shadow-xl'></textarea>
+                <p className='text-end mb-2 text-gray-600 text-sm'>{question.length} / {4294967295} characters</p>
                 <div className='flex justify-center'>
                     <img id='questionImagePreview' src={questionImage} />
                 </div>
@@ -211,6 +373,7 @@ export default function RightDiv(props) {
                 <input type='file' accept='image/*' name='optionAImage' id='optionAImage' onChange={() => handleAddImage("optionAImage")} className='hidden' />
                 <br />
                 <textarea name='optionA' id='optionA' value={optionA} onChange={(e) => editText(e)} className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
+                <p className='text-end mb-2 text-gray-600 text-sm'>{optionA.length} / {65535} characters</p>
                 <div className='flex justify-center'>
                     <img id='optionAImagePreview' src={optionAImage} />
                 </div>
@@ -222,6 +385,7 @@ export default function RightDiv(props) {
                 <input type='file' accept='image/*' name='optionBImage' id='optionBImage' onChange={() => handleAddImage("optionBImage")} className='hidden' />
                 <br />
                 <textarea name='optionB' id='optionB' value={optionB} onChange={(e) => editText(e)} className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
+                <p className='text-end mb-2 text-gray-600 text-sm'>{optionB.length} / {65535} characters</p>
                 <div className='flex justify-center'>
                     <img id='optionBImagePreview' src={optionBImage} />
                 </div>
@@ -233,6 +397,7 @@ export default function RightDiv(props) {
                 <input type='file' accept='image/*' name='optionCImage' id='optionCImage' onChange={() => handleAddImage("optionCImage")} className='hidden' />
                 <br />
                 <textarea name='optionC' id='optionC' value={optionC} onChange={(e) => editText(e)} className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
+                <p className='text-end mb-2 text-gray-600 text-sm'>{optionC.length} / {65535} characters</p>
                 <div className='flex justify-center'>
                     <img id='optionCImagePreview' src={optionCImage} />
                 </div>
@@ -244,6 +409,7 @@ export default function RightDiv(props) {
                 <input type='file' accept='image/*' name='optionDImage' id='optionDImage' onChange={() => handleAddImage("optionDImage")} className='hidden' />
                 <br />
                 <textarea name='optionD' id='optionD' value={optionD} onChange={(e) => editText(e)} className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
+                <p className='text-end mb-2 text-gray-600 text-sm'>{optionD.length} / {65535} characters</p>
                 <div className='flex justify-center'>
                     <img id='optionDImagePreview' src={optionDImage} />
                 </div>
@@ -285,6 +451,18 @@ export default function RightDiv(props) {
                         <input type='checkbox' value={"D"} name='correctAnswer' id='msqCorrectOptionD' checked={correctAnswer.has("D")} onChange={(e) => editCorrectAnswer(e)} />
                         <label htmlFor='msqCorrectOptionD' className='ms-2'>Option - D</label>
                     </div>
+                </div>
+            </div>
+            <div className='w-full my-2 p-3 bg-gray-200 rounded-lg border-gray-500 border-2'>
+                <label htmlFor='solution' className='float-start font-bold'>Solution:</label>
+                <label htmlFor='solutionImage' id='solutionImageAdd' className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${solutionImage === "" ? "" : "hidden"}`}>Add image</label>
+                <label id='solutionImageRemove' onClick={() => handleRemoveImage("solutionImage")} className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${solutionImage === "" ? "hidden" : ""}`}>Remove image</label>
+                <input type='file' accept='image/*' name='solutionImage' id='solutionImage' onChange={() => handleAddImage("solutionImage")} className='hidden' />
+                <br />
+                <textarea name='solution' id='solution' value={solution} onChange={(e) => editText(e)} className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
+                <p className='text-end mb-2 text-gray-600 text-sm'>{solution.length} / {4294967295} characters</p>
+                <div className='flex justify-center'>
+                    <img id='solutionImagePreview' src={solutionImage} />
                 </div>
             </div>
         </>

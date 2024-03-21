@@ -23,14 +23,14 @@ function App() {
   return (
     <>
       <Router>
-        <div className="App">
+        <div className='App h-screen pt-16'>
           <NavBar />
-          <div className='mt-16'>
+          <div className='h-full'>
             <Routes>
               <Route exact path="/" element={<HomePage />} />
               <Route exact path="/auth" element={<Sign />} />
               <Route exact path="/mock-test" element={<MockTestSelection />} />
-              <Route exact path="/create-exam" element={<CreateExam />} />
+              <Route exact path="/create-exam" element={<CreateExam subjectwiseTopics={dummyData} />} />
               <Route exact path="/exam" element={<ExamPage examData={examData} questionData={questionData} />} />
               <Route exact path="/create-question" element={<CreateQuestion subjectwiseTopics={dummyData} />} />
               <Route exact path="/practice" element={<PracticePage subtopics={data[0].subtopics}/>} />
