@@ -1,12 +1,21 @@
 package com.example.quizquadrant.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.util.List;
+import java.util.Objects;
+
+@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "subtopic")
+@IdClass(SubtopicKey.class)
 public class Subtopic {
     @Id
     @SequenceGenerator(
@@ -27,49 +36,26 @@ public class Subtopic {
     )
     private String subtopicName;
 
-    @Column(
-            name = "subjectId"
+    @ManyToOne
+    @JoinColumn(name = "subjectId")
+    @Id
+    private Subject subject;
+
+    @OneToMany(
+            mappedBy = "subtopic",
+            cascade = CascadeType.REMOVE
     )
-    private Long subjectId;
+    @JsonManagedReference
+    private List<Question> questions;
 
-    public Subtopic(String subtopicName, Long subjectId) {
+
+
+
+//    constructors
+
+    public Subtopic(String subtopicName, Subject subject) {
         this.subtopicName = subtopicName;
-        this.subjectId = subjectId;
+        this.subject = subject;
     }
 
-    public Subtopic() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getSubtopicName() {
-        return subtopicName;
-    }
-
-    public void setSubtopicName(String subtopicName) {
-        this.subtopicName = subtopicName;
-    }
-
-    public Long getSubjectId() {
-        return subjectId;
-    }
-
-    public void setSubjectId(Long subjectId) {
-        this.subjectId = subjectId;
-    }
-
-    @Override
-    public String toString() {
-        return "Subtopic{" +
-                "id=" + id +
-                ", subtopicName='" + subtopicName + '\'' +
-                ", subjectId=" + subjectId +
-                '}';
-    }
 }

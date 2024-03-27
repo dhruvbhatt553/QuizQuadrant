@@ -1,10 +1,21 @@
 package com.example.quizquadrant.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import lombok.*;
 
+@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "solution")
 public class Solution {
+    public Solution(String statement, Boolean hasImage) {
+        this.statement = statement;
+        this.hasImage = hasImage;
+    }
 
     @Id
     @SequenceGenerator(
@@ -32,44 +43,10 @@ public class Solution {
     )
     private Boolean hasImage;
 
-    public Solution(String statement, Boolean hasImage) {
-        this.statement = statement;
-        this.hasImage = hasImage;
-    }
-
-    public Solution() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getStatement() {
-        return statement;
-    }
-
-    public void setStatement(String statement) {
-        this.statement = statement;
-    }
-
-    public Boolean getHasImage() {
-        return hasImage;
-    }
-
-    public void setHasImage(Boolean hasImage) {
-        this.hasImage = hasImage;
-    }
-
-    @Override
-    public String toString() {
-        return "Solution{" +
-                "id=" + id +
-                ", statement='" + statement + '\'' +
-                ", hasImage=" + hasImage +
-                '}';
-    }
+    @OneToOne(
+            mappedBy = "solution",
+            cascade = CascadeType.REMOVE
+    )
+    @JsonBackReference
+    private Question question;
 }

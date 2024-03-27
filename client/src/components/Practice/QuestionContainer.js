@@ -2,47 +2,37 @@ import React, { useState } from 'react'
 
 
 
-export default function QuestionContainer({question , number, shift, responses}) {
+export default function QuestionContainer({question , number, shift, responses, resHandler}) {
     const handleImageError = (event) => {
-        event.target.src = 'https://images.pexels.com/photos/2649841/pexels-photo-2649841.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'; // Put your default image URL here
+        event.target.src = 'https://images.pexels.com/photos/2649841/pexels-photo-2649841.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'; 
       };
     
-      function checkAnswerable (res) {
-        let ans = false;
-        for(let i=0;i<4;i++) {
-            ans = ans || res[i];
-            if(ans)
-            break;
-        }
-        return ans;
-      }
+    console.log("number   "+number);
+    console.log(responses);
 
-      const handleResponseChange = (index) => {
-        let updatedResponse = [...response];
+      const handleResponseChange = (index,event) => {
+        console.log(event);
+        let updatedResponses = [...responses];
      
-            updatedResponse[index] = !updatedResponse[index];
+            updatedResponses[number-1][index] = !updatedResponses[number-1][index];
         
         if(question.questionType === "mcq") {
             for(let i=0;i<4;i++) {
                if(i!==index) {
-                updatedResponse[i] = false;
+                updatedResponses[number-1][i] = false;
                }
             }
         }
        
-        changeResponse(updatedResponse); 
-        changeFlag(checkAnswerable(updatedResponse));
+        resHandler([...updatedResponses]); 
+        event.preventDefault();
       };
       
-      const [response,changeResponse] = useState (responses[number-1]);
-      const [flag, changeFlag] = useState(checkAnswerable(responses[number-1]));
-
+   
 
     
     const handelCheckAnswers = (event) => {
-        responses[number-1] = response;
-        changeFlag(false);
-
+       
 
     }
     return(
@@ -73,7 +63,7 @@ export default function QuestionContainer({question , number, shift, responses})
             </div>
 
             <div className='px-4 mb-3 cursor-pointer'>
-                <div className={`border  ps-2 py-1  rounded flex items-center gap-x-3  ${response[0] ? "border-blue-500 font-bold border-2" : "border-black border-0.5"} `}  onClick={() => handleResponseChange(0)} >
+                <div className={`border  ps-2 py-1  rounded flex items-center gap-x-3  ${responses[number-1][0] ? "border-blue-500 font-bold border-2" : "border-black border-0.5"} `}  onClick={(event) => handleResponseChange(0,event)} >
                     <div className={`text-[15px] border border-black w-fit px-3 py-1.5 ${question.questionType === 'mcq' ? 'rounded-full' : 'rounded'}`}>
                         A 
                     </div>
@@ -91,7 +81,7 @@ export default function QuestionContainer({question , number, shift, responses})
                 </div>
             </div>
             <div className='px-4 mb-3 cursor-pointer'>
-                <div className={`border  ps-2 py-1  rounded flex items-center gap-x-3  ${response[1] ? "border-blue-500 font-bold border-2" : "border-black border-0.5"} `}  onClick={() => handleResponseChange(1)} >
+                <div className={`border  ps-2 py-1  rounded flex items-center gap-x-3  ${responses[number-1][1] ? "border-blue-500 font-bold border-2" : "border-black border-0.5"} `}  onClick={(event) => handleResponseChange(1,event)} >
                     <div className={`text-[15px] border border-black w-fit px-3 py-1.5 ${question.questionType === 'mcq' ? 'rounded-full' : 'rounded'}`}>
                         B
                     </div>
@@ -109,7 +99,7 @@ export default function QuestionContainer({question , number, shift, responses})
                 </div>
             </div>
             <div className='px-4 mb-3 cursor-pointer'>
-                <div className={`border  ps-2 py-1  rounded flex items-center gap-x-3  ${response[2] ? "border-blue-500 font-bold border-2" : "border-black border-0.5"} `} onClick={() => handleResponseChange(2)} >
+                <div className={`border  ps-2 py-1  rounded flex items-center gap-x-3  ${responses[number-1][2] ? "border-blue-500 font-bold border-2" : "border-black border-0.5"} `} onClick={(event) => handleResponseChange(2,event)} >
                     <div className={`text-[15px] border border-black w-fit px-3 py-1.5 ${question.questionType === 'mcq' ? 'rounded-full' : 'rounded'}`}>
                         C
                     </div>
@@ -126,7 +116,7 @@ export default function QuestionContainer({question , number, shift, responses})
                 </div>
             </div>
             <div className='px-4 mb-3 cursor-pointer'>
-                <div className={`border  ps-2 py-1  rounded flex items-center gap-x-3  ${response[3] ? "border-blue-500 font-bold border-2" : "border-black border-0.5"} `}  onClick={() => handleResponseChange(3)} >
+                <div className={`border  ps-2 py-1  rounded flex items-center gap-x-3  ${responses[number-1][3] ? "border-blue-500 font-bold border-2" : "border-black border-0.5"} `}  onClick={(event) => handleResponseChange(3,event)} >
                     <div className={`text-[15px] border border-black w-fit px-3 py-1.5 ${question.questionType === 'mcq' ? 'rounded-full' : 'rounded'}`}>
                         D
                     </div>
@@ -142,7 +132,7 @@ export default function QuestionContainer({question , number, shift, responses})
                     </div>
                 </div>
             </div>
-            <div className={`float-end  px-2 ${flag ? "bg-gray-500 cursor-pointer" : " bg-gray-300 cursor-none" }`} onClick={() => handelCheckAnswers()} >
+            <div className={`float-end  px-2 ${(responses[number-1][0] || responses[number-1][1] || responses[number-1][2] || responses[number-1][3] ) ? "bg-gray-500 cursor-pointer" : " bg-gray-300 cursor-none" }`} onClick={() => handelCheckAnswers()} >
                Check Answer 
             </div>
         </div>

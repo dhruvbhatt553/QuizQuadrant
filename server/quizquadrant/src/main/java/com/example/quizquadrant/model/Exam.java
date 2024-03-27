@@ -5,7 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "exam")
@@ -34,63 +37,41 @@ public class Exam {
             nullable = false,
             columnDefinition = "DATE"
     )
-    private Date startDateTime;
+    private LocalDateTime startDateTime;
+
+    @Column(
+            name = "isResultGenerated",
+            nullable = false
+    )
+    private Boolean isResultGenerated;
 
     @Column(
             name = "duration",
             nullable = false,
             columnDefinition = "int(4)"
     )
-    private int duration;
+    private Integer duration;
 
-    public Exam(String title, Date startDateTime, int duration) {
-        this.title = title;
-        this.startDateTime = startDateTime;
-        this.duration = duration;
-    }
+    @OneToMany(
+            mappedBy = "exam",
+            cascade = CascadeType.REMOVE
+    )
+    private List<Result> examResults;
 
-    public Exam() {
-    }
+    @OneToMany(
+            mappedBy = "exam",
+            cascade = CascadeType.REMOVE
+    )
+    private List<ExamResponses> examResponses;
 
-    public Long getId() {
-        return id;
-    }
+    @OneToMany(
+            mappedBy = "exam",
+            cascade = CascadeType.REMOVE
+    )
+    private List<PrivateQuestion> privateQuestions;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @ManyToOne
+    @JoinColumn (name = "examsCreated")
+    private User creator;
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public Date getStartDateTime() {
-        return startDateTime;
-    }
-
-    public void setStartDateTime(Date startDateTime) {
-        this.startDateTime = startDateTime;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
-    @Override
-    public String toString() {
-        return "Exam{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", startDateTime=" + startDateTime +
-                ", duration=" + duration +
-                '}';
-    }
 }

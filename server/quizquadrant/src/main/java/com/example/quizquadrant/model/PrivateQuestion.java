@@ -1,11 +1,21 @@
 package com.example.quizquadrant.model;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.*;
 
+import java.util.List;
+
+@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(
-        name = "privatequestion"
+        name = "privateQuestion"
 )
 public class PrivateQuestion {
     @Id
@@ -34,12 +44,6 @@ public class PrivateQuestion {
     )
     private String type;
 
-    //    TODO foreign key ...
-    @Column (
-            name = "solutionId"
-    )
-    private Long solutionId;
-
     @Column(
             name = "hasImage",
             nullable = false,
@@ -47,79 +51,44 @@ public class PrivateQuestion {
     )
     private Boolean hasImage;
 
-    @Column (
-            name = "subtopicId"
+    @Column(
+            name = "positiveMarks"
     )
-    private Long subtopicId;
+    private Integer positiveMarks;
 
-    public PrivateQuestion(String statement, String type, Long solutionId, Boolean hasImage, Long subtopicId) {
-        this.statement = statement;
-        this.type = type;
-        this.solutionId = solutionId;
-        this.hasImage = hasImage;
-        this.subtopicId = subtopicId;
-    }
+    @Column(
+            name = "negativeMarks"
+    )
+    private Integer negativeMarks;
 
-    public PrivateQuestion() {
-    }
 
-    public Long getId() {
-        return id;
-    }
+    @ManyToOne
+    @JsonBackReference
+    @JoinColumn(name = "subtopicId", referencedColumnName = "id")
+    @JoinColumn(name = "subjectId", referencedColumnName = "subjectId")
+    private Subtopic subtopic;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @ManyToOne
+    @JsonBackReference
+    @JoinColumn(name = "examId")
+    private Exam exam;
 
-    public String getStatement() {
-        return statement;
-    }
+    @OneToMany(
+            mappedBy = "privateQuestion",
+            cascade = CascadeType.REMOVE
+    )
+    @JsonManagedReference
+    private List<ExamResponses> examResponses;
 
-    public void setStatement(String statement) {
-        this.statement = statement;
-    }
+    @OneToMany(
+            mappedBy = "privateQuestion",
+            cascade = CascadeType.REMOVE
+    )
+    @JsonManagedReference
+    private List<PrivateOption> privateOptions;
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Long getSolutionId() {
-        return solutionId;
-    }
-
-    public void setSolutionId(Long solutionId) {
-        this.solutionId = solutionId;
-    }
-
-    public Boolean getHasImage() {
-        return hasImage;
-    }
-
-    public void setHasImage(Boolean hasImage) {
-        this.hasImage = hasImage;
-    }
-
-    public Long getSubtopicId() {
-        return subtopicId;
-    }
-
-    public void setSubtopicId(Long subtopicId) {
-        this.subtopicId = subtopicId;
-    }
-
-    @Override
-    public String toString() {
-        return "PrivateQuestion{" +
-                "id=" + id +
-                ", statement='" + statement + '\'' +
-                ", type='" + type + '\'' +
-                ", solutionId=" + solutionId +
-                ", hasImage=" + hasImage +
-                ", subtopicId=" + subtopicId +
-                '}';
-    }
+    @OneToOne
+    @JsonManagedReference
+    @JoinColumn(name = "privateSolutionId")
+    private PrivateSolution privateSolution;
 }
