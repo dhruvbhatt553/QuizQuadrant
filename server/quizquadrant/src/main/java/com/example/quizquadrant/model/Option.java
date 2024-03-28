@@ -1,7 +1,14 @@
 package com.example.quizquadrant.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import lombok.*;
 
+@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "option_table")
 public class Option {
@@ -32,44 +39,32 @@ public class Option {
     )
     private Boolean hasImage;
 
-    public Option(String statement, Boolean hasImage) {
+    @Column(
+            name = "isCorrect",
+            nullable = false,
+            columnDefinition = "BOOLEAN"
+    )
+    private Boolean isCorrect;
+
+    @ManyToOne
+    @JsonBackReference
+    @JoinColumn(name = "questionId")
+    private Question question;
+
+
+
+
+//    Constructor
+
+    public Option(
+            String statement,
+            Boolean hasImage,
+            Boolean isCorrect,
+            Question question
+    ) {
         this.statement = statement;
         this.hasImage = hasImage;
-    }
-
-    public Option() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getStatement() {
-        return statement;
-    }
-
-    public void setStatement(String statement) {
-        this.statement = statement;
-    }
-
-    public Boolean getHasImage() {
-        return hasImage;
-    }
-
-    public void setHasImage(Boolean hasImage) {
-        this.hasImage = hasImage;
-    }
-
-    @Override
-    public String toString() {
-        return "Option{" +
-                "id=" + id +
-                ", statement='" + statement + '\'' +
-                ", hasImage=" + hasImage +
-                '}';
+        this.isCorrect = isCorrect;
+        this.question = question;
     }
 }

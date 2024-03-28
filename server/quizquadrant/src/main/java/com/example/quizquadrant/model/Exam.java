@@ -1,12 +1,20 @@
 package com.example.quizquadrant.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
+@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "exam")
 public class Exam {
@@ -32,65 +40,66 @@ public class Exam {
     @Column(
             name = "startDateTime",
             nullable = false,
-            columnDefinition = "DATE"
+            columnDefinition = "DATETIME"
     )
-    private Date startDateTime;
+    private LocalDateTime startDateTime;
+
+    @Column(
+            name = "isResultGenerated",
+            nullable = false
+    )
+    private Boolean isResultGenerated;
 
     @Column(
             name = "duration",
             nullable = false,
             columnDefinition = "int(4)"
     )
-    private int duration;
+    private Integer duration;
 
-    public Exam(String title, Date startDateTime, int duration) {
+    @OneToMany(
+            mappedBy = "exam",
+            cascade = CascadeType.REMOVE
+    )
+    @JsonManagedReference
+    private List<Result> examResults;
+
+    @OneToMany(
+            mappedBy = "exam",
+            cascade = CascadeType.REMOVE
+    )
+    @JsonManagedReference
+    private List<ExamResponses> examResponses;
+
+    @OneToMany(
+            mappedBy = "exam",
+            cascade = CascadeType.REMOVE
+    )
+    @JsonManagedReference
+    private List<PrivateQuestion> privateQuestions;
+
+    @ManyToOne
+    @JsonBackReference
+    @JoinColumn(name = "creator")
+    private User creator;
+
+
+
+
+//    constructors
+
+    public Exam(
+            String title,
+            LocalDateTime startDateTime,
+            Boolean isResultGenerated,
+            Integer duration,
+            User creator
+    ) {
         this.title = title;
         this.startDateTime = startDateTime;
+        this.isResultGenerated = isResultGenerated;
         this.duration = duration;
+        this.creator = creator;
     }
 
-    public Exam() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public Date getStartDateTime() {
-        return startDateTime;
-    }
-
-    public void setStartDateTime(Date startDateTime) {
-        this.startDateTime = startDateTime;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
-    @Override
-    public String toString() {
-        return "Exam{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", startDateTime=" + startDateTime +
-                ", duration=" + duration +
-                '}';
-    }
 }

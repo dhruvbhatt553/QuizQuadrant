@@ -10,25 +10,24 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "solution")
-public class Solution {
-
+@Table(name = "privateOption")
+public class PrivateOption {
     @Id
     @SequenceGenerator(
-            name = "solution_sequence",
-            sequenceName = "solution_sequence",
+            name = "private_option_sequence",
+            sequenceName = "private_option_sequence",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "solution_sequence"
+            generator = "private_option_sequence"
     )
     private Long id;
 
     @Column(
             name = "statement",
             nullable = false,
-            columnDefinition = "LONGTEXT"
+            columnDefinition = "TEXT"
     )
     private String statement;
 
@@ -39,20 +38,33 @@ public class Solution {
     )
     private Boolean hasImage;
 
-    @OneToOne(
-            mappedBy = "solution",
-            cascade = CascadeType.REMOVE
+    @Column(
+            name = "isCorrect",
+            nullable = false,
+            columnDefinition = "BOOLEAN"
     )
+    private Boolean isCorrect;
+
+    @ManyToOne
     @JsonBackReference
-    private Question question;
+    @JoinColumn(name = "privateQuestionId")
+    private PrivateQuestion privateQuestion;
 
 
 
 
 //    constructor
 
-    public Solution(String statement, Boolean hasImage) {
+
+    public PrivateOption(
+            String statement,
+            Boolean hasImage,
+            Boolean isCorrect,
+            PrivateQuestion privateQuestion
+    ) {
         this.statement = statement;
         this.hasImage = hasImage;
+        this.isCorrect = isCorrect;
+        this.privateQuestion = privateQuestion;
     }
 }

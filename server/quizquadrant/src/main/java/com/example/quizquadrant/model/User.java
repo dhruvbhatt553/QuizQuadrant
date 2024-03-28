@@ -1,10 +1,18 @@
 package com.example.quizquadrant.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.util.List;
+import java.util.Set;
+
+@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(
         name = "user",
@@ -55,64 +63,24 @@ public class User {
     )
     private String type;
 
-    public User() {
-    }
+    @OneToMany(
+            mappedBy = "creator",
+            cascade = CascadeType.REMOVE
+    )
+    @JsonManagedReference
+    private List<Exam> examsCreated;
 
-    public Long getId() {
-        return id;
-    }
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.REMOVE
+    )
+    @JsonManagedReference
+    private List<Result> examResults;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", type='" + type + '\'' +
-                '}';
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public User(String name, String email, String password, String type) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.type = type;
-    }
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.REMOVE
+    )
+    @JsonManagedReference
+    private List<ExamResponses> examResponses;
 }

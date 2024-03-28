@@ -1,11 +1,21 @@
 package com.example.quizquadrant.model;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.*;
 
+import java.util.List;
+
+@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(
-        name = "privatequestion"
+        name = "privateQuestion"
 )
 public class PrivateQuestion {
     @Id
@@ -34,12 +44,6 @@ public class PrivateQuestion {
     )
     private String type;
 
-    //    TODO foreign key ...
-    @Column (
-            name = "solutionId"
-    )
-    private Long solutionId;
-
     @Column(
             name = "hasImage",
             nullable = false,
@@ -47,79 +51,70 @@ public class PrivateQuestion {
     )
     private Boolean hasImage;
 
-    @Column (
-            name = "subtopicId"
+    @Column(
+            name = "positiveMarks"
     )
-    private Long subtopicId;
+    private Integer positiveMarks;
 
-    public PrivateQuestion(String statement, String type, Long solutionId, Boolean hasImage, Long subtopicId) {
+    @Column(
+            name = "negativeMarks"
+    )
+    private Integer negativeMarks;
+
+
+    @ManyToOne(cascade = CascadeType.REMOVE)
+    @JsonBackReference
+    @JoinColumn(name = "subtopicId", referencedColumnName = "id")
+    @JoinColumn(name = "subjectId", referencedColumnName = "subjectId")
+    private Subtopic subtopic;
+
+    @ManyToOne(cascade = CascadeType.REMOVE)
+    @JsonBackReference
+    @JoinColumn(name = "examId")
+    private Exam exam;
+
+    @OneToMany(
+            mappedBy = "privateQuestion",
+            cascade = CascadeType.REMOVE
+    )
+    @JsonManagedReference
+    private List<ExamResponses> examResponses;
+
+    @OneToMany(
+            mappedBy = "privateQuestion",
+            cascade = CascadeType.REMOVE
+    )
+    @JsonManagedReference
+    private List<PrivateOption> privateOptions;
+
+    @OneToOne
+    @JsonManagedReference
+    @JoinColumn(name = "privateSolutionId")
+    private PrivateSolution privateSolution;
+
+
+
+
+//    constructor
+
+    public PrivateQuestion(
+            String statement,
+            String type,
+            Boolean hasImage,
+            Integer positiveMarks,
+            Integer negativeMarks,
+            Subtopic subtopic,
+            Exam exam,
+            PrivateSolution privateSolution
+    ) {
         this.statement = statement;
         this.type = type;
-        this.solutionId = solutionId;
         this.hasImage = hasImage;
-        this.subtopicId = subtopicId;
+        this.positiveMarks = positiveMarks;
+        this.negativeMarks = negativeMarks;
+        this.subtopic = subtopic;
+        this.exam = exam;
+        this.privateSolution = privateSolution;
     }
 
-    public PrivateQuestion() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getStatement() {
-        return statement;
-    }
-
-    public void setStatement(String statement) {
-        this.statement = statement;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Long getSolutionId() {
-        return solutionId;
-    }
-
-    public void setSolutionId(Long solutionId) {
-        this.solutionId = solutionId;
-    }
-
-    public Boolean getHasImage() {
-        return hasImage;
-    }
-
-    public void setHasImage(Boolean hasImage) {
-        this.hasImage = hasImage;
-    }
-
-    public Long getSubtopicId() {
-        return subtopicId;
-    }
-
-    public void setSubtopicId(Long subtopicId) {
-        this.subtopicId = subtopicId;
-    }
-
-    @Override
-    public String toString() {
-        return "PrivateQuestion{" +
-                "id=" + id +
-                ", statement='" + statement + '\'' +
-                ", type='" + type + '\'' +
-                ", solutionId=" + solutionId +
-                ", hasImage=" + hasImage +
-                ", subtopicId=" + subtopicId +
-                '}';
-    }
 }

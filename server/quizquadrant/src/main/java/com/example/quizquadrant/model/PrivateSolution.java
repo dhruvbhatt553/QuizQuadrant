@@ -10,8 +10,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "solution")
-public class Solution {
+@Table(name = "privateSolution")
+public class PrivateSolution {
 
     @Id
     @SequenceGenerator(
@@ -40,19 +40,20 @@ public class Solution {
     private Boolean hasImage;
 
     @OneToOne(
-            mappedBy = "solution",
+            mappedBy = "privateSolution",
             cascade = CascadeType.REMOVE
     )
     @JsonBackReference
-    private Question question;
+    private PrivateQuestion privateQuestion;
 
 
 
 
 //    constructor
 
-    public Solution(String statement, Boolean hasImage) {
+    public PrivateSolution(String statement, Boolean hasImage) {
         this.statement = statement;
         this.hasImage = hasImage;
     }
+
 }
