@@ -49,4 +49,22 @@ public class PrivateOption {
     @JsonBackReference
     @JoinColumn(name = "privateQuestionId")
     private PrivateQuestion privateQuestion;
+
+
+
+
+//    constructor
+
+    public PrivateOption(
+            String statement,
+            Boolean hasImage,
+            Boolean isCorrect,
+            PrivateQuestion privateQuestion
+    ) {
+        this.statement = statement;
+        this.hasImage = hasImage;
+        this.isCorrect = isCorrect;
+        this.privateQuestion = privateQuestion;
+    }
+ 
 }

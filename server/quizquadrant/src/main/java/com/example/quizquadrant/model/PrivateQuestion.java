@@ -62,13 +62,13 @@ public class PrivateQuestion {
     private Integer negativeMarks;
 
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JsonBackReference
     @JoinColumn(name = "subtopicId", referencedColumnName = "id")
     @JoinColumn(name = "subjectId", referencedColumnName = "subjectId")
     private Subtopic subtopic;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JsonBackReference
     @JoinColumn(name = "examId")
     private Exam exam;
@@ -91,4 +91,30 @@ public class PrivateQuestion {
     @JsonManagedReference
     @JoinColumn(name = "privateSolutionId")
     private PrivateSolution privateSolution;
+
+
+
+
+//    constructor
+
+    public PrivateQuestion(
+            String statement,
+            String type,
+            Boolean hasImage,
+            Integer positiveMarks,
+            Integer negativeMarks,
+            Subtopic subtopic,
+            Exam exam,
+            PrivateSolution privateSolution
+    ) {
+        this.statement = statement;
+        this.type = type;
+        this.hasImage = hasImage;
+        this.positiveMarks = positiveMarks;
+        this.negativeMarks = negativeMarks;
+        this.subtopic = subtopic;
+        this.exam = exam;
+        this.privateSolution = privateSolution;
+    }
+ 
 }

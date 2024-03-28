@@ -1,13 +1,18 @@
 package com.example.quizquadrant.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 import java.util.Set;
 
+@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(
         name = "user",
@@ -62,17 +67,20 @@ public class User {
             mappedBy = "creator",
             cascade = CascadeType.REMOVE
     )
+    @JsonManagedReference
     private List<Exam> examsCreated;
 
     @OneToMany(
             mappedBy = "user",
             cascade = CascadeType.REMOVE
     )
+    @JsonManagedReference
     private List<Result> examResults;
 
     @OneToMany(
             mappedBy = "user",
             cascade = CascadeType.REMOVE
     )
+    @JsonManagedReference
     private List<ExamResponses> examResponses;
 }

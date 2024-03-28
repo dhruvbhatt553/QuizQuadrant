@@ -1,6 +1,5 @@
 package com.example.quizquadrant.model;
 
-
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -14,14 +13,11 @@ public class ExamResponses {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public ExamResponses(User user, PrivateQuestion privateQuestion, Boolean optionAMarked, Boolean optionBMarked, Boolean optionCMarked, Boolean optionDMarked) {
-        this.user = user;
-        this.privateQuestion = privateQuestion;
-        this.optionAMarked = optionAMarked;
-        this.optionBMarked = optionBMarked;
-        this.optionCMarked = optionCMarked;
-        this.optionDMarked = optionDMarked;
-    }
+    @Id
+    @ManyToOne
+    @JoinColumn(name = "exam_id")
+    private Exam exam;
+    
 //    @Id
 //    @ManyToOne
 //    @JoinColumn(name = "exam_id")
@@ -59,6 +55,19 @@ public class ExamResponses {
             columnDefinition = "BOOLEAN"
     )
     private Boolean optionDMarked;
+    
+    
+    
+    
+//     constructor
 
+     public ExamResponses(User user, PrivateQuestion privateQuestion, Boolean optionAMarked, Boolean optionBMarked, Boolean optionCMarked, Boolean optionDMarked) {
+        this.user = user;
+        this.privateQuestion = privateQuestion;
+        this.optionAMarked = optionAMarked;
+        this.optionBMarked = optionBMarked;
+        this.optionCMarked = optionCMarked;
+        this.optionDMarked = optionDMarked;
+    }
 
 }
