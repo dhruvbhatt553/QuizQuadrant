@@ -1,7 +1,15 @@
 package com.example.quizquadrant.model;
 
 import jakarta.persistence.*;
+import lombok.*;
 
+import java.util.List;
+
+@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "subject")
 public class Subject {
@@ -24,34 +32,19 @@ public class Subject {
     )
     private String subName;
 
+    @OneToMany(
+            mappedBy = "subject",
+            cascade = CascadeType.REMOVE
+    )
+    private List<Subtopic> subtopics;
+
+
+
+
+//    constructors ...
+
     public Subject(String subName) {
         this.subName = subName;
     }
 
-    public Subject() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getSubName() {
-        return subName;
-    }
-
-    public void setSubName(String subName) {
-        this.subName = subName;
-    }
-
-    @Override
-    public String toString() {
-        return "Subject{" +
-                "id=" + id +
-                ", subName='" + subName + '\'' +
-                '}';
-    }
 }

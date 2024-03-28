@@ -1,14 +1,26 @@
 package com.example.quizquadrant.model;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.*;
 
+import java.io.Serializable;
+import java.util.List;
+
+@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(
         name = "question"
 
 )
-public class Question {
+@ToString
+public class Question implements Serializable {
     @Id
     @SequenceGenerator(
             name = "question_sequence",
@@ -20,6 +32,19 @@ public class Question {
             generator = "question_sequence"
     )
     private Long id;
+
+    @Column(
+            name = "positiveMarks",
+            nullable = false
+    )
+    private Integer positiveMarks;
+
+    @Column(
+            name = "negativeMarks",
+            nullable = false
+    )
+    private Integer negativeMarks;
+
 
     @Column(
             name = "statement",
@@ -35,11 +60,6 @@ public class Question {
     )
     private String type;
 
-//    TODO foreign key ...
-    @Column (
-            name = "solutionId"
-    )
-    private Long solutionId;
 
     @Column(
             name = "hasImage",
@@ -48,79 +68,44 @@ public class Question {
     )
     private Boolean hasImage;
 
-    @Column (
-            name = "subtopicId"
+    @ManyToOne
+    @JsonBackReference
+    @JoinColumn(name = "subtopicId", referencedColumnName = "id")
+    @JoinColumn(name = "subjectId", referencedColumnName = "subjectId")
+    private Subtopic subtopic;
+
+    @OneToMany(
+            mappedBy = "question",
+            cascade = CascadeType.REMOVE
     )
-    private Long subtopicId;
+    @JsonManagedReference
+    private List<Option> options;
 
-    public Question(String statement, String type, Long solutionId, boolean hasImage, Long subtopicId) {
+    @OneToOne
+    @JsonManagedReference
+    @JoinColumn(name = "solutionId")
+    private Solution solution;
+
+
+
+
+//    constructor
+
+    public Question(
+            Integer positiveMarks,
+            Integer negativeMarks,
+            String statement,
+            String type,
+            Boolean hasImage,
+            Subtopic subtopic,
+            Solution solution
+    ) {
+        this.positiveMarks = positiveMarks;
+        this.negativeMarks = negativeMarks;
         this.statement = statement;
         this.type = type;
-        this.solutionId = solutionId;
         this.hasImage = hasImage;
-        this.subtopicId = subtopicId;
-    }
-
-    public Question() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getStatement() {
-        return statement;
-    }
-
-    public void setStatement(String statement) {
-        this.statement = statement;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Long getSolutionId() {
-        return solutionId;
-    }
-
-    public void setSolutionId(Long solutionId) {
-        this.solutionId = solutionId;
-    }
-
-    public boolean isHasImage() {
-        return hasImage;
-    }
-
-    public void setHasImage(boolean hasImage) {
-        this.hasImage = hasImage;
-    }
-
-    public Long getSubtopicId() {
-        return subtopicId;
-    }
-
-    public void setSubtopicId(Long subtopicId) {
-        this.subtopicId = subtopicId;
-    }
-
-    @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", statement='" + statement + '\'' +
-                ", type='" + type + '\'' +
-                ", solutionId=" + solutionId +
-                ", hasImage=" + hasImage +
-                ", subtopicId=" + subtopicId +
-                '}';
+        this.subtopic = subtopic;
+        this.solution = solution;
     }
 }

@@ -14,6 +14,7 @@ export default function Topics({topic,selection,changeSelection,index1,allSelect
            changeSelection(arr);
 
           checkChildren();
+        //  e.preventDefault();
           console.log(""+subjectSelected+" "+allSelected);
     }
 
