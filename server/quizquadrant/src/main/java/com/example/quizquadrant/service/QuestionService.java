@@ -4,6 +4,7 @@ import com.example.quizquadrant.dto.CreateQuestionDto;
 import com.example.quizquadrant.dto.PracticeOptionDto;
 import com.example.quizquadrant.dto.PracticeQuestionDto;
 import com.example.quizquadrant.dto.PracticeSolutionDto;
+import com.example.quizquadrant.dto.*;
 import com.example.quizquadrant.model.*;
 import com.example.quizquadrant.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -199,7 +200,14 @@ public class QuestionService {
             Image imgOptionD = imageService.createImage(ImageTypes.OPTION, optionD.getId(), createQuestionDto.optionDImageURL());
         }
 
-
         return question;
     }
+
+    public List<Long> getQuestionIdsBySubtopics(CreateMockTestDto createMockTestDto, Integer total) {
+        int pageSize = total;
+        Pageable pageable = PageRequest.of(0, pageSize);
+        Optional<List<Long>> Qids = questionRepository.findQuestionIdsBySubtopics(createMockTestDto.subtopics(), pageable);
+        return Qids.orElse(null);
+    }
+
 }

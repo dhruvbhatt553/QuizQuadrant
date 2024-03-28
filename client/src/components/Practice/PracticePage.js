@@ -1,47 +1,75 @@
-import React from 'react'
+import React, { useState } from 'react'
 import questions from '../../dummy-data/questions';
 import QuestionContainer from './QuestionContainer';
 
 export default function PracticePage({subtopics}) {
   
-  function requestQuestionSet(setNo) {
-    if(current>setNo) {
-      current--;
-      next_set = [...curr_set];
-      curr_set = [...prev_set];
-      for(let i=0;i<curr_set.length;i++) {
-      //  curr_set.push(questions[i]);
-        responses.push([false,false,false,false]);
+  function requestQuestionSet(p) {
+    if(p) {
+      let y=current-1;
+      extra3 = [...curr_set];
+      extra2 = [...prev_set];
+      // for(let i=0;i<curr_set.length;i++) {
+      // //  curr_set.push(questions[i]);
     
-      }
-      if(current===1) {
-        prev_set = null;
+      // }
+      if(y===1) {
+        extra1 = [];
       }
       else {
-        for(let i=5*(current-2);i<Math.min(total,5*(current-1));i++) {
-          prev_set.push(questions[i]);
+        extra1 = [];
+        for(let i=5*(y-2);i<Math.min(total,5*(y-1));i++) {
+          extra1.push(questions[i]);
         }
       }
+      changeCurrent(y);
       
     }
     else {
 
-      current++;
-      prev_set = [...curr_set];
-      curr_set = [...next_set];
+      let y = current+1;
+      extra1 = [...curr_set];
+      extra2 = [...next_set];
+      extra = [...responses];
+      console.log("gello");
+      console.log(extra);
+      extra4 = [...skips];
+        for(let i=0;i<extra2.length;i++) {
+      //  curr_set.push(questions[i]);
+      extra.push([false,false,false,false]);
+      extra4.push(Math.floor(Math.random()*4));
+
+    
+      }
       let x = total/5;
       if(total%5!==0)
       x++;
-      if(current===x) {
-        next_set = null;
+      if(y===x) {
+        extra3 = [];
       }
       else {
-        for(let i=current*5;i<Math.min((current+1)*5,total);i++) {
-          next_set.push(questions[i]);
+        extra3 = [];
+        for(let i=y*5;i<Math.min((y+1)*5,total);i++) {
+          extra3.push(questions[i]);
+
         }
       }
 
+      console.log("hhh"+responses.length);
+      console.log(current);
+      console.log(extra1);
+      console.log(extra2);
+      console.log(extra3);
+      changeCurrent(y);
+      changeResponses(extra);
+      changeSkips(extra4);
+
     }
+    changeCurr_Set(extra2);
+    changePrev_Set(extra1);
+    changeNext_Set(extra3);
+   
+
   }
 
   // function push_initial() {
@@ -55,19 +83,25 @@ export default function PracticePage({subtopics}) {
   const length = subtopics.length;
   const total = questions.length;
   let tracker = Array(length).fill(0);
-  let current = 1;
-  let prev_set=[],curr_set=[],next_set=[],responses=[];
+  
+  let extra1=[],extra2=[],extra3=[],extra=[],extra4=[];
   for(let i=0;i<Math.min(total,5);i++) {
-    curr_set.push(questions[i]);
-    responses.push([false,false,false,false]);
+    extra2.push(questions[i]);
+    extra.push([false,false,false,false]);
+    extra4.push(Math.floor(Math.random()*4));
 
   }
-  for(let i=6;i<Math.min(total,10);i++) {
-    next_set.push(questions[i]);
+  for(let i=5;i<Math.min(total,10);i++) {
+    extra3.push(questions[i]);
   }
 
 
-  let x=0;
+  const[current,changeCurrent] = useState(1);
+  const[responses,changeResponses] = useState(extra);
+  const[curr_set,changeCurr_Set] = useState(extra2);
+  const[prev_set,changePrev_Set] = useState(extra1);
+  const[next_set,changeNext_Set] = useState(extra3);
+  const[skips,changeSkips] = useState(extra4);
 
 
 
@@ -75,8 +109,23 @@ export default function PracticePage({subtopics}) {
     <div className='flex flex-col gap-y-6 pt-2 pb-6'>
       
       {  
-        curr_set.map((question, index) => ( <QuestionContainer question={question} number={5*(current-1)+(index+1)} shift={Math.floor(Math.random()*4)} responses={responses}/>))
+        curr_set.map((question, index) => ( <QuestionContainer question={question} number={5*(current-1)+(index+1)} shift={skips[5*(current-1)+(index)]} responses={responses} resHandler={changeResponses}/>))
       }
+      <div className='flex mx-4 border border-black border-2'>
+      <div className={`w-1/3 border-e-2 border-black ${prev_set.length!=0 ? 'font-bold cursor-pointer pointer-events-auto':'font-thin cursor-none pointer-events-none'} `}
+      onClick={()=>requestQuestionSet(true)}
+      >
+            Previous set
+        </div>
+        <div className='w-1/3 border-e-2 border-black font-extrabold'>
+            {current}
+        </div>
+        <div className={`w-1/3  ${next_set.length!=0 ? 'font-bold cursor-pointer pointer-events-auto':'font-thin cursor-none pointer-events-none'} `}
+        onClick={()=>requestQuestionSet(false)}
+        >
+            Next set
+        </div>
+      </div>
        <div onClick={()=>console.log(responses)}>
       print
     </div>

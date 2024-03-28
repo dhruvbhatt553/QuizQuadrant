@@ -55,7 +55,6 @@ public class PrivateOption {
 
 //    constructor
 
-
     public PrivateOption(
             String statement,
             Boolean hasImage,
@@ -67,4 +66,5 @@ public class PrivateOption {
         this.isCorrect = isCorrect;
         this.privateQuestion = privateQuestion;
     }
+ 
 }

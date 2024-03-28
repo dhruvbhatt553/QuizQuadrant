@@ -33,14 +33,17 @@ insert into subtopic values(1, 1, "Dynamic Programming");
 -- insert into option_table values (0,0,8,6,"q6 option D");
 --
 --
---
 -- insert into image values(2, "my url", "Q");
 -- insert into image values(2, "my url", "S");
 -- insert into image values(5, "my url", "O");
 --
 --
-insert into user values(1, "a@gmail.com", "Aayush Dalal", "password", "S");
-insert into user values(2, "b@gmail.com", "Dhruv Bhatt", "password", "T");
+--
+-- insert into user values(1, "a@gmail.com", "Aayush", "password", "T");
+-- insert into user values(2, "d@gmail.com", "Dhruv", "password", "T");
+--
+--
+--
 -- insert into exam values(180, 0, 1, 1, "2024-04-12", "Exam - 1");
 --
 --
