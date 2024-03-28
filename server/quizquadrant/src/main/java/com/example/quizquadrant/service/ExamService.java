@@ -63,7 +63,7 @@ public class ExamService {
     }
 
     public ExamDto getExamById(Long examId) {
-//        TODO get userID frmo JWT token & authorize whether his email is included in EXAM ...
+//        TODO get userID from JWT token & authorize whether his email is included in EXAM ...
         Long userId = 1L;   // Hardcoded temporarily ...
         User user = userService.getUserById(userId);
         Optional<Exam> examOptional = examRepository.findById(examId);
@@ -79,6 +79,9 @@ public class ExamService {
 
             List<ExamResponseDto> savedResponses = new ArrayList<>();
 //            TODO fetch particular user's responses from exam.getExamResponses()
+            for(ExamResponses examResponses: exam.getExamResponses()) {
+
+            }
 
             examDto = new ExamDto(
                     exam.getId(),
