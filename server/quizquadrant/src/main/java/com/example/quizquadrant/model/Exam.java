@@ -52,11 +52,11 @@ public class Exam {
     )
     private Integer duration;
 
-    @OneToMany(
-            mappedBy = "exam",
-            cascade = CascadeType.REMOVE
-    )
-    private List<Result> examResults;
+//    @OneToMany(
+//            mappedBy = "exam",
+//            cascade = CascadeType.REMOVE
+//    )
+//    private List<Result> examResults;
 
     @OneToMany(
             mappedBy = "exam",

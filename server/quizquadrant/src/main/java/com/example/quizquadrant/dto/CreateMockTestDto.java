@@ -3,7 +3,7 @@ import com.example.quizquadrant.model.Subtopic;
 
 import java.util.List;
 
-public record CreateMockTest(
+public record CreateMockTestDto(
     List <Subtopic> subtopics
 ) {
 }

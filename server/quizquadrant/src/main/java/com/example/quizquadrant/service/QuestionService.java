@@ -199,10 +199,10 @@ public class QuestionService {
         return question;
     }
 
-    public List<Long> getQuestionIdsBySubtopics(CreateMockTest createMockTest, Integer total) {
+    public List<Long> getQuestionIdsBySubtopics(CreateMockTestDto createMockTestDto, Integer total) {
         int pageSize = total;
         Pageable pageable = PageRequest.of(0, pageSize);
-        Optional<List<Long>> Qids = questionRepository.findQuestionIdsBySubtopics(createMockTest.subtopics(), pageable);
+        Optional<List<Long>> Qids = questionRepository.findQuestionIdsBySubtopics(createMockTestDto.subtopics(), pageable);
         return Qids.orElse(null);
     }
 
