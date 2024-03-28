@@ -22,5 +22,4 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     @Query("SELECT q.id FROM Question q WHERE q.subtopic in :subtopics")
     public Optional<List<Long>> findQuestionIdsBySubtopics(List<Subtopic> subtopics, Pageable pageable);
-
 }

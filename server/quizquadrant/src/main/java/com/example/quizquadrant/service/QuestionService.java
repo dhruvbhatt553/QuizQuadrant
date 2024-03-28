@@ -1,5 +1,9 @@
 package com.example.quizquadrant.service;
 
+import com.example.quizquadrant.dto.CreateQuestionDto;
+import com.example.quizquadrant.dto.PracticeOptionDto;
+import com.example.quizquadrant.dto.PracticeQuestionDto;
+import com.example.quizquadrant.dto.PracticeSolutionDto;
 import com.example.quizquadrant.dto.*;
 import com.example.quizquadrant.model.*;
 import com.example.quizquadrant.repository.QuestionRepository;
@@ -147,7 +151,6 @@ public class QuestionService {
                 subtopic,
                 solution
         );
-
         question = questionRepository.save(question);
 
         Option optionA = optionService.createOption(
@@ -196,6 +199,7 @@ public class QuestionService {
         if(optionD.getHasImage()) {
             Image imgOptionD = imageService.createImage(ImageTypes.OPTION, optionD.getId(), createQuestionDto.optionDImageURL());
         }
+
         return question;
     }
 
@@ -205,6 +209,5 @@ public class QuestionService {
         Optional<List<Long>> Qids = questionRepository.findQuestionIdsBySubtopics(createMockTestDto.subtopics(), pageable);
         return Qids.orElse(null);
     }
-
 
 }
