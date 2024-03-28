@@ -14,10 +14,12 @@ export default function Page1(props) {
 
     const editExamDate = (e) => {
         setExamDate(e.target.value);
+        console.log(e.target.value);
     }
-
+    
     const editExamTime = (e) => {
         setExamTime(e.target.value);
+        console.log(e.target.value);
     }
 
     return (

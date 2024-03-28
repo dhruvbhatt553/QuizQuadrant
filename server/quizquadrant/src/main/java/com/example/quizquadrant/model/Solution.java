@@ -49,4 +49,15 @@ public class Solution {
     )
     @JsonBackReference
     private Question question;
+
+
+
+
+//    constructor
+
+    public Solution(String statement, Boolean hasImage) {
+        this.statement = statement;
+        this.hasImage = hasImage;
+    }
+
 }

@@ -1,7 +1,7 @@
 insert into subject values(1, "DSA");
 insert into subtopic values(1, 1, "Dynamic Programming");
-
-
+--
+--
 --
 -- insert into solution values(0, 1, "some solution");
 -- insert into solution values(1, 2, "some solution 2");
@@ -32,7 +32,6 @@ insert into subtopic values(1, 1, "Dynamic Programming");
 -- insert into option_table values (0,0,7,6,"q6 option C");
 -- insert into option_table values (0,0,8,6,"q6 option D");
 --
-
 --
 -- insert into image values(2, "my url", "Q");
 -- insert into image values(2, "my url", "S");

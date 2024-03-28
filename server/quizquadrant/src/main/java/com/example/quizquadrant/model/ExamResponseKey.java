@@ -1,5 +1,6 @@
 package com.example.quizquadrant.model;
 
+import lombok.EqualsAndHashCode;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

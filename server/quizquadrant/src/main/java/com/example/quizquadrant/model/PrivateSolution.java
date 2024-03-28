@@ -45,4 +45,15 @@ public class PrivateSolution {
     )
     @JsonBackReference
     private PrivateQuestion privateQuestion;
+
+
+
+
+//    constructor
+
+    public PrivateSolution(String statement, Boolean hasImage) {
+        this.statement = statement;
+        this.hasImage = hasImage;
+    }
+
 }

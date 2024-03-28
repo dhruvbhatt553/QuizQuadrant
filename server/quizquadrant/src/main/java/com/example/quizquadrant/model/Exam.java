@@ -35,7 +35,7 @@ public class Exam {
     @Column(
             name = "startDateTime",
             nullable = false,
-            columnDefinition = "DATE"
+            columnDefinition = "DATETIME"
     )
     private LocalDateTime startDateTime;
 
@@ -52,26 +52,48 @@ public class Exam {
     )
     private Integer duration;
 
-//    @OneToMany(
-//            mappedBy = "exam",
-//            cascade = CascadeType.REMOVE
-//    )
-//    private List<Result> examResults;
-
     @OneToMany(
             mappedBy = "exam",
             cascade = CascadeType.REMOVE
     )
-    private List<ExamResponses> examResponses;
-
-    @OneToMany(
-            mappedBy = "exam",
-            cascade = CascadeType.REMOVE
-    )
-    private List<PrivateQuestion> privateQuestions;
+    @JsonManagedReference
+    private List<Result> examResults;
 
     @ManyToOne
-    @JoinColumn (name = "examsCreated")
+    @JsonBackReference
+    @JoinColumn (name = "creator")
     private User creator;
+
+    @OneToMany(
+            mappedBy = "exam",
+            cascade = CascadeType.REMOVE
+    )
+    @JsonManagedReference
+    private List<PrivateQuestion> privateQuestions;
+  
+  //    @OneToMany(
+  //            mappedBy = "exam",
+  //            cascade = CascadeType.REMOVE
+  //    )
+  //    private List<ExamResponses> examResponses;
+  
+
+
+
+//    constructors
+
+    public Exam(
+            String title,
+            LocalDateTime startDateTime,
+            Boolean isResultGenerated,
+            Integer duration,
+            User creator
+    ) {
+        this.title = title;
+        this.startDateTime = startDateTime;
+        this.isResultGenerated = isResultGenerated;
+        this.duration = duration;
+        this.creator = creator;
+    }
 
 }

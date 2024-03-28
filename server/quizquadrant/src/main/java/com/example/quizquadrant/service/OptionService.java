@@ -16,7 +16,12 @@ public class OptionService {
         this.optionRepository = optionRepository;
     }
 
-    public Option createOption(String statement, Boolean hasImage, Boolean isCorrect, Question question) {
+    public Option createOption(
+            String statement,
+            Boolean hasImage,
+            Boolean isCorrect,
+            Question question
+    ) {
         Option option = new Option(
                 statement,
                 hasImage,
