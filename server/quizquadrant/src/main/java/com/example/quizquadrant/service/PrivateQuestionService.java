@@ -24,39 +24,61 @@ public class PrivateQuestionService {
     private final PrivateSolutionService privateSolutionService;
     private final SubtopicService subtopicService;
     private final PrivateOptionService privateOptionService;
+    private final UserService userService;
+    private final ExamResponsesService examResponsesService;
+    private final QuestionService questionService;
+
 
     @Autowired
-    public PrivateQuestionService(PrivateQuestionRepository privateQuestionRepository, ImageService imageService, PrivateSolutionService privateSolutionService, SubtopicService subtopicService, PrivateOptionService privateOptionService) {
+    public PrivateQuestionService(PrivateQuestionRepository privateQuestionRepository, ImageService imageService, PrivateSolutionService privateSolutionService, SubtopicService subtopicService, PrivateOptionService privateOptionService, UserService userService, ExamResponsesService examResponsesService, QuestionService questionService) {
         this.privateQuestionRepository = privateQuestionRepository;
         this.imageService = imageService;
         this.privateSolutionService = privateSolutionService;
         this.subtopicService = subtopicService;
         this.privateOptionService = privateOptionService;
+        this.userService = userService;
+        this.examResponsesService = examResponsesService;
+        this.questionService = questionService;
     }
 
-    public ExamQuestionDto getPrivateQuestionById(Long privateQuestionId) {
+    public ExamQuestionDto getPrivateQuestionById(Long userId, Long privateQuestionId) {
         Optional<PrivateQuestion> privateQuestionOptional = privateQuestionRepository.findById(privateQuestionId);
-        PrivateQuestion privateQuestion = privateQuestionOptional.orElse(null);
-        List<ExamOptionDto> optionDtos = new ArrayList<>();
-        for(PrivateOption option: privateQuestion.getPrivateOptions()) {
-            ExamOptionDto examOptionDto = new ExamOptionDto(
-                    option.getId(),
-                    option.getStatement(),
-                    option.getHasImage(),
-                    (option.getHasImage() ? imageService.getImageById(option.getId(), ImageTypes.PRIVATE_OPTION) : "")
+        User user = userService.getUserById(userId);
+        if(privateQuestionOptional.isPresent() && user != null) {
+            PrivateQuestion privateQuestion = privateQuestionOptional.get();
+            privateOptionService.sortPrivateOptions(privateQuestion.getPrivateOptions());
+            ExamResponses examResponse = examResponsesService.getExamResponsesByUserAndQuestion(user, privateQuestion);
+            List<Boolean> markedOptions = new ArrayList<>();
+            if(examResponse != null) {
+                markedOptions.add(examResponse.getOptionAMarked());
+                markedOptions.add(examResponse.getOptionBMarked());
+                markedOptions.add(examResponse.getOptionCMarked());
+                markedOptions.add(examResponse.getOptionDMarked());
+            }
+            List<ExamOptionDto> optionDtos = new ArrayList<>();
+            for(int i = 0; i < privateQuestion.getPrivateOptions().size(); i++) {
+                ExamOptionDto examOptionDto = new ExamOptionDto(
+                        privateQuestion.getPrivateOptions().get(i).getId(),
+                        privateQuestion.getPrivateOptions().get(i).getStatement(),
+                        privateQuestion.getPrivateOptions().get(i).getHasImage(),
+                        (privateQuestion.getPrivateOptions().get(i).getHasImage() ? imageService.getImageById(privateQuestion.getPrivateOptions().get(i).getId(), ImageTypes.PRIVATE_OPTION) : ""),
+                        (examResponse != null && markedOptions.get(i))
+                );
+                optionDtos.add(examOptionDto);
+            }
+            return new ExamQuestionDto(
+                    privateQuestion.getId(),
+                    privateQuestion.getStatement(),
+                    privateQuestion.getType(),
+                    privateQuestion.getHasImage(),
+                    privateQuestion.getPositiveMarks(),
+                    privateQuestion.getNegativeMarks(),
+                    optionDtos,
+                    (privateQuestion.getHasImage() ? imageService.getImageById(privateQuestion.getId(), ImageTypes.PRIVATE_QUESTION) : "")
             );
-            optionDtos.add(examOptionDto);
+        } else {
+            return null;
         }
-        return new ExamQuestionDto(
-                privateQuestion.getId(),
-                privateQuestion.getStatement(),
-                privateQuestion.getType(),
-                privateQuestion.getHasImage(),
-                privateQuestion.getPositiveMarks(),
-                privateQuestion.getNegativeMarks(),
-                optionDtos,
-                (privateQuestion.getHasImage() ? imageService.getImageById(privateQuestion.getId(), ImageTypes.PRIVATE_QUESTION) : "")
-        );
     }
 
     public List<PrivateQuestion> createPrivateQuestions(List<CreateQuestionDto> createQuestionDtos, Exam exam) {
@@ -136,6 +158,79 @@ public class PrivateQuestionService {
         }
 
         return privateQuestions;
+    }
+
+    public void transferPrivateQuestionToQuestion(List<PrivateQuestion> privateQuestionsList) {
+        for(PrivateQuestion q : privateQuestionsList) {
+
+            List<String> correctAnswers = new ArrayList<>();
+            privateOptionService.sortPrivateOptions(q.getPrivateOptions());
+
+            for(int i=0;i<4;i++) {
+                char c = (char)('A'+i);
+                if(q.getPrivateOptions().get(i).getIsCorrect()) {
+                    correctAnswers.add(""+(c));
+                }
+            }
+
+            String questionImgUrl = "";
+            String optionAImgUrl = "";
+            String optionBImgUrl = "";
+            String optionCImgUrl = "";
+            String optionDImgUrl = "";
+            String solutionImgUrl = "";
+
+            if(q.getHasImage()) {
+                questionImgUrl = imageService.getImageById(q.getId(), ImageTypes.PRIVATE_QUESTION);
+            }
+
+            if(q.getPrivateOptions().get(0).getHasImage()) {
+                optionAImgUrl = imageService.getImageById(q.getPrivateOptions().get(0).getId(), ImageTypes.PRIVATE_OPTION);
+            }
+
+            if(q.getPrivateOptions().get(1).getHasImage()) {
+                optionBImgUrl = imageService.getImageById(q.getPrivateOptions().get(1).getId(), ImageTypes.PRIVATE_OPTION);
+            }
+
+            if(q.getPrivateOptions().get(2).getHasImage()) {
+                optionCImgUrl = imageService.getImageById(q.getPrivateOptions().get(2).getId(), ImageTypes.PRIVATE_OPTION);
+            }
+
+            if(q.getPrivateOptions().get(3).getHasImage()) {
+                optionDImgUrl = imageService.getImageById(q.getPrivateOptions().get(3).getId(), ImageTypes.PRIVATE_OPTION);
+            }
+
+            if(q.getPrivateSolution().getHasImage()) {
+                solutionImgUrl = imageService.getImageById(q.getPrivateSolution().getId(), ImageTypes.PRIVATE_SOLUTION);
+            }
+
+            CreateQuestionDto createQuestionDto = new CreateQuestionDto(
+                    q.getType(),
+                    q.getSubtopic().getSubject().getId(),
+                    q.getSubtopic().getId(),
+                    q.getPositiveMarks(),
+                    q.getNegativeMarks(),
+                    q.getStatement(),
+                    questionImgUrl,
+                    q.getPrivateOptions().get(0).getStatement(),
+                    optionAImgUrl,
+                    q.getPrivateOptions().get(1).getStatement(),
+                    optionBImgUrl,
+                    q.getPrivateOptions().get(2).getStatement(),
+                    optionCImgUrl,
+                    q.getPrivateOptions().get(3).getStatement(),
+                    optionDImgUrl,
+                    q.getPrivateSolution().getStatement(),
+                    solutionImgUrl,
+                    correctAnswers
+            );
+
+            questionService.createQuestion(createQuestionDto);
+        }
+    }
+
+    public void removePrivateQuestions(List<PrivateQuestion> privateQuestions) {
+        privateQuestionRepository.deletePrivateQuestions(privateQuestions);
     }
 
 }

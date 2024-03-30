@@ -47,7 +47,9 @@ public class PrivateOption {
 
     @ManyToOne
     @JsonBackReference
-    @JoinColumn(name = "privateQuestionId")
+    @JoinColumn(
+            name = "privateQuestionId"
+    )
     private PrivateQuestion privateQuestion;
 
 

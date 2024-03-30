@@ -2,10 +2,7 @@ package com.example.quizquadrant.service;
 
 
 import com.example.quizquadrant.dto.PrivateQuestionResponsesDto;
-import com.example.quizquadrant.model.ExamResponseKey;
-import com.example.quizquadrant.model.ExamResponses;
-import com.example.quizquadrant.model.PrivateQuestion;
-import com.example.quizquadrant.model.User;
+import com.example.quizquadrant.model.*;
 import com.example.quizquadrant.repository.ExamResponsesRepository;
 import com.example.quizquadrant.repository.PrivateQuestionRepository;
 import com.example.quizquadrant.repository.UserRepository;
@@ -40,11 +37,19 @@ public class ExamResponsesService {
         Optional<ExamResponses> examResponses = examResponsesRepository.findById(examResponseKey);
         if(!examResponses.isEmpty()) {
             List<Boolean> ans = privateQuestionResponsesDto.response();
-            ExamResponses examResponsesNew = new ExamResponses(u, q, ans.get(0), ans.get(1), ans.get(2), ans.get(3))
+            ExamResponses examResponsesNew = new ExamResponses(u, q, ans.get(0), ans.get(1), ans.get(2), ans.get(3));
             return examResponsesRepository.save(examResponsesNew);
         }
         else
             return examResponses.orElse(null);
 
+    }
+
+    public ExamResponses getExamResponsesByUserAndQuestion(User user, PrivateQuestion privateQuestion) {
+        return examResponsesRepository.findExamResponsesByUserAndPrivateQuestion(user, privateQuestion);
+    }
+
+    public void removeResponses(User user, List<PrivateQuestion> privateQuestionList) {
+        examResponsesRepository.deleteExamResponsesByUserAndAndPrivateQuestion(user,privateQuestionList);
     }
 }

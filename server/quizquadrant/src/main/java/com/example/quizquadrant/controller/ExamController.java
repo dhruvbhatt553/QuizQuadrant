@@ -1,12 +1,9 @@
 package com.example.quizquadrant.controller;
 
-import com.example.quizquadrant.dto.CreateExamDto;
-import com.example.quizquadrant.dto.ExamDto;
-import com.example.quizquadrant.dto.ExamQuestionDto;
+import com.example.quizquadrant.dto.*;
 import com.example.quizquadrant.model.Exam;
 import com.example.quizquadrant.service.ExamService;
 import com.example.quizquadrant.dto.ExamQuestionDto;
-import com.example.quizquadrant.dto.ExamResponseDto;
 import com.example.quizquadrant.model.ExamResponses;
 import com.example.quizquadrant.model.PrivateQuestion;
 import com.example.quizquadrant.service.ExamResponsesService;
@@ -31,23 +28,39 @@ public class ExamController {
     }
 
     @GetMapping("/get-question-by-id")
-    public ExamQuestionDto getPrivateQuestionById(@RequestParam("questionId") Long privateQuestionId) {
-        return privateQuestionService.getPrivateQuestionById(privateQuestionId);
+    public ExamQuestionDto getPrivateQuestionById(
+            @RequestParam("userId") Long userId,
+            @RequestParam("questionId") Long privateQuestionId
+    ) {
+        return privateQuestionService.getPrivateQuestionById(userId, privateQuestionId);
     }
 
     @GetMapping("/get-exam-by-id")
-    public ExamDto getExamById(@RequestParam("examId") Long examId) {
-        return examService.getExamById(examId);
+    public ExamDto getExamById(
+            @RequestParam("userId") Long userId,
+            @RequestParam("examId") Long examId
+    ) {
+        return examService.getExamById(userId, examId);
+    }
+
+    @GetMapping("/calculate-result")
+    public void calculateResult(
+            @RequestParam("examId") Long examId
+    ) {
+        examService.calculateResult(examId);
     }
 
     @PostMapping("/create-exam")
-    public Exam createExam(@RequestBody CreateExamDto createExamDto) {
-        return examService.createExam(createExamDto);
+    public Exam createExam(
+            @RequestParam("userId") Long userId,
+            @RequestBody CreateExamDto createExamDto
+    ) {
+        return examService.createExam(userId, createExamDto);
     }
       
     @PostMapping("/store-response")
-    public ExamResponses StorePrivateQuestionResponse (@RequestParam("privateQuestionId") Long privateQuestionId,@RequestParam("userId") Long userId,  @RequestBody ExamResponseDto examResponseDto) {
-        return examResponsesService
+    public ExamResponses StorePrivateQuestionResponse (@RequestParam("privateQuestionId") Long privateQuestionId, @RequestParam("userId") Long userId, @RequestBody PrivateQuestionResponsesDto privateQuestionResponsesDto) {
+        return examResponsesService.storePrivateQuestionResponses(userId, privateQuestionId, privateQuestionResponsesDto);
     }
 
 }

@@ -1,5 +1,5 @@
-insert into subject values(1, "DSA");
-insert into subtopic values(1, 1, "Dynamic Programming");
+-- insert into subject values(1, "DSA");
+-- insert into subtopic values(1, 1, "Dynamic Programming");
 --
 --
 --
@@ -92,3 +92,26 @@ insert into subtopic values(1, 1, "Dynamic Programming");
 -- insert into image values(1, "my url", "q");
 -- insert into image values(2, "my url", "o");
 -- insert into image values(4, "my url", "s");
+--
+--
+-- insert into exam_responses values(0, 1, 1, 0, 1, 1);
+-- insert into exam_responses values(1, 0, 0, 0, 2, 1);
+-- insert into exam_responses values(1, 0, 0, 1, 3, 1);
+-- insert into exam_responses values(0, 1, 1, 1, 1, 2);
+-- insert into exam_responses values(0, 0, 1, 0, 2, 2);
+-- insert into exam_responses values(1, 0, 0, 1, 3, 2);
+
+
+-- Batch insert:
+insert into subject values(1, "DSA");
+insert into subtopic values(1, 1, "Dynamic Programming");
+insert into user values(1, "a@gmail.com", "Aayush", "password", "T");
+insert into user values(2, "d@gmail.com", "Dhruv", "password", "S");
+insert into user values(3, "k@gmail.com", "Karm", "password", "S");
+insert into user values(4, "j@gmail.com", "Jay", "password", "S");
+
+
+insert into exam_responses values(1, 1, 0, 0, 1, 2);
+insert into exam_responses values(0, 1, 1, 0, 2, 2);
+insert into exam_responses values(1, 0, 0, 0, 3, 2);
+insert into exam_responses values(0, 1, 0, 1, 1, 3);
