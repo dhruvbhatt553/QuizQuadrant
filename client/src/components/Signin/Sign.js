@@ -14,8 +14,8 @@ export default function Sign() {
   const containerClass =
     "container " + (type === "signUp" ? "right-panel-active" : "");
   return (
-    <div className="Sign">
-      <h2>Sign in/up Form</h2>
+    <div className="Sign h-full">
+      {/* <h2>Sign in/up Form</h2> */}
       <div className={containerClass} id="container">
         <SignUpForm />
         <SignInForm />

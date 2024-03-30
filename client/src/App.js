@@ -7,8 +7,8 @@ import {
 import CreateQuestion from './components/CreateQuestion/CreateQuestion';
 import ExamPage from './components/ExamPage/ExamPage';
 import dummyData from './dummy-data/data';
-import questionData from './dummy-data/questionData';
-import examData from './dummy-data/examData';
+// import questionData from './dummy-data/questionData';
+// import examData from './dummy-data/examData';
 import CreateExam from './components/CreateExam/CreateExam';
 import HomePage from './components/HomePage/HomePage';
 import MockTestSelection from './components/MockTestSelection/MockTestSelection';
@@ -16,6 +16,8 @@ import NavBar from './components/NavBar';
 import Sign from './components/Signin/Sign';
 import PracticePage from './components/Practice/PracticePage';
 import data from './dummy-data/data';
+import Profile from './components/Profile/Profile';
+import Leaderboard from './components/Leaderboard/Leaderboard';
 
 
 
@@ -31,11 +33,12 @@ function App() {
               <Route exact path="/auth" element={<Sign />} />
               <Route exact path="/mock-test" element={<MockTestSelection />} />
               <Route exact path="/create-exam" element={<CreateExam subjectwiseTopics={dummyData} />} />
-              <Route exact path="/exam" element={<ExamPage examData={examData} questionData={questionData} />} />
+              <Route exact path="/exam" element={<ExamPage />} />
               <Route exact path="/create-question" element={<CreateQuestion subjectwiseTopics={dummyData} />} />
               <Route exact path="/practice" element={<PracticePage subtopics={data[0].subtopics}/>} />
-
-
+              <Route exact path="/profile" element={<Profile />} />
+              <Route exact path="/leaderboard" element={<Leaderboard />} />
+              <Route exact path="/result" element={<Leaderboard />} />
             </Routes>
 
           </div>
