@@ -1,6 +1,7 @@
 package com.example.quizquadrant.service;
 
 import com.example.quizquadrant.dto.CreateExamDto;
+import com.example.quizquadrant.dto.CreateQuestionDto;
 import com.example.quizquadrant.dto.ExamDto;
 import com.example.quizquadrant.dto.ExamResponseDto;
 import com.example.quizquadrant.model.*;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +23,7 @@ public class ExamService {
     private final UserService userService;
     private final ResultService resultService;
 
+
     @Autowired
     public ExamService(ExamRepository examRepository, PrivateQuestionService privateQuestionService, UserService userService, ResultService resultService) {
         this.examRepository = examRepository;
@@ -29,13 +32,16 @@ public class ExamService {
         this.resultService = resultService;
     }
 
-    public Exam createExam(CreateExamDto createExamDto) {
+    public Exam createExam(Long creatorId, CreateExamDto createExamDto) {
 //        TODO get userID from JWT token
-        Long creatorID = 1L;    // Hardcoded temporarily ...
-        User user = userService.getUserById(creatorID);
+        User user = userService.getUserById(creatorId);
 
-        String[] date = createExamDto.startDate().split("-");
-        String[] time = createExamDto.startTime().split(":");
+        String[] date = createExamDto.startDate().split("-");   // yyyy-mm-dd
+        String[] time = createExamDto.startTime().split(":");   // 20:00
+        int totalMarks = 0;
+        for(CreateQuestionDto q : createExamDto.questionDtos()) {
+            totalMarks += q.positiveMarks();
+        }
 
         Exam exam = new Exam(
                 createExamDto.title(),
@@ -48,39 +54,32 @@ public class ExamService {
                 ),
                 false,
                 createExamDto.duration(),
+                totalMarks,
                 user
         );
         exam = examRepository.save(exam);
 
         List<PrivateQuestion> privateQuestions = privateQuestionService.createPrivateQuestions(createExamDto.questionDtos(), exam);
-        exam.setPrivateQuestions(privateQuestions);
+//        exam.setPrivateQuestions(privateQuestions);
 
         List<User> users = userService.getUsersByEmailId(createExamDto.emailIds());
         List<Result> results = resultService.createResults(users, exam);
-        exam.setExamResults(results);
+//        exam.setExamResults(results);
 
         return exam;
     }
 
-    public ExamDto getExamById(Long examId) {
+    public ExamDto getExamById(Long userId, Long examId) {
 //        TODO get userID from JWT token & authorize whether his email is included in EXAM ...
-        Long userId = 1L;   // Hardcoded temporarily ...
         User user = userService.getUserById(userId);
         Optional<Exam> examOptional = examRepository.findById(examId);
         ExamDto examDto = null;
 
         if(examOptional.isPresent()) {
             Exam exam = examOptional.get();
-
             List<Long> questionIds = new ArrayList<>();
             for(PrivateQuestion privateQuestion: exam.getPrivateQuestions()) {
                 questionIds.add(privateQuestion.getId());
-            }
-
-            List<ExamResponseDto> savedResponses = new ArrayList<>();
-//            TODO fetch particular user's responses from exam.getExamResponses()
-            for(ExamResponses examResponses: exam.getExamResponses()) {
-
             }
 
             examDto = new ExamDto(
@@ -91,11 +90,24 @@ public class ExamService {
                     exam.getStartDateTime().getHour() + ":" + exam.getStartDateTime().getMinute(),
                     user.getName(),
                     user.getEmail(),
-                    questionIds,
-                    savedResponses
+                    questionIds
             );
+
+
+
+
+            resultService.markUserPresent(user, exam);
         }
 
         return examDto;
+    }
+
+    public Exam getExamById (Long examId) {
+        return examRepository.findById(examId).orElse(null);
+    }
+
+    public void calculateResult(Long examId) {
+        resultService.calculateResult(this.getExamById(examId));
+        examRepository.markResultGenerated(examId);
     }
 }

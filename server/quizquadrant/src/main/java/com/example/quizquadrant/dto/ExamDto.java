@@ -11,7 +11,6 @@ public record ExamDto(
         String startTime,
         String candidateName,
         String candidateEmail,
-        List<Long> questionIds,
-        List<ExamResponseDto> savedResponses
+        List<Long> questionIds
 ) {
 }

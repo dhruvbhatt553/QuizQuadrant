@@ -2,26 +2,18 @@ package com.example.quizquadrant.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "examResponses")
 @IdClass(ExamResponseKey.class)
 @Data
+@NoArgsConstructor
 public class ExamResponses {
     @Id
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
-    @Id
-    @ManyToOne
-    @JoinColumn(name = "exam_id")
-    private Exam exam;
-    
-//    @Id
-//    @ManyToOne
-//    @JoinColumn(name = "exam_id")
-//    private Exam exam;
 
     @Id
     @ManyToOne

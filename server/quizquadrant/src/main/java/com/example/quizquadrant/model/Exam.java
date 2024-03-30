@@ -1,15 +1,20 @@
 package com.example.quizquadrant.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "exam")
 public class Exam {
@@ -52,6 +57,12 @@ public class Exam {
     )
     private Integer duration;
 
+    @Column(
+            name = "totalMarks",
+            nullable = false
+    )
+    private Integer totalMarks;
+
     @OneToMany(
             mappedBy = "exam",
             cascade = CascadeType.REMOVE
@@ -82,18 +93,13 @@ public class Exam {
 
 //    constructors
 
-    public Exam(
-            String title,
-            LocalDateTime startDateTime,
-            Boolean isResultGenerated,
-            Integer duration,
-            User creator
-    ) {
+
+    public Exam(String title, LocalDateTime startDateTime, Boolean isResultGenerated, Integer duration, Integer totalMarks, User creator) {
         this.title = title;
         this.startDateTime = startDateTime;
         this.isResultGenerated = isResultGenerated;
         this.duration = duration;
+        this.totalMarks = totalMarks;
         this.creator = creator;
     }
-
 }

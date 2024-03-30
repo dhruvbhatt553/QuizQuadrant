@@ -26,6 +26,12 @@ public class Result {
     @JoinColumn(name = "exam_id")
     private Exam exam;
 
+    @Column (
+            name = "isPresent",
+            nullable = false
+    )
+    private Boolean isPresent;
+
     @Column(
             name = "marks",
             nullable = false,
