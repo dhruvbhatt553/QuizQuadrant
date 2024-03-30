@@ -4,6 +4,7 @@ public record ExamOptionDto(
         Long id,
         String statement,
         Boolean hasImage,
-        String imageURL
+        String imageURL,
+        Boolean isMarked
 ) {
 }

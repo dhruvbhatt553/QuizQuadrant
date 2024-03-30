@@ -5,6 +5,7 @@ import com.example.quizquadrant.repository.ImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -28,5 +29,9 @@ public class ImageService {
     public Image createImage(String type, Long refId ,String imgURL) {
        Image newImage  = new Image(type, refId, imgURL);
        return imageRepository.save(newImage);
+    }
+
+    public void removeImage(String type, Long refId) {
+        imageRepository.deleteImage(type, refId);
     }
 }

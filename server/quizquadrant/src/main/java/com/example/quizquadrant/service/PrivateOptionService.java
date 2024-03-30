@@ -7,6 +7,10 @@ import com.example.quizquadrant.repository.PrivateOptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 @Service
 public class PrivateOptionService {
 
@@ -32,4 +36,19 @@ public class PrivateOptionService {
         return privateOptionRepository.save(privateOption);
     }
 
+    public void removePrivateOptions(List<PrivateOption> privateOptions) {
+        privateOptionRepository.deletePrivateOptions(privateOptions);
+    }
+
+
+
+    public void sortPrivateOptions(List<PrivateOption> privateOptions) {
+        Collections.sort(privateOptions, new PrivateOptionComparator());
+    }
+
+    class PrivateOptionComparator implements Comparator<PrivateOption> {
+        public int compare(PrivateOption privateOption1, PrivateOption privateOption2) {
+            return privateOption1.getId().compareTo(privateOption2.getId());
+        }
+    }
 }

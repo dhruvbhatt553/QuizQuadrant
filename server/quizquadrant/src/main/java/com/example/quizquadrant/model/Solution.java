@@ -12,10 +12,6 @@ import lombok.*;
 @Entity
 @Table(name = "solution")
 public class Solution {
-    public Solution(String statement, Boolean hasImage) {
-        this.statement = statement;
-        this.hasImage = hasImage;
-    }
 
     @Id
     @SequenceGenerator(

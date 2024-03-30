@@ -45,9 +45,11 @@ public class PrivateOption {
     )
     private Boolean isCorrect;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JsonBackReference
-    @JoinColumn(name = "privateQuestionId")
+    @JoinColumn(
+            name = "privateQuestionId"
+    )
     private PrivateQuestion privateQuestion;
 
 
