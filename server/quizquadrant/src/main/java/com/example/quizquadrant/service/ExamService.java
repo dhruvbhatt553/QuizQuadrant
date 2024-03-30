@@ -93,9 +93,6 @@ public class ExamService {
                     questionIds
             );
 
-
-
-
             resultService.markUserPresent(user, exam);
         }
 

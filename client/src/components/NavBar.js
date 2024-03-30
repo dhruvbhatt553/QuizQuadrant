@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 export default function NavBar() {
     let path = useLocation().pathname;
@@ -10,12 +10,11 @@ export default function NavBar() {
                 <button className='border border-blue-800 p-2'>
                     Make Test/ Mock test
                 </button>
-                <button>
-
+                <Link to="/auth">
                     <img src="/images/log-in.png"
                         width={ "40px" }
                     />
-                </button>
+                </Link>
             </div>
         </div>
     );
