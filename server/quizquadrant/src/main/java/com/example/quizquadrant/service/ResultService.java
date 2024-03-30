@@ -53,13 +53,6 @@ public class ResultService {
         resultRepository.updateResultMarksByUserAndExam(user,exam,marks);
     }
 
-    // match user responses with isCorrect fields in private_option table & calculate marks of all users
-    // update marks in result table
-    // remove responses from exam_responses table
-    // private_question -> question
-    // private_option -> option
-    // private_solution -> solution
-    // change type in image table
 
     public void calculateResult(Exam exam) {
         for(Result result : exam.getExamResults()) {

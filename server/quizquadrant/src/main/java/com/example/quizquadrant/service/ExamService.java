@@ -92,10 +92,6 @@ public class ExamService {
                     user.getEmail(),
                     questionIds
             );
-
-
-
-
             resultService.markUserPresent(user, exam);
         }
 
