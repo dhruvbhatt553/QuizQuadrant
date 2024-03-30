@@ -53,7 +53,10 @@ public class ResultService {
         resultRepository.updateResultMarksByUserAndExam(user,exam,marks);
     }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1c10de667486193f3d07d21dd09dff3a9967de70
     public void calculateResult(Exam exam) {
         for(Result result : exam.getExamResults()) {
             User user = result.getUser();
@@ -81,9 +84,6 @@ public class ResultService {
         }
 
         privateQuestionService.transferPrivateQuestionToQuestion(exam.getPrivateQuestions());
-//
-
-       // privateQuestionService.removePrivateQuestions(exam.getPrivateQuestions());
 
     }
 

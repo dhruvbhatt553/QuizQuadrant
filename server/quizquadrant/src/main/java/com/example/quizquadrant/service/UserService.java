@@ -45,8 +45,6 @@ public class UserService {
                 examsCreated.add(exam.getId());
             }
             List<UserProfilePastExamDto> pastExams = new ArrayList<>();
-
-
             List<UserProfileOngoingAndFutureExamDto> ongoingExams = new ArrayList<>();
             List<UserProfileOngoingAndFutureExamDto> futureExams = new ArrayList<>();
 

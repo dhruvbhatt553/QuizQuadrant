@@ -227,9 +227,6 @@ public class PrivateQuestionService {
 
             questionService.createQuestion(createQuestionDto);
 
-
-
-
             imageService.removeImage(ImageTypes.PRIVATE_QUESTION,q.getId());
             imageService.removeImage(ImageTypes.PRIVATE_OPTION,q.getPrivateOptions().get(0).getId());
             imageService.removeImage(ImageTypes.PRIVATE_OPTION,q.getPrivateOptions().get(1).getId());

@@ -40,8 +40,6 @@ public class PrivateOptionService {
         privateOptionRepository.deletePrivateOptions(privateOptions);
     }
 
-
-
     public void sortPrivateOptions(List<PrivateOption> privateOptions) {
         Collections.sort(privateOptions, new PrivateOptionComparator());
     }

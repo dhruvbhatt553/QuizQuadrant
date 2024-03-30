@@ -17,14 +17,9 @@ import java.util.Optional;
 @Repository
 public interface ResultRepository extends JpaRepository<Result, ResultKey> {
 
-    public Optional<List<Result>> findResultsByUser(User u);
-
     List<Result> findTop10ByExamOrderByMarksDesc(Exam exam);
-
-
+  
     List<Result> findByExamOrderByMarksDesc(Exam exam);
-
-
 
     @Transactional
     @Modifying
