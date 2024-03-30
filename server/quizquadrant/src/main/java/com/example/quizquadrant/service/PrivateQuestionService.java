@@ -226,7 +226,17 @@ public class PrivateQuestionService {
             );
 
             questionService.createQuestion(createQuestionDto);
+
+            imageService.removeImage(ImageTypes.PRIVATE_QUESTION,q.getId());
+            imageService.removeImage(ImageTypes.PRIVATE_OPTION,q.getPrivateOptions().get(0).getId());
+            imageService.removeImage(ImageTypes.PRIVATE_OPTION,q.getPrivateOptions().get(1).getId());
+            imageService.removeImage(ImageTypes.PRIVATE_OPTION,q.getPrivateOptions().get(2).getId());
+            imageService.removeImage(ImageTypes.PRIVATE_OPTION,q.getPrivateOptions().get(3).getId());
+            imageService.removeImage(ImageTypes.PRIVATE_SOLUTION,q.getPrivateSolution().getId());
+            privateOptionService.removePrivateOptions(q.getPrivateOptions());
+            privateSolutionService.removePrivateSolution(q.getPrivateSolution());
         }
+        removePrivateQuestions(privateQuestionsList);
     }
 
     public void removePrivateQuestions(List<PrivateQuestion> privateQuestions) {

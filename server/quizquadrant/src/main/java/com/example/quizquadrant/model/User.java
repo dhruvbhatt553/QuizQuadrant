@@ -23,6 +23,9 @@ import java.util.Set;
                 )
         }
 )
+
+
+
 public class User {
     @Id
     @SequenceGenerator(
@@ -84,3 +87,8 @@ public class User {
     @JsonManagedReference
     private List<ExamResponses> examResponses;
 }
+
+// leaderboard - ok
+// show result for teacher - ok
+// user by id - ok
+// Send subjects to Home page

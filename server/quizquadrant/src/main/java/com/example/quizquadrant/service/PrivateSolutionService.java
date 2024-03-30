@@ -20,4 +20,8 @@ public class PrivateSolutionService {
         return privateSolutionRepository.save(privateSolution);
     }
 
+    public void removePrivateSolution(PrivateSolution privateSolution) {
+        privateSolutionRepository.deletePrivateSolution(privateSolution);
+    }
+
 }

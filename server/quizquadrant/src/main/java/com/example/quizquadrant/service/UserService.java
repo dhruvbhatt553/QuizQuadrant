@@ -36,6 +36,7 @@ public class UserService {
 
     public UserProfileDto getUserProfile(Long userId) {
 //        TODO fetch userID from JWT token ...
+        Long selfUserId = 1L;   // hardcoded temp ...
         Optional<User> userOptional = userRepository.findById(userId);
         if(userOptional.isPresent()) {
             User user = userOptional.get();
@@ -46,6 +47,12 @@ public class UserService {
             List<UserProfilePastExamDto> pastExams = new ArrayList<>();
             List<UserProfileOngoingAndFutureExamDto> ongoingExams = new ArrayList<>();
             List<UserProfileOngoingAndFutureExamDto> futureExams = new ArrayList<>();
+
+            if(!userId.equals(selfUserId)) {
+                ongoingExams = null;
+                futureExams = null;
+            }
+
             for(Result result: user.getExamResults()) {
                 Exam exam = result.getExam();
                 if(exam.getStartDateTime().isBefore(LocalDateTime.now())) {
@@ -63,7 +70,7 @@ public class UserService {
                                         exam.getIsResultGenerated()
                                 )
                         );
-                    } else {
+                    } else if(userId.equals(selfUserId)) {
                         ongoingExams.add(
                                 new UserProfileOngoingAndFutureExamDto(
                                         exam.getId(),
@@ -75,7 +82,7 @@ public class UserService {
                                 )
                         );
                     }
-                } else {
+                } else if(userId.equals(selfUserId)) {
                     futureExams.add(
                             new UserProfileOngoingAndFutureExamDto(
                                     exam.getId(),

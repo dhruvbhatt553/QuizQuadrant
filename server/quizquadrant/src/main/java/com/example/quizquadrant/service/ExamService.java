@@ -105,5 +105,6 @@ public class ExamService {
 
     public void calculateResult(Long examId) {
         resultService.calculateResult(this.getExamById(examId));
+        examRepository.markResultGenerated(examId);
     }
 }

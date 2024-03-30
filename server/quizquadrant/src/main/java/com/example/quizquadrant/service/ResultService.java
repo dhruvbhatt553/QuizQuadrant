@@ -1,5 +1,6 @@
 package com.example.quizquadrant.service;
 
+import com.example.quizquadrant.dto.LeaderBoardDto;
 import com.example.quizquadrant.model.*;
 import com.example.quizquadrant.repository.ExamRepository;
 import com.example.quizquadrant.repository.ResultRepository;
@@ -52,15 +53,6 @@ public class ResultService {
         resultRepository.updateResultMarksByUserAndExam(user,exam,marks);
     }
 
-    // match user responses with isCorrect fields in private_option table & calculate marks of all users
-    // update marks in result table
-    // remove responses from exam_responses table
-    // private_question -> question
-    // private_option -> option
-    // private_solution -> solution
-    // change type in image table
-    // set isResultGenerated in Exam table
-
     public void calculateResult(Exam exam) {
         for(Result result : exam.getExamResults()) {
             User user = result.getUser();
@@ -88,7 +80,30 @@ public class ResultService {
         }
 
         privateQuestionService.transferPrivateQuestionToQuestion(exam.getPrivateQuestions());
-        privateQuestionService.removePrivateQuestions(exam.getPrivateQuestions());
+
+    }
+
+    public List<LeaderBoardDto> getLeaderBoard (Exam exam) {
+        List<Result> topResults = resultRepository.findTop10ByExamOrderByMarksDesc(exam);
+        List<LeaderBoardDto> lds = new ArrayList<>();
+        for(Result result : topResults) {
+            if(result.getIsPresent()) {
+                LeaderBoardDto ld = new LeaderBoardDto(result.getUser().getId() , result.getUser().getName(), result.getMarks(), true);
+                lds.add(ld);
+            }
+        }
+        return lds;
+
+    }
+
+    public List<LeaderBoardDto> getAllResult (Exam exam) {
+        List<Result> results = resultRepository.findByExamOrderByMarksDesc(exam);
+        List<LeaderBoardDto> lds = new ArrayList<>();
+        for(Result result : results) {
+                LeaderBoardDto ld = new LeaderBoardDto(result.getUser().getId() , result.getUser().getName(), result.getMarks(), result.getIsPresent());
+                lds.add(ld);
+        }
+        return lds;
 
     }
 

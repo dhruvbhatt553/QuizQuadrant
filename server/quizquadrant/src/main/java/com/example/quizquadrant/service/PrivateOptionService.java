@@ -36,6 +36,10 @@ public class PrivateOptionService {
         return privateOptionRepository.save(privateOption);
     }
 
+    public void removePrivateOptions(List<PrivateOption> privateOptions) {
+        privateOptionRepository.deletePrivateOptions(privateOptions);
+    }
+
     public void sortPrivateOptions(List<PrivateOption> privateOptions) {
         Collections.sort(privateOptions, new PrivateOptionComparator());
     }

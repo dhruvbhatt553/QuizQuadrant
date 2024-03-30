@@ -4,6 +4,7 @@ import com.example.quizquadrant.model.Exam;
 import com.example.quizquadrant.model.Result;
 import com.example.quizquadrant.model.ResultKey;
 import com.example.quizquadrant.model.User;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -15,6 +16,10 @@ import java.util.Optional;
 
 @Repository
 public interface ResultRepository extends JpaRepository<Result, ResultKey> {
+
+    List<Result> findTop10ByExamOrderByMarksDesc(Exam exam);
+  
+    List<Result> findByExamOrderByMarksDesc(Exam exam);
 
     @Transactional
     @Modifying
