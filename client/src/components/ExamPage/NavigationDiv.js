@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import examContext from '../../context/exam/examContext';
 
-export default function NavigationDiv(props) {
+export default function NavigationDiv() {
 
-    const { handlePrevBtn, handleNextBtn, handleClearSelectionBtn, handleSaveBtn} = props;
+    const { handlePrevBtn, handleNextBtn, handleClearSelectionBtn, handleSaveBtn} = useContext(examContext);
 
     return (
         <div id='navigationDiv' className='w-full h-52 lg:h-12 flex items-center px-3 bg-gray-400'>
