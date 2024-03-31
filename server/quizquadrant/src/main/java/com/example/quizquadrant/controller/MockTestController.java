@@ -20,7 +20,7 @@ public class MockTestController {
     }
 
     @GetMapping("/get-questions")
-    public List<Long> getPrivateQuestionById(@RequestBody CreateMockTestDto createMockTestDto, @RequestParam("total") Integer total) {
+    public List<Long> getQuestionsById(@RequestBody CreateMockTestDto createMockTestDto, @RequestParam("total") Integer total) {
         return questionService.getQuestionIdsBySubtopics(createMockTestDto,total);
     }
 

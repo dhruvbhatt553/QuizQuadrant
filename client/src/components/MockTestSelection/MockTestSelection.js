@@ -9,6 +9,19 @@ export default function MockTestSelection() {
         return Array(subtopicsLength).fill(false);
     });
 
+    function createMockTest() {
+        let subtopicArr = [];
+        for(let i=0;i<selection.length;i++) {
+            for(let j=0;j<selection[i].length;j++) {
+                if(selection[i][j])
+                subtopicArr.push(data[i].subtopics[j]);
+            }
+        }
+
+        console.log(subtopicArr);
+
+    }
+
     function handleAllSelection(e){
        
       if(!allSelected)
@@ -95,7 +108,7 @@ export default function MockTestSelection() {
                 }
             </div>
             <div onClick={(e)=>{console.log(selection);}} className="cursor-pointer">
-                krmgm
+                Create Mock test
             </div>
 
         </div>

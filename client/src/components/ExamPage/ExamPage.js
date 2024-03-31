@@ -8,7 +8,7 @@ import ExamFinishDiv from './ExamFinishDiv';
 import examContext from '../../context/exam/examContext';
 
 export default function ExamPage() {
-
+  
     const { examStart, examFinish, examData, fetchExamData } = useContext(examContext);
 
     useEffect(() => {
