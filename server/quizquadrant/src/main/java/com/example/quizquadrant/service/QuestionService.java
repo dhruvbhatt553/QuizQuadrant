@@ -206,7 +206,12 @@ public class QuestionService {
     public List<Long> getQuestionIdsBySubtopics(CreateMockTestDto createMockTestDto, Integer total) {
         int pageSize = total;
         Pageable pageable = PageRequest.of(0, pageSize);
-        Optional<List<Long>> Qids = questionRepository.findQuestionIdsBySubtopics(createMockTestDto.subtopics(), pageable);
+        List<Subtopic> subtopics = new ArrayList<>();
+        for(SubtopicDto subtopicDto : createMockTestDto.subtopicDtos()) {
+            Subtopic subtopic = subtopicService.getSubtopicById(subtopicDto.subId(), subtopicDto.subtopicId());
+            subtopics.add(subtopic);
+        }
+        Optional<List<Long>> Qids = questionRepository.findQuestionIdsBySubtopics(subtopics, pageable);
         return Qids.orElse(null);
     }
 

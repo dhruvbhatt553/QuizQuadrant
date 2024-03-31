@@ -9,17 +9,14 @@ export default function PracticePage({subtopics}) {
       let y=current-1;
       extra3 = [...curr_set];
       extra2 = [...prev_set];
-      // for(let i=0;i<curr_set.length;i++) {
-      // //  curr_set.push(questions[i]);
-    
-      // }
+     
       if(y===1) {
         extra1 = [];
       }
       else {
         extra1 = [];
         for(let i=5*(y-2);i<Math.min(total,5*(y-1));i++) {
-          extra1.push(questions[i]);
+          extra1.push(cachedQuestions[i]);
         }
       }
       changeCurrent(y);
@@ -31,15 +28,13 @@ export default function PracticePage({subtopics}) {
       extra1 = [...curr_set];
       extra2 = [...next_set];
       extra = [...responses];
+      extra5 = [...cachedQuestions];
       console.log("gello");
       console.log(extra);
       extra4 = [...skips];
         for(let i=0;i<extra2.length;i++) {
-      //  curr_set.push(questions[i]);
       extra.push([false,false,false,false]);
       extra4.push(Math.floor(Math.random()*4));
-
-    
       }
       let x = total/5;
       if(total%5!==0)
@@ -51,7 +46,7 @@ export default function PracticePage({subtopics}) {
         extra3 = [];
         for(let i=y*5;i<Math.min((y+1)*5,total);i++) {
           extra3.push(questions[i]);
-
+          extra5.push(questions[i]);
         }
       }
 
@@ -63,6 +58,8 @@ export default function PracticePage({subtopics}) {
       changeCurrent(y);
       changeResponses(extra);
       changeSkips(extra4);
+      changeCachedQuestions(extra5);
+
 
     }
     changeCurr_Set(extra2);
@@ -71,28 +68,21 @@ export default function PracticePage({subtopics}) {
    
 
   }
-
-  // function push_initial() {
-  //   if(responses.length-1<5*current)
-  //         {
-  //         }
-
-  // }
-
-
-  const length = subtopics.length;
+ const length = subtopics.length;
   const total = questions.length;
   let tracker = Array(length).fill(0);
   
-  let extra1=[],extra2=[],extra3=[],extra=[],extra4=[];
+  let extra1=[],extra2=[],extra3=[],extra=[],extra4=[],extra5=[];
   for(let i=0;i<Math.min(total,5);i++) {
     extra2.push(questions[i]);
+    extra5.push(questions[i]);
     extra.push([false,false,false,false]);
     extra4.push(Math.floor(Math.random()*4));
 
   }
   for(let i=5;i<Math.min(total,10);i++) {
     extra3.push(questions[i]);
+    extra5.push(questions[i]);
   }
 
 
@@ -102,6 +92,7 @@ export default function PracticePage({subtopics}) {
   const[prev_set,changePrev_Set] = useState(extra1);
   const[next_set,changeNext_Set] = useState(extra3);
   const[skips,changeSkips] = useState(extra4);
+  const[cachedQuestions,changeCachedQuestions] = useState(extra5);
 
 
 
@@ -127,7 +118,7 @@ export default function PracticePage({subtopics}) {
         </div>
       </div>
        <div onClick={()=>console.log(responses)}>
-      print
+      submit
     </div>
     </div>
    

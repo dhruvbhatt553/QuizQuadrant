@@ -37,21 +37,34 @@ export default function QuestionContainer({question , number, shift, responses, 
     }
     return(
         <div className='border border-blue-300 mx-4 text-start'>
-            <div className='py-3 ps-4 border-b-blue-300 border-b font-semibold'>
-                Question {number}
+            <div className='flex justify-between border-b-blue-300 border-b items-center px-4'>
+                <div className='py-3   font-semibold'>
+                    Question {number}
+                </div>
+                <div className='flex gap-x-2'>
+                    <div className='bg-yellow-400 p-1 rounded'>
+                        +{question.maxMarks}
+                    </div>
+                    
+                    <div className='bg-red-400 p-1 rounded'>
+                        -{question.maxMarks}
+                    </div>
+                </div>
             </div>
             <div className='py-3 px-4 flex justify-between'>
                 <div>
-                <div className='text-[14px] w-4/5 '>
-                    {question.questionText}
-                </div>
-                <div>
-                    <img src={question.questionImage} 
-                    className='w-1/5'
-                    alt="loading"
-                    onError={handleImageError}
-                    />
-                </div>
+                    
+                            <div className='text-[14px] w-4/5 '>
+                                {question.questionText}
+                            </div>
+                    
+                    <div>
+                        <img src={question.questionImage} 
+                        className='w-1/5'
+                        alt="loading"
+                        onError={handleImageError}
+                        />
+                    </div>
                 </div>
 
                 <div className='font-serif font-bold'>

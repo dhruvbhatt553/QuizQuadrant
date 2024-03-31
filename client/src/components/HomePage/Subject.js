@@ -1,11 +1,10 @@
 import React from 'react';
 import Subtopics from './Subtopics';
 
-
 export default function Subject({ subject }) {
     return (
         <div className='shadow md:basis-1/3 sm:basis-0 py-4 px-6 border rounded-xl font-mono ' >
-            <div className='font-extrabold text-xl'>
+            <div className='font-extrabold text-xl hover:underline hover:font-bold hover:text-red-700 cursor-pointer'>
                 {subject.title}
             </div>
             <div className='mt-6 text-start'>
