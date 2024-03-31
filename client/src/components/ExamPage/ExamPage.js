@@ -20,8 +20,9 @@ export default function ExamPage() {
     const [currQuestionMarkedAnswer, setCurrQuestionMarkedAnswer] = useState([]);
 
     const rotateArray = (arr) => {
-        const rotationFactor = userId % examId;
-        let count = rotationFactor % arr.length;
+     //   const rotationFactor = userId % examId;
+     const rotationFactor = 2; 
+     let count = rotationFactor % arr.length;
         let i = arr.length - 1;
         while(count > 0) {
             let temp = arr[0];
