@@ -1,15 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import examContext from '../../context/exam/examContext';
 
-export default function InstructionDiv(props) {
+export default function InstructionDiv() {
 
-    const { duration, handleInstructionRead } = props;
+    const { examData, handleInstructionRead } = useContext(examContext);
 
     return (
         <div id='instructionDiv' className='w-full h-[calc(100%-16rem)] lg:h-[calc(100%-6rem)] px-5 py-3 overflow-auto text-left'>
             <h1 className='text-xl font-bold text-center mb-3'>INSTRUCTIONS</h1>
             <h1 className='font-bold'>Read the instructions carefully before starting the exam:</h1>
             <ul className='list-disc ml-5 my-3'>
-                <li className='my-2'>The duration of the examination is <b>{duration}</b> minutes. The clock will be set on the server. The countdown timer at the top right-hand corner of your screen displays the time available for you to complete the examination.</li>
+                <li className='my-2'>The duration of the examination is <b>{examData.duration}</b> minutes. The clock will be set on the server. The countdown timer at the top right-hand corner of your screen displays the time available for you to complete the examination.</li>
                 <li className='my-2'>When the timer reaches zero, the examination will end automatically. If you want, you can press <b>FINISH EXAM</b> button to end the exam.</li>
                 <li className='my-2'>To navigate to a question, click on the question number in the Question Palette. This does <b>NOT</b> save your answer to the current question.</li>
                 <li className='my-2'>Each MCQ/MSQ has four options. Clicking on an option will select it and clicking on it again will unselect it. For MCQ, only one option can be selected at any time. For MSQ, more than one option can be selected. Clicking the <b>Clear</b> button will clear all selected options for that question.</li>

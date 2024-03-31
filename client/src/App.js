@@ -18,6 +18,7 @@ import PracticePage from './components/Practice/PracticePage';
 import data from './dummy-data/data';
 import Profile from './components/Profile/Profile';
 import Leaderboard from './components/Leaderboard/Leaderboard';
+import ExamState from './context/exam/ExamState';
 
 
 
@@ -33,7 +34,7 @@ function App() {
               <Route exact path="/auth" element={<Sign />} />
               <Route exact path="/mock-test" element={<MockTestSelection />} />
               <Route exact path="/create-exam" element={<CreateExam subjectwiseTopics={dummyData} />} />
-              <Route exact path="/exam" element={<ExamPage />} />
+              <Route exact path="/exam" element={<><ExamState><ExamPage /></ExamState></>} />
               <Route exact path="/create-question" element={<CreateQuestion subjectwiseTopics={dummyData} />} />
               <Route exact path="/practice" element={<PracticePage subtopics={data[0].subtopics}/>} />
               <Route exact path="/profile" element={<Profile />} />

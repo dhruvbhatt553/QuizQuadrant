@@ -30,34 +30,34 @@ const q1 = {
     "options": [
         {
             "id": 1,
-            "statement": "option A",
+            "statement": "q1 option A",
             "hasImage": false,
             "imageURL": "",
-            "isMarked": false
+            "isMarked": true
         },
         {
             "id": 2,
-            "statement": "option B",
+            "statement": "q1 option B",
             "hasImage": false,
             "imageURL": "",
-            "isMarked": false
+            "isMarked": true
         },
         {
             "id": 3,
-            "statement": "option C",
+            "statement": "q1 option C",
             "hasImage": true,
             "imageURL": "URL Exam - 3 Q - 1 Option - C",
             "isMarked": false
         },
         {
             "id": 4,
-            "statement": "option D",
+            "statement": "q1 option D",
             "hasImage": true,
             "imageURL": "URL Exam - 3 Q - 1 Option - D",
             "isMarked": false
         }
     ],
-    "imageURL": "URL Exam - 3 Q - 1"
+    "imageURL": "https://media.istockphoto.com/id/1317323736/photo/a-view-up-into-the-trees-direction-sky.jpg?s=612x612&w=0&k=20&c=i4HYO7xhao7CkGy7Zc_8XSNX_iqG0vAwNsrH1ERmw2Q="
 };
 
 const q2 = {
@@ -70,31 +70,31 @@ const q2 = {
     "options": [
         {
             "id": 5,
-            "statement": "option A",
+            "statement": "q2 option A",
             "hasImage": false,
             "imageURL": "",
             "isMarked": false
         },
         {
             "id": 6,
-            "statement": "option B",
+            "statement": "q2 option B",
             "hasImage": false,
             "imageURL": "",
             "isMarked": false
         },
         {
             "id": 7,
-            "statement": "option C",
+            "statement": "q2 option C",
             "hasImage": true,
             "imageURL": "URL Exam - 3 Q - 2 Option - C",
             "isMarked": false
         },
         {
             "id": 8,
-            "statement": "option D",
+            "statement": "q2 option D",
             "hasImage": true,
             "imageURL": "URL Exam - 3 Q - 2 Option - D",
-            "isMarked": false
+            "isMarked": true
         }
     ],
     "imageURL": "URL Exam - 3 Q - 2"
@@ -327,7 +327,7 @@ const q8 = {
             "statement": "Option C",
             "hasImage": true,
             "imageURL": "URL Exam - 3 Q - 3 Option - C",
-            "isMarked": false
+            "isMarked": true
         },
         {
             "id": 12,
