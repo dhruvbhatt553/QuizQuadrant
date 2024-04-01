@@ -10,6 +10,9 @@ export default function NavBar() {
                 <button className='border border-blue-800 p-2'>
                     Make Test/ Mock test
                 </button>
+                <Link to={"/create-question"}>
+                    Create Question
+                </Link>
                 <Link to="/auth">
                     <img src="/images/log-in.png"
                         width={ "40px" }

@@ -2,17 +2,17 @@ import React, { useContext, useEffect, useState } from 'react';
 import TitleDiv from './TitleDiv';
 import InstructionDiv from './InstructionDiv';
 import QuestionDiv from './QuestionDiv';
-import NavigationDiv from './NavigationDiv';
 import UtilityDiv from './UtilityDiv';
 import ExamFinishDiv from './ExamFinishDiv';
 import examContext from '../../context/exam/examContext';
 
 export default function ExamPage() {
   
-    const { examStart, examFinish, examData, fetchExamData } = useContext(examContext);
+    const { examStart, examFinish, examData, fetchExamData, startTimer } = useContext(examContext);
 
     useEffect(() => {
-        fetchExamData();
+        setTimeout(() => { fetchExamData(); }, 2000);
+        startTimer("16:36", 5);
         console.log("exam div rendered ...");
     }, []);
 
@@ -29,7 +29,6 @@ export default function ExamPage() {
                                 <TitleDiv />
                                 { !examStart && (<InstructionDiv />) }
                                 { examStart && (<QuestionDiv />) }
-                                { examStart && (<NavigationDiv />) }
                             </div>
                             <div id='rightDiv' className='w-full h-[calc(100%-6rem)] lg:w-1/4 lg:h-full float-end hidden lg:block bg-gray-300 border-black lg:border-l-4'>
                                 <UtilityDiv />

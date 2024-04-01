@@ -19,15 +19,21 @@ import data from './dummy-data/data';
 import Profile from './components/Profile/Profile';
 import Leaderboard from './components/Leaderboard/Leaderboard';
 import ExamState from './context/exam/ExamState';
-import { useEffect } from 'react';
+import {useContext, useEffect} from 'react';
 import PracticequestionState from "./context/practiceQuestions/PracticequestionState";
+import CreatequestionState from "./context/create-question/CreatequestionState";
+import subjectContext from "./context/subject/subjectContext";
+import ProfileState from "./context/profile/ProfileState";
 
 
 
 function App() {
 
+  const { fetchSubjects } = useContext(subjectContext);
+
   useEffect(() => {
-    console.log("dkhfbvkldgf");
+    console.log("Appsladnvljasbgf");
+    fetchSubjects();
   }, []);
 
   return (
@@ -42,9 +48,9 @@ function App() {
               <Route exact path="/mock-test" element={<MockTestSelection />} />
               <Route exact path="/create-exam" element={<CreateExam subjectwiseTopics={dummyData} />} />
               <Route exact path="/exam" element={<><ExamState><ExamPage /></ExamState></>} />
-              <Route exact path="/create-question" element={<CreateQuestion subjectwiseTopics={dummyData} />} />
+              <Route exact path="/create-question" element={<><CreatequestionState><CreateQuestion /></CreatequestionState></>} />
               <Route exact path="/practice" element={<><PracticequestionState><PracticePage subtopics={data[0].subtopics}/></PracticequestionState></>} />
-              <Route exact path="/profile" element={<Profile />} />
+              <Route exact path="/profile" element={<><ProfileState><Profile /></ProfileState></>} />
               <Route exact path="/leaderboard" element={<Leaderboard />} />
               <Route exact path="/result" element={<Leaderboard />} />
             </Routes>

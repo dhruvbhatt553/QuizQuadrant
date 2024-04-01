@@ -103,8 +103,8 @@ public class ExamService {
         return examRepository.findById(examId).orElse(null);
     }
 
-    public void calculateResult(Long examId) {
-        resultService.calculateResult(this.getExamById(examId));
+    public Boolean calculateResult(Long examId) {
         examRepository.markResultGenerated(examId);
+        return resultService.calculateResult(this.getExamById(examId));
     }
 }

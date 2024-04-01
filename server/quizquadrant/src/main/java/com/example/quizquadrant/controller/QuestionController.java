@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @CrossOrigin
@@ -41,6 +44,11 @@ public class QuestionController {
     @PostMapping("/create-question")
     public Question createQuestion(@RequestBody CreateQuestionDto createQuestionDto) {
         return questionService.createQuestion(createQuestionDto);
+    }
+
+    @GetMapping("/get-question-by-id")
+    public PracticeQuestionDto getQuestion(@RequestParam("questionID") Long qid) {
+        return questionService.getQuestionById(qid);
     }
 
 }
