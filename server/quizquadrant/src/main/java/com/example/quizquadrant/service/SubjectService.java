@@ -32,14 +32,20 @@ public class SubjectService {
         List<Subject> subjects = subjectRepository.findAll();
         List<SubjectDto> subjectDtos = new ArrayList<>();
         for (Subject subject : subjects) {
-
+            Integer toq = 0;
             List<SubtopicDto> subtopicDtos = new ArrayList<>();
             for(Subtopic subtopic : subject.getSubtopics()) {
-                SubtopicDto subtopicDto = new SubtopicDto(subtopic.getSubtopicName(), subject.getId(), subtopic.getId());
+                SubtopicDto subtopicDto = new SubtopicDto(
+                        subtopic.getSubtopicName(),
+                        subject.getId(),
+                        subtopic.getQuestions().size(),
+                        subtopic.getId()
+                );
+                toq += subtopic.getQuestions().size();
                 subtopicDtos.add(subtopicDto);
             }
 
-            SubjectDto subjectDto = new SubjectDto(subject.getSubName(), subject.getId(), subtopicDtos);
+            SubjectDto subjectDto = new SubjectDto(subject.getSubName(), subject.getId(),toq, subtopicDtos);
             subjectDtos.add(subjectDto);
         }
         return subjectDtos;

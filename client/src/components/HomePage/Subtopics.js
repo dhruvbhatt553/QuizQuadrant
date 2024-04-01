@@ -1,10 +1,14 @@
 import React from 'react';
+import {Link} from "react-router-dom";
 
-export default function Subtopics({ name }) {
+export default function Subtopics({ subtopic }) {
     return (
-        <button className='text-lg hover:underline hover:font-bold hover:text-red-700
-         text-start '>
-        {name}
-        </button>
+            <Link
+                to={"/practice"}
+                state={{ bySubject: false, subject: null, subtopic: subtopic, total: subtopic.noq }}
+                className='text-lg hover:underline hover:font-bold hover:text-red-700 text-start inline-block'
+            >
+                {subtopic.subtopicName}
+            </Link>
     );
 };

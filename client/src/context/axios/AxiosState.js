@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import AxiosContext from './axiosContext';
+import React, { useState } from "react";
+import axiosContext from "./axiosContext";
+
 
 const AxiosState = (props) => {
-    <AxiosContext.Provider value={{  }}>
-        {props.children}
-    </AxiosContext.Provider>
+   AxiosState.pr
+   
 };
