@@ -234,13 +234,18 @@ public class PrivateQuestionService {
             imageService.removeImage(ImageTypes.PRIVATE_OPTION,q.getPrivateOptions().get(3).getId());
             imageService.removeImage(ImageTypes.PRIVATE_SOLUTION,q.getPrivateSolution().getId());
             privateOptionService.removePrivateOptions(q.getPrivateOptions());
+            this.removePrivateQuestion(q);
             privateSolutionService.removePrivateSolution(q.getPrivateSolution());
         }
-        removePrivateQuestions(privateQuestionsList);
+//        removePrivateQuestions(privateQuestionsList);
     }
 
     public void removePrivateQuestions(List<PrivateQuestion> privateQuestions) {
         privateQuestionRepository.deletePrivateQuestions(privateQuestions);
+    }
+
+    public void removePrivateQuestion(PrivateQuestion privateQuestion) {
+        privateQuestionRepository.deletePrivateQuestion(privateQuestion);
     }
 
 }

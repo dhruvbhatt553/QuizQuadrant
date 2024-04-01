@@ -19,31 +19,31 @@ export default function PracticePage() {
     } = useContext(practicequestionContext);
 
     useEffect(() => {
+        console.log("total questions: ", total)
+        const fetchData = async () => {
+            console.log("current page:", current, " kasbfvdsfb");
+            if (bySubject) {
+                const q2 = await fetchPracticeQuestionsBySubject(subject.subId, current);
+                console.log("first call: ", q2.length);
+                if (current === 1) {
+                    const q1 = await fetchPracticeQuestionsBySubject(subject.subId, current - 1);
+                    initialFetch(q1, q2);
+                    console.log("second call: ", q1.length);
+                }
 
-        console.log("current page:", current, " kasbfvdsfb");
-        if (bySubject) {
-            fetchPracticeQuestionsBySubject(subject.subId, current);
-            const q2 = [...questions];
-            console.log("first call: ", q2.length);
-            if (current === 1) {
-                fetchPracticeQuestionsBySubject(subject.subId, current - 1);
-                const q1 = [...questions];
-                initialFetch(q1,q2);
-                console.log("second call: ", q1.length);
+            } else {
+                const q2 = await fetchPracticeQuestionsBySubtopic(subtopic.subId, subtopic.subtopicId, current);
+                if (current === 1) {
+                    const q1 = await fetchPracticeQuestionsBySubtopic(subtopic.subId, subtopic.subtopicId, current - 1);
+                    initialFetch(q1, q2);
+                }
+
             }
 
-        } else {
-            fetchPracticeQuestionsBySubtopic(subtopic.subId, subtopic.subtopicId, current);
-            const q1 = [...questions];
-            if (current === 1) {
-                fetchPracticeQuestionsBySubtopic(subtopic.subId, subtopic.subtopicId, current - 1);
-                const q2 = [...questions];
-                initialFetch(q1,q2);
-            }
-
+            console.log("qqqq", questions.length);
         }
 
-        console.log("qqqq", questions.length);
+        fetchData();
 
     }, [current]);
 
@@ -77,24 +77,24 @@ export default function PracticePage() {
                 extra.push([false, false, false, false]);
                 extra4.push(Math.floor(Math.random() * 4));
             }
-            let x = total / 5;
+            let x = parseInt("" + total / 5);
             if (total % 5 !== 0)
                 x++;
             if (y === x) {
                 extra3 = [];
             } else {
-                extra3 = [...questions];
+                extra3 = [];
                 for (let i = 0; i < questions.length; i++) {
                     extra3.push(questions[i]);
                     extra5.push(questions[i]);
                 }
             }
 
-            console.log("hhh" + responses.length);
+            console.log("hhh" + responses.length +" "+x+" "+y+" "+total);
             console.log(current);
             console.log(extra1);
             console.log(extra2);
-            console.log(extra3);
+            console.log("aayush : " + extra3);
             changeCurrent(y);
             changeResponses(extra);
             changeSkips(extra4);
@@ -112,13 +112,13 @@ export default function PracticePage() {
     let extra1 = [], extra2 = [], extra3 = [], extra = [], extra4 = [], extra5 = [];
 
     const initialFetch = (q1,q2) => {
-        for (let i = 0; i < Math.min(total, 5); i++) {
+        for (let i = 0; i < q1.length; i++) {
             extra2.push(q1[i]);
             extra5.push(q1[i]);
             extra.push([false, false, false, false]);
             extra4.push(Math.floor(Math.random() * 4));
         }
-        for (let i = 0; i < Math.min(total, 5); i++) {
+        for (let i = 0; i < q2.length; i++) {
             extra3.push(q2[i]);
             extra5.push(q2[i]);
         }
@@ -130,7 +130,7 @@ export default function PracticePage() {
     const [next_set, changeNext_Set] = useState(extra3);
     const [skips, changeSkips] = useState(extra4);
     const [cachedQuestions, changeCachedQuestions] = useState(extra5);
-
+    console.log("extra3 : "+next_set.length);
     return (
         <div className='flex flex-col gap-y-6 pt-2 pb-6'>
 
@@ -144,7 +144,7 @@ export default function PracticePage() {
             }
             <div className='flex mx-4 border border-black border-2'>
                 <div
-                    className={`w-1/3 border-e-2 border-black ${prev_set.length != 0 ? 'font-bold cursor-pointer pointer-events-auto' : 'font-thin cursor-none pointer-events-none'} `}
+                    className={`w-1/3 border-e-2 border-black ${prev_set.length !== 0 ? 'font-bold cursor-pointer pointer-events-auto' : 'font-thin cursor-none pointer-events-none'} `}
                     onClick={() => requestQuestionSet(true)}
                 >
                     Previous set
@@ -153,7 +153,7 @@ export default function PracticePage() {
                     {current}
                 </div>
                 <div
-                    className={`w-1/3  ${next_set.length != 0 ? 'font-bold cursor-pointer pointer-events-auto' : 'font-thin cursor-none pointer-events-none'} `}
+                    className={`w-1/3  ${next_set.length !== 0 ? 'font-bold cursor-pointer pointer-events-auto' : 'font-thin cursor-none pointer-events-none'} `}
                     onClick={() => requestQuestionSet(false)}
                 >
                     Next set

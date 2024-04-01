@@ -44,10 +44,10 @@ public class ExamController {
     }
 
     @GetMapping("/calculate-result")
-    public void calculateResult(
+    public Boolean calculateResult(
             @RequestParam("examId") Long examId
     ) {
-        examService.calculateResult(examId);
+        return examService.calculateResult(examId);
     }
 
     @PostMapping("/create-exam")

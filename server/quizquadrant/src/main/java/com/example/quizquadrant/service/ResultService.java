@@ -53,34 +53,39 @@ public class ResultService {
         resultRepository.updateResultMarksByUserAndExam(user,exam,marks);
     }
 
-    public void calculateResult(Exam exam) {
-        for(Result result : exam.getExamResults()) {
-            User user = result.getUser();
-            int userMarks = 0;
+    public Boolean calculateResult(Exam exam) {
+        if(exam != null) {
+            for(Result result : exam.getExamResults()) {
+                User user = result.getUser();
+                int userMarks = 0;
 
 
-            for(PrivateQuestion privateQuestion : exam.getPrivateQuestions()) {
-                ExamResponses examResponse = examResponsesService.getExamResponsesByUserAndQuestion(user, privateQuestion);
-                if(examResponse != null) {
-                    int questionMark = privateQuestion.getNegativeMarks();
-                    privateOptionService.sortPrivateOptions(privateQuestion.getPrivateOptions());
+                for(PrivateQuestion privateQuestion : exam.getPrivateQuestions()) {
+                    ExamResponses examResponse = examResponsesService.getExamResponsesByUserAndQuestion(user, privateQuestion);
+                    if(examResponse != null) {
+                        int questionMark = privateQuestion.getNegativeMarks();
+                        privateOptionService.sortPrivateOptions(privateQuestion.getPrivateOptions());
 
-                    if ((examResponse.getOptionAMarked() == privateQuestion.getPrivateOptions().get(0).getIsCorrect())
-                            && (examResponse.getOptionBMarked() == privateQuestion.getPrivateOptions().get(1).getIsCorrect())
-                            && (examResponse.getOptionCMarked() == privateQuestion.getPrivateOptions().get(2).getIsCorrect())
-                            && (examResponse.getOptionDMarked() == privateQuestion.getPrivateOptions().get(3).getIsCorrect())
-                    ) {
-                        questionMark = privateQuestion.getPositiveMarks();
+                        if ((examResponse.getOptionAMarked() == privateQuestion.getPrivateOptions().get(0).getIsCorrect())
+                                && (examResponse.getOptionBMarked() == privateQuestion.getPrivateOptions().get(1).getIsCorrect())
+                                && (examResponse.getOptionCMarked() == privateQuestion.getPrivateOptions().get(2).getIsCorrect())
+                                && (examResponse.getOptionDMarked() == privateQuestion.getPrivateOptions().get(3).getIsCorrect())
+                        ) {
+                            questionMark = privateQuestion.getPositiveMarks();
+                        }
+                        userMarks += questionMark;
                     }
-                    userMarks += questionMark;
                 }
+                examResponsesService.removeResponses(user, exam.getPrivateQuestions());
+                updateMarksOfUser(user, exam, userMarks);
             }
-            examResponsesService.removeResponses(user, exam.getPrivateQuestions());
-            updateMarksOfUser(user, exam, userMarks);
+
+            privateQuestionService.transferPrivateQuestionToQuestion(exam.getPrivateQuestions());
+
+            return true;
+        } else {
+            return false;
         }
-
-        privateQuestionService.transferPrivateQuestionToQuestion(exam.getPrivateQuestions());
-
     }
 
     public List<LeaderBoardDto> getLeaderBoard (Exam exam) {

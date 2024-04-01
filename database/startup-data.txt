@@ -1,3 +1,10 @@
+insert into user values(1, "a@gmail.com", "Aayush", "password", "T");
+insert into user values(2, "d@gmail.com", "Dhruv", "password", "S");
+insert into user values(3, "k@gmail.com", "Karm", "password", "S");
+insert into user values(4, "j@gmail.com", "Jay", "password", "S");
+
+
+
 INSERT INTO subject VALUES (1, "DSA");
 INSERT INTO subject VALUES (2, "Algorithms");
 INSERT INTO subject VALUES (3, "Data Structures");

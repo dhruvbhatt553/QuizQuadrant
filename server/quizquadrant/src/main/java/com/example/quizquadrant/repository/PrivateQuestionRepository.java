@@ -15,6 +15,11 @@ public interface PrivateQuestionRepository extends JpaRepository<PrivateQuestion
 
     @Transactional
     @Modifying
+    @Query("DELETE FROM PrivateQuestion pq where pq in :privateQuestion")
+    public void deletePrivateQuestion(PrivateQuestion privateQuestion);
+
+    @Transactional
+    @Modifying
     @Query("DELETE FROM PrivateQuestion pq where pq in :privateQuestions")
     public void deletePrivateQuestions(List<PrivateQuestion> privateQuestions);
 
