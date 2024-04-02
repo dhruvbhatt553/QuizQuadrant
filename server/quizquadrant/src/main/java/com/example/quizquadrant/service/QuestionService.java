@@ -215,4 +215,44 @@ public class QuestionService {
         return Qids.orElse(null);
     }
 
+
+    //QUESTION BY ID
+    public PracticeQuestionDto getQuestionById(Long questionId) {
+
+        Question question = this.questionRepository.findById(questionId).get();
+        PracticeSolutionDto solutionDto = new PracticeSolutionDto(
+                question.getSolution().getId(),
+                question.getSolution().getStatement(),
+                question.getSolution().getHasImage(),
+                (question.getSolution().getHasImage() ? imageService.getImageById(question.getSolution().getId(), ImageTypes.SOLUTION) : "")
+        );
+        List<PracticeOptionDto> optionDtos = new ArrayList<>();
+        for(Option option: question.getOptions()) {
+            PracticeOptionDto optionDto = new PracticeOptionDto(
+                    option.getId(),
+                    option.getStatement(),
+                    option.getHasImage(),
+                    option.getIsCorrect(),
+                    (option.getHasImage() ? imageService.getImageById(option.getId(), ImageTypes.OPTION) : "")
+            );
+            optionDtos.add(optionDto);
+        }
+        PracticeQuestionDto questionDto = new PracticeQuestionDto(
+                question.getId(),
+                question.getPositiveMarks(),
+                question.getNegativeMarks(),
+                question.getStatement(),
+                question.getType(),
+                question.getSubtopic().getSubtopicName(),
+                question.getSubtopic().getSubject().getSubName(),
+                solutionDto,
+                optionDtos,
+                (question.getHasImage() ? imageService.getImageById(question.getId(), ImageTypes.QUESTION) : "")
+        );
+
+        return questionDto;
+
+    }
+
+
 }

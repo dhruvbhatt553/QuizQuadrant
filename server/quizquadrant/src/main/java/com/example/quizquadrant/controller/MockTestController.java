@@ -19,8 +19,8 @@ public class MockTestController {
         this.questionService = questionService;
     }
 
-    @GetMapping("/get-questions")
-    public List<Long> getQuestionsById(@RequestBody CreateMockTestDto createMockTestDto, @RequestParam("total") Integer total) {
+    @PostMapping("/get-question-Ids")
+    public List<Long> getQuestionIds(@RequestBody CreateMockTestDto createMockTestDto, @RequestParam("total") Integer total) {
         return questionService.getQuestionIdsBySubtopics(createMockTestDto,total);
     }
 

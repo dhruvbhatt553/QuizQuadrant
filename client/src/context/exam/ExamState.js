@@ -12,6 +12,8 @@ const ExamState = (props) => {
     const [examData, setExamData] = useState(null);
     const [currQuestionIndex, setCurrQuestionIndex] = useState(0);
     const [currQuestionData, setCurrQuestionData] = useState(null);
+    const [remainingMin, setRemainingMin] = useState(0);
+    const [remainingSec, setRemainingSec] = useState(0);
 
     const rotateArray = (arr) => {
         const userId = 1;   // hardcoded temp ...
@@ -35,13 +37,13 @@ const ExamState = (props) => {
         setExamData(data);
     };
 
-    const fetchQuestionData = (id) => {
+    const fetchQuestionData = () => {
         // TODO API call for fetching data ...
-        let flag = true;
+        const questionId = examData.questionIds[currQuestionIndex];
 
         // jugaadu logic ...
         let tempData = null;
-        switch (id) {
+        switch (questionId) {
             case 1:
                 tempData = q1;
                 break;
@@ -77,9 +79,9 @@ const ExamState = (props) => {
 
         // After data has arrived ...
         setCurrQuestionData(tempData);
-        console.log("request to fetch question with id: " + id);
+        console.log("request to fetch question with id: " + questionId);
 
-        return flag;
+        return tempData;
     }
 
     const finishExam = () => {
@@ -121,8 +123,6 @@ const ExamState = (props) => {
 
     const handleStartExamBtn = () => {
         setExamStart(true);
-        const flag = fetchQuestionData(examData.questionIds[0]);
-
         const screen = document.documentElement;
         if (screen.requestFullscreen) {
             screen.requestFullscreen();
@@ -154,7 +154,7 @@ const ExamState = (props) => {
     const handleOptionSelection = (index) => {
         const newData = new Object(currQuestionData);
         if (currQuestionData.type === "mcq") {
-            newData.options.map((option) => {
+            newData.options.map((option, i) => {
                 option.isMarked = false;
             });
             newData.options[index].isMarked = true;
@@ -164,6 +164,7 @@ const ExamState = (props) => {
         }
         console.log(currQuestionData.options[0].isMarked, currQuestionData.options[1].isMarked, currQuestionData.options[2].isMarked, currQuestionData.options[3].isMarked);
         setCurrQuestionData(newData);
+        return [newData.options[0].isMarked, newData.options[1].isMarked, newData.options[2].isMarked, newData.options[3].isMarked]
     }
 
     const handleClearSelectionBtn = () => {
@@ -177,40 +178,53 @@ const ExamState = (props) => {
 
     const handleQuestionNumberBtn = (e) => {
         let index = Number(e.target.value);
-        const flag = fetchQuestionData(examData.questionIds[index]);
-
-        if (flag) {
-            setCurrQuestionIndex(index);
-        }
+        setCurrQuestionIndex(index);
     }
 
     const handlePrevBtn = () => {
         console.log("prev");
         if (currQuestionIndex > 0) {
-            let index = currQuestionIndex;
-            index--;
-            const flag = fetchQuestionData(examData.questionIds[index]);
-            if (flag) {
-                setCurrQuestionIndex(index);
-            }
+            setCurrQuestionIndex(currQuestionIndex - 1);
         }
     }
 
     const handleNextBtn = () => {
         console.log("next");
         if (currQuestionIndex < (examData.questionIds.length - 1)) {
-            let index = currQuestionIndex;
-            index++;
-            const flag = fetchQuestionData(examData.questionIds[index]);
-            if (flag) {
-                setCurrQuestionIndex(index);
-            }
+            setCurrQuestionIndex(currQuestionIndex + 1);
         }
     }
 
     const handleSaveBtn = () => {
         // TODO API call to save answer ...
         console.log("save");
+    }
+
+    const handleSecRemaining = () => {
+        setRemainingSec((remainingSec) => { return (remainingSec === 0 ? 59 : remainingSec - 1) });
+        // console.log(remainingMin, remainingSec);
+    }
+
+    const handleMinRemaining = () => {
+        setRemainingMin((remainingMin) => { return remainingMin - 1 });
+        console.log(remainingMin, remainingSec);
+    }
+
+    const startTimer = (examStartTime, duration) => {
+        const examStartTimeSplit = examStartTime.split(":");
+        const currDate = new Date(Date.now());
+        const minutesElapsed = ((currDate.getHours() - parseInt(examStartTimeSplit[0])) * 60) + (currDate.getMinutes() - parseInt(examStartTimeSplit[1]));
+        const startMin = duration - minutesElapsed - 1;
+        const startSec = 60 - currDate.getSeconds();
+        setRemainingMin((remainingMin) => { return startMin });
+        setRemainingSec((remainingSec) => { return startSec });
+        console.log("timer start ...");
+        setInterval(handleSecRemaining, 1000);
+        setTimeout(() => {
+            console.log("start min timer ...");
+            setRemainingMin((remainingMin) => { return remainingMin - 1 });
+            setInterval(handleMinRemaining, 60000);
+        }, (startSec + 1) * 1000);
     }
 
     return (
@@ -223,6 +237,8 @@ const ExamState = (props) => {
                 examData,
                 currQuestionIndex,
                 currQuestionData,
+                remainingMin,
+                remainingSec,
                 fetchExamData,
                 fetchQuestionData,
                 finishExam,
@@ -234,7 +250,8 @@ const ExamState = (props) => {
                 handleQuestionNumberBtn,
                 handlePrevBtn,
                 handleNextBtn,
-                handleSaveBtn
+                handleSaveBtn,
+                startTimer
             }}
         >
             {props.children}

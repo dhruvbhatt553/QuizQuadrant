@@ -50,7 +50,7 @@ export default function QuestionContainer({question, number, shift, responses, r
                                 </div>
 
                                 <div className='bg-red-400 p-1 rounded'>
-                                    -{question.negativeMark}
+                                    {question.negativeMark}
                                 </div>
                             </div>
                         </div>

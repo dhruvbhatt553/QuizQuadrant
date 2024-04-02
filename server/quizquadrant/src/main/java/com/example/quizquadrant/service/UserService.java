@@ -40,9 +40,17 @@ public class UserService {
         Optional<User> userOptional = userRepository.findById(userId);
         if(userOptional.isPresent()) {
             User user = userOptional.get();
-            List<Long> examsCreated = new ArrayList<>();
+            List<UserProfileOngoingAndFutureExamDto> examsCreated = new ArrayList<>();
             for(Exam exam: user.getExamsCreated()) {
-                examsCreated.add(exam.getId());
+                examsCreated.add(
+                        new UserProfileOngoingAndFutureExamDto(
+                        exam.getId(),
+                        exam.getTitle(),
+                        exam.getStartDateTime().getYear() + "-" + exam.getStartDateTime().getMonthValue() + "-" + exam.getStartDateTime().getDayOfMonth(),
+                        exam.getStartDateTime().getHour() + ":" + exam.getStartDateTime().getMinute(),
+                        exam.getDuration(),
+                        exam.getTotalMarks()
+                ));
             }
             List<UserProfilePastExamDto> pastExams = new ArrayList<>();
             List<UserProfileOngoingAndFutureExamDto> ongoingExams = new ArrayList<>();

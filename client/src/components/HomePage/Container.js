@@ -7,9 +7,9 @@ export default function Container() {
 
     const { subjects, fetchSubjects } = useContext(subjectContext);
 
-    useEffect(() => {
-        fetchSubjects();
-    }, []);
+    // useEffect(() => {
+    //     // fetchSubjects();
+    // }, []);
 
     return (
         <div className='mt-3'>
