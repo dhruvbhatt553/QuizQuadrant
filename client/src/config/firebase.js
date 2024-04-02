@@ -10,15 +10,6 @@ const firebaseConfig = {
     messagingSenderId: `${process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID}`,
     appId: `${process.env.REACT_APP_FIREBASE_APP_ID}`,
     measurementId: `${process.env.REACT_APP_FIREBASE_MEASUREMENT_ID}`
-
-
-    // apiKey: "AIzaSyDX0iHmJoIZ4oHqkUY7-ZaF6GTKZX0hUYU",
-    // authDomain: "quizquadrant-project.firebaseapp.com",
-    // projectId: "quizquadrant-project",
-    // storageBucket: "quizquadrant-project.appspot.com",
-    // messagingSenderId: "1095498022985",
-    // appId: "1:1095498022985:web:e4365eec423067f71cbf98",
-    // measurementId: "G-SHMD9790ZS"
 };
 
 // Initialize Firebase
