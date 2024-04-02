@@ -24,6 +24,7 @@ import PracticequestionState from "./context/practiceQuestions/PracticequestionS
 import CreatequestionState from "./context/create-question/CreatequestionState";
 import subjectContext from "./context/subject/subjectContext";
 import ProfileState from "./context/profile/ProfileState";
+import ResultState from "./context/result/ResultState";
 
 
 
@@ -51,8 +52,8 @@ function App() {
               <Route exact path="/create-question" element={<><CreatequestionState><CreateQuestion /></CreatequestionState></>} />
               <Route exact path="/practice" element={<><PracticequestionState><PracticePage subtopics={data[0].subtopics}/></PracticequestionState></>} />
               <Route exact path="/profile" element={<><ProfileState><Profile /></ProfileState></>} />
-              <Route exact path="/leaderboard" element={<Leaderboard />} />
-              <Route exact path="/result" element={<Leaderboard />} />
+              <Route exact path="/leaderboard" element={<><ResultState><Leaderboard /></ResultState></>} />
+              <Route exact path="/result" element={<><ResultState><Leaderboard /></ResultState></>} />
             </Routes>
 
           </div>

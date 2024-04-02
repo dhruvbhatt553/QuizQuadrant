@@ -1,24 +1,35 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Link} from 'react-router-dom';
+import {Link, useLocation} from 'react-router-dom';
 import profileContext from "../../context/profile/profileContext";
 
 export default function Profile() {
 
+    const location = useLocation();
+    const { userId } = location.state;
     const [userProfile, setUserProfile] = useState(null);
-    const { fetchProfile, generateResult } = useContext(profileContext);
+    const [isGenerating, setIsGenerating] = useState(false);
+    const {fetchProfile, generateResult} = useContext(profileContext);
 
     const handleGenerateResult = async (index) => {
+        setIsGenerating((isGenerating) => {
+            return true;
+        });
         let tempUser = new Object(userProfile);
         const response = await generateResult(userProfile.examsCreated[index].id);
         console.log("iskdhbvkhasbgkjasfbksbf: ", userProfile.examsCreated[index].id);
-        console.log("response: "+response);
+        console.log("response: " + response);
         tempUser.examsCreated[index].isResultGenerated = true;
         setUserProfile(tempUser);
+        setTimeout(() => {
+            setIsGenerating((isGenerating) => {
+                return false;
+            });
+        }, 2000);
     }
 
     useEffect(() => {
         const fetchData = async () => {
-            const data = await fetchProfile(1);
+            const data = await fetchProfile(userId);
             setUserProfile(data);  // hardcoded temp ...
             console.log(data);
         };
@@ -89,36 +100,40 @@ export default function Profile() {
                                                                             className='text-start'>{exam.totalMarks}</span>
                                                                     </div>
                                                                     {
-                                                                        exam.isResultGenerated ?
-                                                                            (
-                                                                                <Link
-                                                                                    to="/result"
-                                                                                    state={{
-                                                                                        isLeaderboard: false,
-                                                                                        examId: exam.id,
-                                                                                        examName: exam.title,
-                                                                                        totalMarks: exam.totalMarks
-                                                                                    }}
-                                                                                    value={exam.id}
-                                                                                    className='inline-block bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 rounded-lg px-3 py-2 mt-3 font-bold text-white'
-                                                                                    onClick={(e) => {
-                                                                                        console.log(e.target.value)
-                                                                                    }}
-                                                                                >
-                                                                                    Show Result
-                                                                                </Link>
-                                                                            ) :
-                                                                            (
-                                                                                <button
-                                                                                    value={exam.id}
-                                                                                    className='bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 rounded-lg px-3 py-2 mt-3 font-bold text-white'
-                                                                                    onClick={async (e) => {
-                                                                                        await handleGenerateResult(index);
-                                                                                    }}
-                                                                                >
-                                                                                    Generate Result
-                                                                                </button>
-                                                                            )
+                                                                        ((new Date(exam.startDate + " " + exam.startTime)) < (new Date(Date.now()) - (exam.duration * 60 * 1000))) &&
+                                                                        (
+                                                                            exam.isResultGenerated ?
+                                                                                (
+                                                                                    <Link
+                                                                                        to="/result"
+                                                                                        state={{
+                                                                                            isLeaderboard: false,
+                                                                                            examId: exam.id,
+                                                                                            examName: exam.title,
+                                                                                            totalMarks: exam.totalMarks
+                                                                                        }}
+                                                                                        value={exam.id}
+                                                                                        className='inline-block bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 rounded-lg px-3 py-2 mt-3 font-bold text-white'
+                                                                                        onClick={(e) => {
+                                                                                            console.log(e.target.value)
+                                                                                        }}
+                                                                                    >
+                                                                                        Show Result
+                                                                                    </Link>
+                                                                                ) :
+                                                                                (
+                                                                                    <button
+                                                                                        value={exam.id}
+                                                                                        className={`bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 rounded-lg px-3 py-2 mt-3 font-bold text-white disabled:pointer-events-none disabled:bg-red-600`}
+                                                                                        disabled={isGenerating}
+                                                                                        onClick={async (e) => {
+                                                                                            await handleGenerateResult(index);
+                                                                                        }}
+                                                                                    >
+                                                                                        {isGenerating ? "Generating Result ..." : "Generate Result"}
+                                                                                    </button>
+                                                                                )
+                                                                        )
                                                                     }
                                                                 </div>
                                                             </div>

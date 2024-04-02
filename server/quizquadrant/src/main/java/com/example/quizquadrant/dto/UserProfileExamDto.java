@@ -1,6 +1,6 @@
 package com.example.quizquadrant.dto;
 
-public record UserProfilePastExamDto(
+public record UserProfileExamDto(
         Long id,
         String title,
         String startDate,

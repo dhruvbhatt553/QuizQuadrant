@@ -70,6 +70,7 @@ export default function PracticePage() {
             extra2 = [...next_set];
             extra = [...responses];
             extra5 = [...cachedQuestions];
+            extra6 = [...attempted];
             //console.log("gello");
             console.log(extra);
             extra4 = [...skips];
@@ -87,10 +88,11 @@ export default function PracticePage() {
                 for (let i = 0; i < questions.length; i++) {
                     extra3.push(questions[i]);
                     extra5.push(questions[i]);
+                    extra6.push(false);
                 }
             }
 
-            console.log("hhh" + responses.length +" "+x+" "+y+" "+total);
+            console.log("hhh" + responses.length +" "+x+" "+y+" "+total+" "+questions.length);
             console.log(current);
             console.log(extra1);
             console.log(extra2);
@@ -99,6 +101,7 @@ export default function PracticePage() {
             changeResponses(extra);
             changeSkips(extra4);
             changeCachedQuestions(extra5);
+            setAttempted(extra6);
 
 
         }
@@ -109,18 +112,20 @@ export default function PracticePage() {
 
     }
 
-    let extra1 = [], extra2 = [], extra3 = [], extra = [], extra4 = [], extra5 = [];
+    let extra1 = [], extra2 = [], extra3 = [], extra = [], extra4 = [], extra5 = [], extra6 = [];
 
     const initialFetch = (q1,q2) => {
         for (let i = 0; i < q1.length; i++) {
             extra2.push(q1[i]);
             extra5.push(q1[i]);
+            extra6.push(false);
             extra.push([false, false, false, false]);
             extra4.push(Math.floor(Math.random() * 4));
         }
         for (let i = 0; i < q2.length; i++) {
             extra3.push(q2[i]);
             extra5.push(q2[i]);
+            extra6.push(false);
         }
     }
 
@@ -130,6 +135,9 @@ export default function PracticePage() {
     const [next_set, changeNext_Set] = useState(extra3);
     const [skips, changeSkips] = useState(extra4);
     const [cachedQuestions, changeCachedQuestions] = useState(extra5);
+    const [attempted, setAttempted] = useState(extra6);
+
+
     console.log("extra3 : "+next_set.length);
     return (
         <div className='flex flex-col gap-y-6 pt-2 pb-6'>
@@ -137,12 +145,19 @@ export default function PracticePage() {
             {
                 curr_set && curr_set.length>0 &&
                 curr_set.map((question, index) => (
-                    <QuestionContainer key={index} question={question} number={5 * (current - 1) + (index + 1)}
-                                                       shift={skips[5 * (current - 1) + (index)]} responses={responses}
-                                                       resHandler={changeResponses}/>)
+                        <QuestionContainer  key = {index}
+                                            question = {question}
+                                            number = {5 * (current - 1) + (index + 1)}
+                                            shift = {skips[5 * (current - 1) + (index)]}
+                                            responses = {responses}
+                                            resHandler = {changeResponses}
+                                            attempted = {attempted}
+                                            setAttempted = {setAttempted}
+                        />
+                    )
                 )
             }
-            <div className='flex mx-4 border border-black border-2'>
+            <div className='flex mx-4 border-black border-2'>
                 <div
                     className={`w-1/3 border-e-2 border-black ${prev_set.length !== 0 ? 'font-bold cursor-pointer pointer-events-auto' : 'font-thin cursor-none pointer-events-none'} `}
                     onClick={() => requestQuestionSet(true)}

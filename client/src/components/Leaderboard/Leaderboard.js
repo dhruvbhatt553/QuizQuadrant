@@ -1,28 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import leaderboardData from '../../dummy-data/leaderboard';
+import React, {useContext, useEffect, useState} from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import resultContext from "../../context/result/resultContext";
 
 export default function Leaderboard() {
 
     const location = useLocation();
     const { isLeaderboard, examId, examName, totalMarks, obtainedMarks, isPresent } = location.state;
     const [leaderboard, setLeaderboard] = useState([]);
+    const { fetchResult, fetchLeaderboard } = useContext(resultContext);
 
-    const fetchResult = (examId) => {
-        // TODO API call ...
-        setLeaderboard(leaderboardData);
-        console.log("Result: " + examId);
-    }
-
-    const fetchLeaderboard = (examId) => {
-        // TODO API call ...
-        setLeaderboard(leaderboardData);
-        console.log("Leaderboard: " + examId);
-    }
 
     useEffect(() => {
-        if(isLeaderboard) fetchLeaderboard(examId);
-        else fetchResult(examId);
+        let data = [];
+        const fetchData = async () => {
+            if(isLeaderboard) {
+                data = await fetchLeaderboard(examId);
+            } else {
+                data = await fetchResult(examId);
+            }
+            setLeaderboard(data);
+        };
+        fetchData();
+        console.log(leaderboard);
+        console.log(examId);
     }, [])
 
     return (
