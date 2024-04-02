@@ -1,9 +1,6 @@
 package com.example.quizquadrant.service;
 
-import com.example.quizquadrant.dto.CreateExamDto;
-import com.example.quizquadrant.dto.CreateQuestionDto;
-import com.example.quizquadrant.dto.ExamDto;
-import com.example.quizquadrant.dto.ExamResponseDto;
+import com.example.quizquadrant.dto.*;
 import com.example.quizquadrant.model.*;
 import com.example.quizquadrant.repository.ExamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,5 +103,13 @@ public class ExamService {
     public Boolean calculateResult(Long examId) {
         examRepository.markResultGenerated(examId);
         return resultService.calculateResult(this.getExamById(examId));
+    }
+
+    public List<LeaderBoardDto> getLeaderboard (Long examId) {
+        return resultService.getLeaderBoard(this.getExamById(examId));
+    }
+
+    public List<LeaderBoardDto> getAllResult (Long examId) {
+        return resultService.getAllResult(this.getExamById(examId));
     }
 }

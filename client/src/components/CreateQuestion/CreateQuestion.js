@@ -2,31 +2,42 @@ import React, {useContext, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import subjectContext from "../../context/subject/subjectContext";
 import createQuestionContext from "../../context/create-question/createquestionContext";
+import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
+import { imageDB } from '../../config/firebase';
+import { v4 } from 'uuid';
 
 export default function CreateQuestion() {
 
     const navigate = useNavigate();
     const { subjects } = useContext(subjectContext);
     const { createQuestion } = useContext(createQuestionContext);
-    const [topicList, setTopicList] = useState([]);
+    const [isSaving, setIsSaving] = useState(false);
     const [questionType, setQuestionType] = useState("mcq");
     const [subject, setSubject] = useState("");
     const [subtopic, setSubtopic] = useState("");
     const [positiveMarks, setPositiveMarks] = useState(0);
     const [negativeMarks, setNegativeMarks] = useState(0);
     const [question, setQuestion] = useState("");
-    const [questionImage, setQuestionImage] = useState("");
+    const [questionImage, setQuestionImage] = useState(null);
     const [optionA, setOptionA] = useState("");
-    const [optionAImage, setOptionAImage] = useState("");
+    const [optionAImage, setOptionAImage] = useState(null);
     const [optionB, setOptionB] = useState("");
-    const [optionBImage, setOptionBImage] = useState("");
+    const [optionBImage, setOptionBImage] = useState(null);
     const [optionC, setOptionC] = useState("");
-    const [optionCImage, setOptionCImage] = useState("");
+    const [optionCImage, setOptionCImage] = useState(null);
     const [optionD, setOptionD] = useState("");
-    const [optionDImage, setOptionDImage] = useState("");
+    const [optionDImage, setOptionDImage] = useState(null);
     const [solution, setSolution] = useState("");
-    const [solutionImage, setSolutionImage] = useState("");
+    const [solutionImage, setSolutionImage] = useState(null);
     const [correctAnswer, setCorrectAnswer] = useState(new Set());
+    const [questionImagePreview, setQuestionImagePreview] = useState(null);
+    const [optionAImagePreview, setOptionAImagePreview] = useState(null);
+    const [optionBImagePreview, setOptionBImagePreview] = useState(null);
+    const [optionCImagePreview, setOptionCImagePreview] = useState(null);
+    const [optionDImagePreview, setOptionDImagePreview] = useState(null);
+    const [solutionImagePreview, setSolutionImagePreview] = useState(null);
+
+
 
     const sleep = async (ms) => {
         await (new Promise(resolve => setTimeout(resolve, ms)));
@@ -52,27 +63,27 @@ export default function CreateQuestion() {
             isValid = false;
             errorMsg.push("Please enter appropriate value for negative marks (i.e. less than 0)");
         }
-        if (question === "" && questionImage === "") {
+        if (question === "" && questionImagePreview === "") {
             isValid = false;
             errorMsg.push("Please enter question");
         }
-        if (optionA === "" && optionAImage === "") {
+        if (optionA === "" && optionAImagePreview === "") {
             isValid = false;
             errorMsg.push("Please enter option - A");
         }
-        if (optionB === "" && optionBImage === "") {
+        if (optionB === "" && optionBImagePreview === "") {
             isValid = false;
             errorMsg.push("Please enter option - B");
         }
-        if (optionC === "" && optionCImage === "") {
+        if (optionC === "" && optionCImagePreview === "") {
             isValid = false;
             errorMsg.push("Please enter option - C");
         }
-        if (optionD === "" && optionDImage === "") {
+        if (optionD === "" && optionDImagePreview === "") {
             isValid = false;
             errorMsg.push("Please enter option - D");
         }
-        if (solution === "" && solutionImage === "") {
+        if (solution === "" && solutionImagePreview === "") {
             isValid = false;
             errorMsg.push("Please enter solution");
         }
@@ -88,7 +99,6 @@ export default function CreateQuestion() {
     }
 
     const saveQuestion = async (data) => {
-        // TODO API call to save data ...
         const response = await createQuestion(data);
         console.log(data);
         console.log(response);
@@ -130,72 +140,99 @@ export default function CreateQuestion() {
                 solutionImageURL: solutionImage,
                 correctAnswer: [...correctAnswer]
             };
-            document.getElementById("main-div").classList.add("hidden");
-            document.getElementById("loading-div").classList.remove("hidden");
+            setIsSaving((isSaving) => { return true });
+
+            data.questionImageURL = await uploadImage(questionImage);
+            data.optionAImageURL = await uploadImage(optionAImage);
+            data.optionBImageURL = await uploadImage(optionBImage);
+            data.optionCImageURL = await uploadImage(optionCImage);
+            data.optionDImageURL = await uploadImage(optionDImage);
+            data.solutionImageURL = await uploadImage(solutionImage);
+
             await saveQuestion(data);
-            // navigate("/");
+            setIsSaving((isSaving) => { return false });
+            navigate("/");
         }
     }
 
-    const uploadImage = async () => {
-        const url = "https://media.istockphoto.com/id/183412466/photo/eastern-bluebirds-male-and-female.jpg?s=612x612&w=0&k=20&c=6_EQHnGedwdjM9QTUF2c1ce7cC3XtlxvMPpU5HAouhc=";
-        await sleep(2000);
-        return url;
+    const uploadImage = async (file) => {
+        if(file!=null) {
+            const imgRef = ref(imageDB, `images/${v4()}`);
+            const response = await uploadBytes(imgRef, file);
+            const imageURL = await getDownloadURL(response.ref);
+            return imageURL;
+        } else {
+            return "";
+        }
     }
 
     const deleteImage = async () => {
         await sleep(2000);
     }
 
-    const handleAddImage = async (baseID) => {
+    const handleAddImage = (e, baseID) => {
         document.getElementById(baseID + "Add").classList.add("hidden");
-        document.getElementById(baseID + "Preview").src = '/images/loading.gif';
-        const url = await uploadImage();
-        switch (baseID) {
-            case "questionImage":
-                setQuestionImage(url);
-                break;
-            case "optionAImage":
-                setOptionAImage(url);
-                break;
-            case "optionBImage":
-                setOptionBImage(url);
-                break;
-            case "optionCImage":
-                setOptionCImage(url);
-                break;
-            case "optionDImage":
-                setOptionDImage(url);
-                break;
-            case "solutionImage":
-                setSolutionImage(url);
-                break;
-        }
+        const file = e.target.files[0];
+        console.log(file);
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = () => {
+            switch (baseID) {
+                case "questionImage":
+                    setQuestionImagePreview(reader.result);
+                    setQuestionImage(file);
+                    break;
+                case "optionAImage":
+                    setOptionAImagePreview(reader.result);
+                    setOptionAImage(file);
+                    break;
+                case "optionBImage":
+                    setOptionBImagePreview(reader.result);
+                    setOptionBImage(file);
+                    break;
+                case "optionCImage":
+                    setOptionCImagePreview(reader.result);
+                    setOptionCImage(file);
+                    break;
+                case "optionDImage":
+                    setOptionDImagePreview(reader.result);
+                    setOptionDImage(file);
+                    break;
+                case "solutionImage":
+                    setSolutionImagePreview(reader.result);
+                    setSolutionImage(file);
+                    break;
+            }
+        };
         document.getElementById(baseID + "Remove").classList.remove("hidden");
     }
 
     const handleRemoveImage = async (baseID) => {
         document.getElementById(baseID + "Remove").classList.add("hidden");
-        document.getElementById(baseID + "Preview").src = '/images/loading.gif';
-        await deleteImage();
         switch (baseID) {
             case "questionImage":
-                setQuestionImage("");
+                setQuestionImagePreview(null);
+                setQuestionImage(null);
                 break;
             case "optionAImage":
-                setOptionAImage("");
+                setOptionAImagePreview(null);
+                setOptionAImage(null);
                 break;
             case "optionBImage":
-                setOptionBImage("");
+                setOptionBImagePreview(null);
+                setOptionBImage(null);
                 break;
             case "optionCImage":
-                setOptionCImage("");
+                setOptionCImagePreview(null);
+                setOptionCImage(null);
                 break;
             case "optionDImage":
-                setOptionDImage("");
+                setOptionDImagePreview(null);
+                setOptionDImage(null);
                 break;
             case "solutionImage":
-                setSolutionImage("");
+                setSolutionImagePreview(null);
+                setSolutionImage(null);
                 break;
         }
         document.getElementById(baseID + "Add").classList.remove("hidden");
@@ -260,12 +297,17 @@ export default function CreateQuestion() {
 
     return (
         <>
-            <div id='loading-div' className='w-full px-10 py-10 text-3xl text-center grid grid-cols-11 hidden'>
-                <div className='col-start-6'>
-                    <img src='images/loading.gif'/>
-                    <h1 className='mt-10 text-red-700 font-medium'>Saving ...</h1>
-                </div>
-            </div>
+            {
+                isSaving &&
+                (
+                    <div id='loading-div' className='w-full px-10 py-10 text-3xl text-center grid grid-cols-11'>
+                        <div className='col-start-6'>
+                            <img src='images/loading.gif'/>
+                            <h1 className='mt-10 text-red-700 font-medium'>Saving ...</h1>
+                        </div>
+                    </div>
+                )
+            }
             <div id='main-div' className='w-full h-screen px-10 py-2 text-lg'>
                 <div className='w-full my-5 grid grid-cols-3 items-center'>
                     <button id='cancel' onClick={handleCancelBtn}
@@ -337,96 +379,96 @@ export default function CreateQuestion() {
                 <div className='w-full my-2 p-3 bg-gray-200 rounded-lg border-gray-500 border-2'>
                     <label htmlFor='question' className='float-left font-bold'>Question:</label>
                     <label htmlFor='questionImage' id='questionImageAdd'
-                           className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${questionImage === "" ? "" : "hidden"}`}>Add
+                           className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${questionImage === null ? "" : "hidden"}`}>Add
                         image</label>
                     <label id='questionImageRemove' onClick={() => handleRemoveImage("questionImage")}
-                           className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${questionImage === "" ? "hidden" : ""}`}>Remove
+                           className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${questionImage === null ? "hidden" : ""}`}>Remove
                         image</label>
                     <input type='file' accept='image/*' name='questionImage' id='questionImage'
-                           onChange={() => handleAddImage("questionImage")} className='hidden'/>
+                           onChange={(e) => handleAddImage(e, "questionImage")} className='hidden'/>
                     <br/>
                     <textarea name='question' id='question' value={question} onChange={(e) => editText(e)}
                               maxLength={4294967295}
                               className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-52 focus:shadow-xl'></textarea>
                     <p className='text-end mb-2 text-gray-600 text-sm'>{question.length} / {4294967295} characters</p>
                     <div className='flex justify-center'>
-                        <img id='questionImagePreview' src={questionImage}/>
+                        <img id='questionImagePreview' src={questionImagePreview} />
                     </div>
                 </div>
                 <div className='w-full my-2 p-3 bg-gray-200 rounded-lg border-gray-500 border-2'>
                     <label htmlFor='optionA' className='float-start font-bold'>Option - A:</label>
                     <label htmlFor='optionAImage' id='optionAImageAdd'
-                           className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${optionAImage === "" ? "" : "hidden"}`}>Add
+                           className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${optionAImage === null ? "" : "hidden"}`}>Add
                         image</label>
                     <label id='optionAImageRemove' onClick={() => handleRemoveImage("optionAImage")}
-                           className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${optionAImage === "" ? "hidden" : ""}`}>Remove
+                           className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${optionAImage === null ? "hidden" : ""}`}>Remove
                         image</label>
                     <input type='file' accept='image/*' name='optionAImage' id='optionAImage'
-                           onChange={() => handleAddImage("optionAImage")} className='hidden'/>
+                           onChange={(e) => handleAddImage(e, "optionAImage")} className='hidden'/>
                     <br/>
                     <textarea name='optionA' id='optionA' value={optionA} onChange={(e) => editText(e)}
                               maxLength={65535}
                               className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
                     <p className='text-end mb-2 text-gray-600 text-sm'>{optionA.length} / {65535} characters</p>
                     <div className='flex justify-center'>
-                        <img id='optionAImagePreview' src={optionAImage}/>
+                        <img id='optionAImagePreview' src={optionAImagePreview} />
                     </div>
                 </div>
                 <div className='w-full my-2 p-3 bg-gray-200 rounded-lg border-gray-500 border-2'>
                     <label htmlFor='optionB' className='float-start font-bold'>Option - B:</label>
                     <label htmlFor='optionBImage' id='optionBImageAdd'
-                           className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${optionBImage === "" ? "" : "hidden"}`}>Add
+                           className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${optionBImage === null ? "" : "hidden"}`}>Add
                         image</label>
                     <label id='optionBImageRemove' onClick={() => handleRemoveImage("optionBImage")}
-                           className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer hidden ${optionBImage === "" ? "hidden" : ""}`}>Remove
+                           className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer hidden ${optionBImage === null ? "hidden" : ""}`}>Remove
                         image</label>
                     <input type='file' accept='image/*' name='optionBImage' id='optionBImage'
-                           onChange={() => handleAddImage("optionBImage")} className='hidden'/>
+                           onChange={(e) => handleAddImage(e, "optionBImage")} className='hidden'/>
                     <br/>
                     <textarea name='optionB' id='optionB' value={optionB} onChange={(e) => editText(e)}
                               maxLength={65535}
                               className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
                     <p className='text-end mb-2 text-gray-600 text-sm'>{optionB.length} / {65535} characters</p>
                     <div className='flex justify-center'>
-                        <img id='optionBImagePreview' src={optionBImage}/>
+                        <img id='optionBImagePreview' src={optionBImagePreview}/>
                     </div>
                 </div>
                 <div className='w-full my-2 p-3 bg-gray-200 rounded-lg border-gray-500 border-2'>
                     <label htmlFor='optionC' className='float-start font-bold'>Option - C:</label>
                     <label htmlFor='optionCImage' id='optionCImageAdd'
-                           className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${optionCImage === "" ? "" : "hidden"}`}>Add
+                           className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${optionCImage === null ? "" : "hidden"}`}>Add
                         image</label>
                     <label id='optionCImageRemove' onClick={() => handleRemoveImage("optionCImage")}
-                           className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${optionCImage === "" ? "hidden" : ""}`}>Remove
+                           className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${optionCImage === null ? "hidden" : ""}`}>Remove
                         image</label>
                     <input type='file' accept='image/*' name='optionCImage' id='optionCImage'
-                           onChange={() => handleAddImage("optionCImage")} className='hidden'/>
+                           onChange={(e) => handleAddImage(e, "optionCImage")} className='hidden'/>
                     <br/>
                     <textarea name='optionC' id='optionC' value={optionC} onChange={(e) => editText(e)}
                               maxLength={65535}
                               className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
                     <p className='text-end mb-2 text-gray-600 text-sm'>{optionC.length} / {65535} characters</p>
                     <div className='flex justify-center'>
-                        <img id='optionCImagePreview' src={optionCImage}/>
+                        <img id='optionCImagePreview' src={optionCImagePreview}/>
                     </div>
                 </div>
                 <div className='w-full my-2 p-3 bg-gray-200 rounded-lg border-gray-500 border-2'>
                     <label htmlFor='optionD' className='float-start font-bold'>Option - D:</label>
                     <label htmlFor='optionDImage' id='optionDImageAdd'
-                           className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${optionDImage === "" ? "" : "hidden"}`}>Add
+                           className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${optionDImage === null ? "" : "hidden"}`}>Add
                         image</label>
                     <label id='optionDImageRemove' onClick={() => handleRemoveImage("optionDImage")}
-                           className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${optionDImage === "" ? "hidden" : ""}`}>Remove
+                           className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${optionDImage === null ? "hidden" : ""}`}>Remove
                         image</label>
                     <input type='file' accept='image/*' name='optionDImage' id='optionDImage'
-                           onChange={() => handleAddImage("optionDImage")} className='hidden'/>
+                           onChange={(e) => handleAddImage(e, "optionDImage")} className='hidden'/>
                     <br/>
                     <textarea name='optionD' id='optionD' value={optionD} onChange={(e) => editText(e)}
                               maxLength={65535}
                               className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
                     <p className='text-end mb-2 text-gray-600 text-sm'>{optionD.length} / {65535} characters</p>
                     <div className='flex justify-center'>
-                        <img id='optionDImagePreview' src={optionDImage}/>
+                        <img id='optionDImagePreview' src={optionDImagePreview}/>
                     </div>
                 </div>
                 <div className='w-full my-2 p-3 bg-gray-200 rounded-lg border-gray-500 border-2'>
@@ -479,20 +521,20 @@ export default function CreateQuestion() {
                 <div className='w-full my-2 p-3 bg-gray-200 rounded-lg border-gray-500 border-2'>
                     <label htmlFor='solution' className='float-start font-bold'>Solution:</label>
                     <label htmlFor='solutionImage' id='solutionImageAdd'
-                           className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${solutionImage === "" ? "" : "hidden"}`}>Add
+                           className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${solutionImage === null ? "" : "hidden"}`}>Add
                         image</label>
                     <label id='solutionImageRemove' onClick={() => handleRemoveImage("solutionImage")}
-                           className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${solutionImage === "" ? "hidden" : ""}`}>Remove
+                           className={`float-end rounded-full bg-blue-700 px-3 py-1 text-white font-bold cursor-pointer ${solutionImage === null ? "hidden" : ""}`}>Remove
                         image</label>
                     <input type='file' accept='image/*' name='solutionImage' id='solutionImage'
-                           onChange={() => handleAddImage("solutionImage")} className='hidden'/>
+                           onChange={(e) => handleAddImage(e, "solutionImage")} className='hidden'/>
                     <br/>
                     <textarea name='solution' id='solution' value={solution} onChange={(e) => editText(e)}
                               maxLength={4294967295}
                               className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
                     <p className='text-end mb-2 text-gray-600 text-sm'>{solution.length} / {4294967295} characters</p>
                     <div className='flex justify-center'>
-                        <img id='solutionImagePreview' src={solutionImage}/>
+                        <img id='solutionImagePreview' src={solutionImagePreview}/>
                     </div>
                 </div>
             </div>
