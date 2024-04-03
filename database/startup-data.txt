@@ -1,9 +1,3 @@
-insert into user values(1, "a@gmail.com", "Aayush", "password", "T");
-insert into user values(2, "d@gmail.com", "Dhruv", "password", "S");
-insert into user values(3, "k@gmail.com", "Karm", "password", "S");
-insert into user values(4, "j@gmail.com", "Jay", "password", "S");
-
-
 
 INSERT INTO subject VALUES (1, "DSA");
 INSERT INTO subject VALUES (2, "Algorithms");
@@ -49,3 +43,9 @@ INSERT INTO subtopic VALUES (7, 3, "Virtualization");
 INSERT INTO subtopic VALUES (8, 3, "Security");
 INSERT INTO subtopic VALUES (9, 3, "I/O Management");
 INSERT INTO subtopic VALUES (10, 3, "Distributed Systems");
+
+
+insert into user values(1, "a@gmail.com", "Aayush", "password", "T");
+insert into user values(2, "d@gmail.com", "Dhruv", "password", "S");
+insert into user values(3, "k@gmail.com", "Karm", "password", "S");
+insert into user values(4, "j@gmail.com", "Jay", "password", "S");
