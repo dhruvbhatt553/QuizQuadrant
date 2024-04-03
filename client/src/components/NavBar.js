@@ -28,7 +28,7 @@ export default function NavBar() {
                 <Link
                     to="/profile"
                     state={{
-                        userId: 1
+                        userId: 2
                     }}
                 >
                     Profile

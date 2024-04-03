@@ -45,6 +45,15 @@ public class ExamController {
         return examService.getExamById(userId, examId);
     }
 
+    @GetMapping("/finish-exam")
+    public Boolean setFinishedExam(
+            @RequestParam("userId") Long userId,
+            @RequestParam("examId") Long examId
+    ) {
+         examService.setExamFinished(examId, userId);
+         return true;
+    }
+
     @GetMapping("/calculate-result")
     public Boolean calculateResult(
             @RequestParam("examId") Long examId
