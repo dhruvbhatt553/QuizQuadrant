@@ -332,12 +332,19 @@ export default function Profile() {
                                                                                 <span
                                                                                     className='text-start'>{exam.totalMarks}</span>
                                                                             </div>
-                                                                            <button value={exam.id}
-                                                                                className='bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 rounded-lg px-3 py-2 mt-3 font-bold text-white'
-                                                                                onClick={(e) => {
-                                                                                    console.log(e.target.value)
-                                                                                }}>Enter Exam
-                                                                            </button>
+                                                                            {
+                                                                                !exam.isFinished &&
+                                                                                (
+                                                                                    <Link
+                                                                                        to={"/exam"}
+                                                                                        state={{ examId: exam.id }}
+                                                                                        value={exam.id}
+                                                                                        className='bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 rounded-lg px-3 py-2 mt-3 font-bold text-white'
+                                                                                    >
+                                                                                        Enter Exam
+                                                                                    </Link>
+                                                                                )
+                                                                            }
                                                                         </div>
                                                                     </div>
                                                                 );

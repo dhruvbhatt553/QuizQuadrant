@@ -9,6 +9,7 @@ public record UserProfileExamDto(
         Integer totalMarks,
         Integer obtainedMarks,
         Boolean isPresent,
+        Boolean isFinished,
         Boolean isResultGenerated
 ) {
 }

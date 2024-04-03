@@ -18,16 +18,18 @@ export default function QuestionDiv() {
     const [optionsMarked, setOptionsMarked] = useState([false, false, false, false]);   // only for display purpose ...
 
     useEffect(() => {
-        console.log("hii");
-        const data = fetchQuestionData();
-        setOptionsMarked(
-            [
-                data.options[0].isMarked,
-                data.options[1].isMarked,
-                data.options[2].isMarked,
-                data.options[3].isMarked
-            ]
-        );
+        const getQuestionData = async () => {
+            const data = await fetchQuestionData();
+            setOptionsMarked(
+                [
+                    data.options[0].isMarked,
+                    data.options[1].isMarked,
+                    data.options[2].isMarked,
+                    data.options[3].isMarked
+                ]
+            );
+        }
+        getQuestionData();
     }, [currQuestionIndex]);
 
     return (

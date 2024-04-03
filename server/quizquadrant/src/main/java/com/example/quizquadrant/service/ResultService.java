@@ -35,6 +35,7 @@ public class ResultService {
                     user,
                     exam,
                     false,
+                    false,
                     0
             );
             result = resultRepository.save(result);
@@ -46,7 +47,10 @@ public class ResultService {
     }
 
     public void markUserPresent(User user, Exam exam) {
-        resultRepository.updateResultByUserAndExam(user, exam);
+        resultRepository.updateIsPresentResultByUserAndExam(user, exam);
+    }
+    public void markExamFinished(User user, Exam exam) {
+        resultRepository.updateIsFinishedResultByUserAndExam(user, exam);
     }
 
     public void updateMarksOfUser(User user, Exam exam, Integer marks) {
@@ -110,6 +114,11 @@ public class ResultService {
         }
         return lds;
 
+    }
+
+    public Boolean getIsFinished (User user, Exam exam) {
+        Result res = resultRepository.findResultsByExamAndUser(exam,user);
+        return res.getIsFinished();
     }
 
 }

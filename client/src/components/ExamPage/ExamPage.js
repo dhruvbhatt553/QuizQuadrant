@@ -5,14 +5,20 @@ import QuestionDiv from './QuestionDiv';
 import UtilityDiv from './UtilityDiv';
 import ExamFinishDiv from './ExamFinishDiv';
 import examContext from '../../context/exam/examContext';
+import {useLocation} from "react-router-dom";
 
 export default function ExamPage() {
-  
+
+    const location = useLocation();
+    const { examId } = location.state;
     const { examStart, examFinish, examData, fetchExamData, startTimer } = useContext(examContext);
 
     useEffect(() => {
-        const data = fetchExamData();
-        startTimer(data.startTime, data.duration);
+        const getExamData = async () => {
+            const data = await fetchExamData(examId);
+            startTimer(data.startTime, data.duration);
+        }
+        getExamData();
         console.log("exam div rendered ...");
     }, []);
 

@@ -2,28 +2,31 @@ import React, { useContext, useState } from 'react';
 import CreateExamContext from "./createExamContext";
 import { useNavigate } from 'react-router-dom';
 import localStorageContext from '../local-storage/localStorageContext';
+import axios from "axios";
 
 const CreateExamState = (props) => {
 
     const createNewQuestionObject = () => {
         return {
             type: "mcq",
-            subject: "",
-            subtopic: "",
+            subject: null,
+            subjectId: -1,
+            subtopic: null,
+            subtopicId: -1,
             positiveMarks: 0,
             negativeMarks: 0,
-            question: "",
-            questionImage: null,
-            optionA: "",
-            optionAImage: null,
-            optionB: "",
-            optionBImage: null,
-            optionC: "",
-            optionCImage: null,
-            optionD: "",
-            optionDImage: null,
-            solution: "",
-            solutionImage: null,
+            questionStatement: "",
+            questionImageURL: null,
+            optionAStatement: "",
+            optionAImageURL: null,
+            optionBStatement: "",
+            optionBImageURL: null,
+            optionCStatement: "",
+            optionCImageURL: null,
+            optionDStatement: "",
+            optionDImageURL: null,
+            solutionStatement: "",
+            solutionImageURL: null,
             correctAnswer: []
         };
     }
@@ -41,19 +44,23 @@ const CreateExamState = (props) => {
     const [unsaved, setUnsaved] = useState(true);
     const [candidateEmail, setCandidateEmail] = useState(new Set());
 
-    const sleep = async (ms) => {
-        await (new Promise(resolve => setTimeout(resolve, ms)));
-    }
-
     const askBeforeReload = (e) => {
         e.preventDefault();
     }
     window.addEventListener("beforeunload", askBeforeReload);
 
     const createExam = async (data) => {
-        // TODO API call to save data ...
-        await sleep(2000);
-        console.log(data);
+        const userID = 1;
+        const response = await axios.post(`http://localhost:8080/api/exam/create-exam?userId=${userID}`, {
+            title: data.examTitle,
+            duration: data.examDuration,
+            startDate: data.examDate,
+            startTime: data.examTime,
+            questionDtos: data.examQuestions,
+            emailIds: data.candidateEmail
+        });
+        console.log("response: ", response.data);
+        return response.data;
     }
 
     const validateData = () => {
