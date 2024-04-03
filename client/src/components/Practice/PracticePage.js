@@ -17,11 +17,12 @@ export default function PracticePage() {
         fetchPracticeQuestionsBySubtopic,
         questions
     } = useContext(practicequestionContext);
-
+   // let q2;
+//    let makeRequest=current;
     useEffect(() => {
         console.log("total questions: ", total)
         const fetchData = async () => {
-            console.log("current page:", current, " kasbfvdsfb");
+            console.log("current page:", current);
             if (bySubject) {
                 const q2 = await fetchPracticeQuestionsBySubject(subject.subId, current);
                 console.log("first call: ", q2.length);
@@ -47,9 +48,27 @@ export default function PracticePage() {
 
     }, [current]);
 
+    // const requestData = async (cr) => {
+    //     console.log("cr :", cr);
+    //     if (bySubject) {
+    //         const q2 = await fetchPracticeQuestionsBySubject(subject.subId, cr);
+    //         console.log("first call: ", q2.length);
+            
+
+    //     } else {
+    //         const q2 = await fetchPracticeQuestionsBySubtopic(subtopic.subId, subtopic.subtopicId, current);
+          
+    //     }
+
+    //     console.log("qqqq", questions.length);
+    // }
+
+
+
     function requestQuestionSet(p) {
         if (p) {
             let y = current - 1;
+            changeCurrent(y);
             extra3 = [...curr_set];
             extra2 = [...prev_set];
 
@@ -72,7 +91,7 @@ export default function PracticePage() {
             extra5 = [...cachedQuestions];
             extra6 = [...attempted];
             //console.log("gello");
-            console.log(extra);
+            //console.log(extra);
             extra4 = [...skips];
             for (let i = 0; i < extra2.length; i++) {
                 extra.push([false, false, false, false]);
@@ -81,14 +100,18 @@ export default function PracticePage() {
             let x = parseInt("" + total / 5);
             if (total % 5 !== 0)
                 x++;
-            if (y === x) {
+            if (y === x+1) {
                 extra3 = [];
             } else {
                 extra3 = [];
+
                 for (let i = 0; i < questions.length; i++) {
+                    console.log(i,questions[i].statement);
                     extra3.push(questions[i]);
                     extra5.push(questions[i]);
                     extra6.push(false);
+                    extra.push([false, false, false, false]);
+                    extra4.push(Math.floor(Math.random() * 4));
                 }
             }
 
@@ -126,6 +149,9 @@ export default function PracticePage() {
             extra3.push(q2[i]);
             extra5.push(q2[i]);
             extra6.push(false);
+            extra.push([false, false, false, false]);
+            extra4.push(Math.floor(Math.random() * 4));
+            changeCurrent(current+1);
         }
     }
 
@@ -147,8 +173,8 @@ export default function PracticePage() {
                 curr_set.map((question, index) => (
                         <QuestionContainer  key = {index}
                                             question = {question}
-                                            number = {5 * (current - 1) + (index + 1)}
-                                            shift = {skips[5 * (current - 1) + (index)]}
+                                            number = {5 * (current - 2) + (index + 1)}
+                                            shift = {skips[5 * (current - 2) + (index)]}
                                             responses = {responses}
                                             resHandler = {changeResponses}
                                             attempted = {attempted}
@@ -165,7 +191,7 @@ export default function PracticePage() {
                     Previous set
                 </div>
                 <div className='w-1/3 border-e-2 border-black font-extrabold'>
-                    {current}
+                    {current-1}
                 </div>
                 <div
                     className={`w-1/3  ${next_set.length !== 0 ? 'font-bold cursor-pointer pointer-events-auto' : 'font-thin cursor-none pointer-events-none'} `}
