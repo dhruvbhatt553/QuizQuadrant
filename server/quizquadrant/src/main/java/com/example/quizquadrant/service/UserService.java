@@ -1,8 +1,7 @@
 package com.example.quizquadrant.service;
 
 import com.example.quizquadrant.dto.UserProfileDto;
-import com.example.quizquadrant.dto.UserProfileOngoingAndFutureExamDto;
-import com.example.quizquadrant.dto.UserProfilePastExamDto;
+import com.example.quizquadrant.dto.UserProfileExamDto;
 import com.example.quizquadrant.model.Exam;
 import com.example.quizquadrant.model.Result;
 import com.example.quizquadrant.model.User;
@@ -38,35 +37,38 @@ public class UserService {
 //        TODO fetch userID from JWT token ...
         Long selfUserId = 1L;   // hardcoded temp ...
         Optional<User> userOptional = userRepository.findById(userId);
-        if(userOptional.isPresent()) {
+        if (userOptional.isPresent()) {
             User user = userOptional.get();
-            List<UserProfileOngoingAndFutureExamDto> examsCreated = new ArrayList<>();
-            for(Exam exam: user.getExamsCreated()) {
+            List<UserProfileExamDto> examsCreated = new ArrayList<>();
+            for (Exam exam : user.getExamsCreated()) {
                 examsCreated.add(
-                        new UserProfileOngoingAndFutureExamDto(
-                        exam.getId(),
-                        exam.getTitle(),
-                        exam.getStartDateTime().getYear() + "-" + exam.getStartDateTime().getMonthValue() + "-" + exam.getStartDateTime().getDayOfMonth(),
-                        exam.getStartDateTime().getHour() + ":" + exam.getStartDateTime().getMinute(),
-                        exam.getDuration(),
-                        exam.getTotalMarks()
-                ));
+                        new UserProfileExamDto(
+                                exam.getId(),
+                                exam.getTitle(),
+                                exam.getStartDateTime().getYear() + "-" + exam.getStartDateTime().getMonthValue() + "-" + exam.getStartDateTime().getDayOfMonth(),
+                                exam.getStartDateTime().getHour() + ":" + exam.getStartDateTime().getMinute(),
+                                exam.getDuration(),
+                                exam.getTotalMarks(),
+                                -111,
+                                false,
+                                exam.getIsResultGenerated()
+                        ));
             }
-            List<UserProfilePastExamDto> pastExams = new ArrayList<>();
-            List<UserProfileOngoingAndFutureExamDto> ongoingExams = new ArrayList<>();
-            List<UserProfileOngoingAndFutureExamDto> futureExams = new ArrayList<>();
+            List<UserProfileExamDto> pastExams = new ArrayList<>();
+            List<UserProfileExamDto> ongoingExams = new ArrayList<>();
+            List<UserProfileExamDto> futureExams = new ArrayList<>();
 
-            if(!userId.equals(selfUserId)) {
+            if (!userId.equals(selfUserId)) {
                 ongoingExams = null;
                 futureExams = null;
             }
 
-            for(Result result: user.getExamResults()) {
+            for (Result result : user.getExamResults()) {
                 Exam exam = result.getExam();
-                if(exam.getStartDateTime().isBefore(LocalDateTime.now())) {
-                    if(exam.getStartDateTime().plusMinutes(exam.getDuration()).isBefore(LocalDateTime.now())) {
+                if (exam.getStartDateTime().isBefore(LocalDateTime.now())) {
+                    if (exam.getStartDateTime().plusMinutes(exam.getDuration()).isBefore(LocalDateTime.now())) {
                         pastExams.add(
-                                new UserProfilePastExamDto(
+                                new UserProfileExamDto(
                                         exam.getId(),
                                         exam.getTitle(),
                                         exam.getStartDateTime().getYear() + "-" + exam.getStartDateTime().getMonthValue() + "-" + exam.getStartDateTime().getDayOfMonth(),
@@ -78,27 +80,33 @@ public class UserService {
                                         exam.getIsResultGenerated()
                                 )
                         );
-                    } else if(userId.equals(selfUserId)) {
+                    } else if (userId.equals(selfUserId)) {
                         ongoingExams.add(
-                                new UserProfileOngoingAndFutureExamDto(
+                                new UserProfileExamDto(
                                         exam.getId(),
                                         exam.getTitle(),
                                         exam.getStartDateTime().getYear() + "-" + exam.getStartDateTime().getMonthValue() + "-" + exam.getStartDateTime().getDayOfMonth(),
                                         exam.getStartDateTime().getHour() + ":" + exam.getStartDateTime().getMinute(),
                                         exam.getDuration(),
-                                        exam.getTotalMarks()
+                                        exam.getTotalMarks(),
+                                        -111,
+                                        false,
+                                        false
                                 )
                         );
                     }
-                } else if(userId.equals(selfUserId)) {
+                } else if (userId.equals(selfUserId)) {
                     futureExams.add(
-                            new UserProfileOngoingAndFutureExamDto(
+                            new UserProfileExamDto(
                                     exam.getId(),
                                     exam.getTitle(),
                                     exam.getStartDateTime().getYear() + "-" + exam.getStartDateTime().getMonthValue() + "-" + exam.getStartDateTime().getDayOfMonth(),
                                     exam.getStartDateTime().getHour() + ":" + exam.getStartDateTime().getMinute(),
                                     exam.getDuration(),
-                                    exam.getTotalMarks()
+                                    exam.getTotalMarks(),
+                                    -111,
+                                    false,
+                                    false
                             )
                     );
                 }

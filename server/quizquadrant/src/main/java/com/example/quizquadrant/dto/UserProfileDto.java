@@ -6,9 +6,9 @@ public record UserProfileDto(
         String name,
         String email,
         String type,
-        List<UserProfileOngoingAndFutureExamDto> examsCreated,
-        List<UserProfilePastExamDto> pastExams,
-        List<UserProfileOngoingAndFutureExamDto> ongoingExams,
-        List<UserProfileOngoingAndFutureExamDto> futureExams
+        List<UserProfileExamDto> examsCreated,
+        List<UserProfileExamDto> pastExams,
+        List<UserProfileExamDto> ongoingExams,
+        List<UserProfileExamDto> futureExams
 ) {
 }
