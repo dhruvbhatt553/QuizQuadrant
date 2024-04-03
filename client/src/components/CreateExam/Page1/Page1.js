@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
+import createExamContext from "../../../context/create-exam/createExamContext";
 
-export default function Page1(props) {
+export default function Page1() {
 
-    const { examTitle, setExamTitle, examDuration, setExamDuration, examDate, setExamDate, examTime, setExamTime } = props;
+    const { examTitle, setExamTitle, examDuration, setExamDuration, examDate, setExamDate, examTime, setExamTime } = useContext(createExamContext);
     
     const editExamTitle = (e) => {
         setExamTitle(e.target.value);

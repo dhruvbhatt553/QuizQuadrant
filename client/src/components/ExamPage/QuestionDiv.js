@@ -30,12 +30,6 @@ export default function QuestionDiv() {
         );
     }, [currQuestionIndex]);
 
-    function handleOptionsMarked(index, isMarked) {
-        let arr = [...optionsMarked];
-        arr[index] = isMarked;
-        setOptionsMarked(arr);
-    }
-
     return (
         <>
             {
