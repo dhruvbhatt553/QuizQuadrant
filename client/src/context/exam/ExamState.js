@@ -10,6 +10,7 @@ const ExamState = (props) => {
     const [examFinish, setExamFinish] = useState(false);
     const [violationCount, setViolationCount] = useState(0);
     const [examData, setExamData] = useState(null);
+    const [allQuestions, setAllQuestions] = useState(null);
     const [currQuestionIndex, setCurrQuestionIndex] = useState(0);
     const [currQuestionData, setCurrQuestionData] = useState(null);
     const [remainingMin, setRemainingMin] = useState(0);
@@ -33,53 +34,63 @@ const ExamState = (props) => {
     }
 
     const fetchExamData = () => {
+        // TODO API call for fetching data ...
+        const questionArray = [];
         data.questionIds = rotateArray(data.questionIds);
+        data.questionIds.map((questionId) => {
+            questionArray.push(null);
+        });
         setExamData(data);
+        setAllQuestions(questionArray);
+
+        return data;
     };
 
     const fetchQuestionData = () => {
-        // TODO API call for fetching data ...
-        const questionId = examData.questionIds[currQuestionIndex];
-
-        // jugaadu logic ...
-        let tempData = null;
-        switch (questionId) {
-            case 1:
-                tempData = q1;
-                break;
-            case 2:
-                tempData = q2;
-                break;
-            case 3:
-                tempData = q3;
-                break;
-            case 4:
-                tempData = q4;
-                break;
-            case 5:
-                tempData = q5;
-                break;
-            case 6:
-                tempData = q6;
-                break;
-            case 7:
-                tempData = q7;
-                break;
-            case 8:
-                tempData = q8;
-                break;
-            case 9:
-                tempData = q9;
-                break;
-            default:
-                tempData = q1;
+        let tempData = allQuestions[currQuestionIndex];
+        if(tempData === null) {
+            const questionId = examData.questionIds[currQuestionIndex];
+            // TODO API call for fetching data ...
+            // jugaadu logic ...
+            switch (questionId) {
+                case 1:
+                    tempData = q1;
+                    break;
+                case 2:
+                    tempData = q2;
+                    break;
+                case 3:
+                    tempData = q3;
+                    break;
+                case 4:
+                    tempData = q4;
+                    break;
+                case 5:
+                    tempData = q5;
+                    break;
+                case 6:
+                    tempData = q6;
+                    break;
+                case 7:
+                    tempData = q7;
+                    break;
+                case 8:
+                    tempData = q8;
+                    break;
+                case 9:
+                    tempData = q9;
+                    break;
+                default:
+                    tempData = q1;
+            }
+            tempData.options = rotateArray(tempData.options);
+            const newArray = [...allQuestions];
+            newArray[currQuestionIndex] = tempData;
+            setAllQuestions(newArray);
+            console.log("request to fetch question with id: " + questionId);
         }
 
-        tempData.options = rotateArray(tempData.options);
-
-        // After data has arrived ...
         setCurrQuestionData(tempData);
-        console.log("request to fetch question with id: " + questionId);
 
         return tempData;
     }
@@ -110,6 +121,7 @@ const ExamState = (props) => {
     const handleFullScreenViolation = () => {
         if (document.fullscreenElement === null) {
             setViolationCount((violationCount) => (violationCount + 1));
+            window.alert(`You have attempted to leave the full screen mode. This will violate the exam rules. Your current violation count is: ${violationCount + 1}. Press OK to resume the exam.`);
             checkViolationLimit();
         }
     }
@@ -163,7 +175,10 @@ const ExamState = (props) => {
             newData.options[index].isMarked = !newData.options[index].isMarked;
         }
         console.log(currQuestionData.options[0].isMarked, currQuestionData.options[1].isMarked, currQuestionData.options[2].isMarked, currQuestionData.options[3].isMarked);
+        const newArr = [...allQuestions];
+        newArr[currQuestionIndex] = newData;
         setCurrQuestionData(newData);
+        setAllQuestions(newArr);
         return [newData.options[0].isMarked, newData.options[1].isMarked, newData.options[2].isMarked, newData.options[3].isMarked]
     }
 

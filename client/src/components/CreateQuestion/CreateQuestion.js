@@ -2,9 +2,10 @@ import React, {useContext, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import subjectContext from "../../context/subject/subjectContext";
 import createQuestionContext from "../../context/create-question/createquestionContext";
-import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
-import { imageDB } from '../../config/firebase';
-import { v4 } from 'uuid';
+import {uploadImage} from '../../utils/firebase';
+// import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
+// import { imageDB } from '../../config/firebase';
+// import { v4 } from 'uuid';
 
 export default function CreateQuestion() {
 
@@ -63,27 +64,27 @@ export default function CreateQuestion() {
             isValid = false;
             errorMsg.push("Please enter appropriate value for negative marks (i.e. less than 0)");
         }
-        if (question === "" && questionImagePreview === "") {
+        if (question === "" && questionImagePreview === null) {
             isValid = false;
             errorMsg.push("Please enter question");
         }
-        if (optionA === "" && optionAImagePreview === "") {
+        if (optionA === "" && optionAImagePreview === null) {
             isValid = false;
             errorMsg.push("Please enter option - A");
         }
-        if (optionB === "" && optionBImagePreview === "") {
+        if (optionB === "" && optionBImagePreview === null) {
             isValid = false;
             errorMsg.push("Please enter option - B");
         }
-        if (optionC === "" && optionCImagePreview === "") {
+        if (optionC === "" && optionCImagePreview === null) {
             isValid = false;
             errorMsg.push("Please enter option - C");
         }
-        if (optionD === "" && optionDImagePreview === "") {
+        if (optionD === "" && optionDImagePreview === null) {
             isValid = false;
             errorMsg.push("Please enter option - D");
         }
-        if (solution === "" && solutionImagePreview === "") {
+        if (solution === "" && solutionImagePreview === null) {
             isValid = false;
             errorMsg.push("Please enter solution");
         }
@@ -155,16 +156,16 @@ export default function CreateQuestion() {
         }
     }
 
-    const uploadImage = async (file) => {
-        if(file!=null) {
-            const imgRef = ref(imageDB, `images/${v4()}`);
-            const response = await uploadBytes(imgRef, file);
-            const imageURL = await getDownloadURL(response.ref);
-            return imageURL;
-        } else {
-            return "";
-        }
-    }
+    // const uploadImage = async (file) => {
+    //     if(file!=null) {
+    //         const imgRef = ref(imageDB, `images/${v4()}`);
+    //         const response = await uploadBytes(imgRef, file);
+    //         const imageURL = await getDownloadURL(response.ref);
+    //         return imageURL;
+    //     } else {
+    //         return "";
+    //     }
+    // }
 
     const deleteImage = async () => {
         await sleep(2000);
@@ -300,7 +301,7 @@ export default function CreateQuestion() {
             {
                 isSaving &&
                 (
-                    <div id='loading-div' className='w-full px-10 py-10 text-3xl text-center grid grid-cols-11'>
+                    <div id='loading-div' className='absolute w-full px-10 py-10 text-3xl text-center grid grid-cols-11'>
                         <div className='col-start-6'>
                             <img src='images/loading.gif'/>
                             <h1 className='mt-10 text-red-700 font-medium'>Saving ...</h1>
@@ -308,7 +309,7 @@ export default function CreateQuestion() {
                     </div>
                 )
             }
-            <div id='main-div' className='w-full h-screen px-10 py-2 text-lg'>
+            <div id='main-div' className={`w - full h-screen px-10 py-2 text-lg ${isSaving ? "blur pointer-events-none" : ""}`}>
                 <div className='w-full my-5 grid grid-cols-3 items-center'>
                     <button id='cancel' onClick={handleCancelBtn}
                             className='justify-self-start text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center'>Cancel

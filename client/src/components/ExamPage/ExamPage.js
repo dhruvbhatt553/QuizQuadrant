@@ -11,8 +11,8 @@ export default function ExamPage() {
     const { examStart, examFinish, examData, fetchExamData, startTimer } = useContext(examContext);
 
     useEffect(() => {
-        setTimeout(() => { fetchExamData(); }, 2000);
-        startTimer("16:36", 5);
+        const data = fetchExamData();
+        startTimer(data.startTime, data.duration);
         console.log("exam div rendered ...");
     }, []);
 

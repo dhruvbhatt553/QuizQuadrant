@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import * as xlsx from 'xlsx';
+import createExamContext from '../../../context/create-exam/createExamContext';
 
-export default function Page3(props) {
+export default function Page3() {
 
-    const { candidateEmail, setCandidateEmail } = props;
+    const { candidateEmail, setCandidateEmail } = useContext(createExamContext);
     const [emailChoice, setEmailChoice] = useState("manual");
     const [emailField, setEmailField] = useState("");
     const emailRegExp = /[\w-\.]+@[\w]{2,}[\.][\w]{2,}/;

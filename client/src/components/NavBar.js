@@ -17,9 +17,25 @@ export default function NavBar() {
                 <Link to={"/create-question"}>
                     Create Question
                 </Link>
+                <Link
+                    to={"/create-exam"}
+                    state={{
+                        localIndex: null
+                    }}
+                >
+                    Create Exam
+                </Link>
+                <Link
+                    to="/profile"
+                    state={{
+                        userId: 1
+                    }}
+                >
+                    Profile
+                </Link>
                 <Link to="/auth">
                     <img src="/images/log-in.png"
-                        width={ "40px" }
+                        width={"40px"}
                     />
                 </Link>
             </div>
