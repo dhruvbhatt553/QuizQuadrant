@@ -25,6 +25,7 @@ import CreatequestionState from "./context/create-question/CreatequestionState";
 import subjectContext from "./context/subject/subjectContext";
 import ProfileState from "./context/profile/ProfileState";
 import ResultState from "./context/result/ResultState";
+import CreateExamState from "./context/create-exam/CreateExamState";
 
 
 
@@ -47,7 +48,7 @@ function App() {
               <Route exact path="/" element={<HomePage />} />
               <Route exact path="/auth" element={<Sign />} />
               <Route exact path="/mock-test" element={<MockTestSelection />} />
-              <Route exact path="/create-exam" element={<CreateExam subjectwiseTopics={dummyData} />} />
+              <Route exact path="/create-exam" element={<><CreateExamState><CreateExam /></CreateExamState></>} />
               <Route exact path="/exam" element={<><ExamState><ExamPage /></ExamState></>} />
               <Route exact path="/create-question" element={<><CreatequestionState><CreateQuestion /></CreatequestionState></>} />
               <Route exact path="/practice" element={<><PracticequestionState><PracticePage subtopics={data[0].subtopics}/></PracticequestionState></>} />

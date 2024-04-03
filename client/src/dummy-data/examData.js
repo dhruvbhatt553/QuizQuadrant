@@ -1,9 +1,9 @@
 const data = {
     "id": 1,
     "title": "Exam - 3",
-    "duration": 120,
-    "startDate": "2024-3-29",
-    "startTime": "8:0",
+    "duration": 5,
+    "startDate": "2024-4-3",
+    "startTime": "14:50",
     "candidateName": "Karm",
     "candidateEmail": "k@gmail.com",
     "questionIds": [
