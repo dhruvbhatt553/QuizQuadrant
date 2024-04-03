@@ -31,8 +31,8 @@ public class Subtopic {
 
     @Column(
             name = "subtopicName",
-            nullable = false,
-            columnDefinition ="VARCHAR(20)"
+            nullable = false
+         
     )
     private String subtopicName;
 
