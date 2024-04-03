@@ -68,36 +68,41 @@ public class ExamService {
 
     public ExamDto getExamById(Long userId, Long examId) {
 //        TODO get userID from JWT token & authorize whether his email is included in EXAM ...
+
         User user = userService.getUserById(userId);
         Optional<Exam> examOptional = examRepository.findById(examId);
         ExamDto examDto = null;
 
         if(examOptional.isPresent()) {
             Exam exam = examOptional.get();
-            List<Long> questionIds = new ArrayList<>();
-            for(PrivateQuestion privateQuestion: exam.getPrivateQuestions()) {
-                questionIds.add(privateQuestion.getId());
+            if(!resultService.getIsFinished(user,exam)) {
+                List<Long> questionIds = new ArrayList<>();
+                for (PrivateQuestion privateQuestion : exam.getPrivateQuestions()) {
+                    questionIds.add(privateQuestion.getId());
+                }
+
+                examDto = new ExamDto(
+                        exam.getId(),
+                        exam.getTitle(),
+                        exam.getDuration(),
+                        exam.getStartDateTime().getYear() + "-" + exam.getStartDateTime().getMonthValue() + "-" + exam.getStartDateTime().getDayOfMonth(),
+                        exam.getStartDateTime().getHour() + ":" + exam.getStartDateTime().getMinute(),
+                        user.getName(),
+                        user.getEmail(),
+                        questionIds
+                );
+
+                resultService.markUserPresent(user, exam);
             }
-
-            examDto = new ExamDto(
-                    exam.getId(),
-                    exam.getTitle(),
-                    exam.getDuration(),
-                    exam.getStartDateTime().getYear() + "-" + exam.getStartDateTime().getMonthValue() + "-" + exam.getStartDateTime().getDayOfMonth(),
-                    exam.getStartDateTime().getHour() + ":" + exam.getStartDateTime().getMinute(),
-                    user.getName(),
-                    user.getEmail(),
-                    questionIds
-            );
-
-            resultService.markUserPresent(user, exam);
         }
 
         return examDto;
     }
 
     public Exam getExamById (Long examId) {
-        return examRepository.findById(examId).orElse(null);
+        return
+                examRepository.findById(examId).orElse(null);
+
     }
 
     public Boolean calculateResult(Long examId) {
@@ -111,5 +116,9 @@ public class ExamService {
 
     public List<LeaderBoardDto> getAllResult (Long examId) {
         return resultService.getAllResult(this.getExamById(examId));
+    }
+
+    public void setExamFinished(Long examId, Long userId) {
+        resultService.markExamFinished(userService.getUserById(userId),this.getExamById(examId));
     }
 }

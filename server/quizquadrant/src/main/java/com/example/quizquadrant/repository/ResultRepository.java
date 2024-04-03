@@ -24,10 +24,17 @@ public interface ResultRepository extends JpaRepository<Result, ResultKey> {
     @Transactional
     @Modifying
     @Query("UPDATE Result r set r.isPresent=true where r.user = :user and r.exam = :exam")
-    public void updateResultByUserAndExam(User user, Exam exam);
+    public void updateIsPresentResultByUserAndExam(User user, Exam exam);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE Result r set r.isFinished=true where r.user = :user and r.exam = :exam")
+    public void updateIsFinishedResultByUserAndExam(User user, Exam exam);
 
     @Transactional
     @Modifying
     @Query("UPDATE Result r SET r.marks = :marks WHERE r.user = :user AND r.exam = :exam")
     public void updateResultMarksByUserAndExam(User user, Exam exam, Integer marks);
+
+    public Result findResultsByExamAndUser (Exam exam, User user);
 }

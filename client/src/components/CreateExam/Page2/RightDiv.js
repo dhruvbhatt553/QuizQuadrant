@@ -1,6 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import subjectContext from "../../../context/subject/subjectContext";
 import createExamContext from '../../../context/create-exam/createExamContext';
+import {uploadImage} from "../../../utils/firebase";
 
 export default function RightDiv() {
 
@@ -11,18 +12,18 @@ export default function RightDiv() {
     const [subtopic, setSubtopic] = useState(examQuestions[questionIndex].subtopic);
     const [positiveMarks, setPositiveMarks] = useState(examQuestions[questionIndex].positiveMarks);
     const [negativeMarks, setNegativeMarks] = useState(examQuestions[questionIndex].negativeMarks);
-    const [question, setQuestion] = useState(examQuestions[questionIndex].question);
-    const [questionImage, setQuestionImage] = useState(examQuestions[questionIndex].questionImage);
-    const [optionA, setOptionA] = useState(examQuestions[questionIndex].optionA);
-    const [optionAImage, setOptionAImage] = useState(examQuestions[questionIndex].optionAImage);
-    const [optionB, setOptionB] = useState(examQuestions[questionIndex].optionB);
-    const [optionBImage, setOptionBImage] = useState(examQuestions[questionIndex].optionBImage);
-    const [optionC, setOptionC] = useState(examQuestions[questionIndex].optionC);
-    const [optionCImage, setOptionCImage] = useState(examQuestions[questionIndex].optionCImage);
-    const [optionD, setOptionD] = useState(examQuestions[questionIndex].optionD);
-    const [optionDImage, setOptionDImage] = useState(examQuestions[questionIndex].optionDImage);
-    const [solution, setSolution] = useState("");
-    const [solutionImage, setSolutionImage] = useState("");
+    const [question, setQuestion] = useState(examQuestions[questionIndex].questionStatement);
+    const [questionImage, setQuestionImage] = useState(examQuestions[questionIndex].questionImageURL);
+    const [optionA, setOptionA] = useState(examQuestions[questionIndex].optionAStatement);
+    const [optionAImage, setOptionAImage] = useState(examQuestions[questionIndex].optionAImageURL);
+    const [optionB, setOptionB] = useState(examQuestions[questionIndex].optionBStatement);
+    const [optionBImage, setOptionBImage] = useState(examQuestions[questionIndex].optionBImageURL);
+    const [optionC, setOptionC] = useState(examQuestions[questionIndex].optionCStatement);
+    const [optionCImage, setOptionCImage] = useState(examQuestions[questionIndex].optionCImageURL);
+    const [optionD, setOptionD] = useState(examQuestions[questionIndex].optionDStatement);
+    const [optionDImage, setOptionDImage] = useState(examQuestions[questionIndex].optionDImageURL);
+    const [solution, setSolution] = useState(examQuestions[questionIndex].solutionStatement);
+    const [solutionImage, setSolutionImage] = useState(examQuestions[questionIndex].solutionImageURL);
     const [correctAnswer, setCorrectAnswer] = useState(new Set(examQuestions[questionIndex].correctAnswer));
     const [questionImagePreview, setQuestionImagePreview] = useState(null);
     const [optionAImagePreview, setOptionAImagePreview] = useState(null);
@@ -39,25 +40,25 @@ export default function RightDiv() {
         setSubtopic(examQuestions[questionIndex].subtopic);
         setPositiveMarks(examQuestions[questionIndex].positiveMarks);
         setNegativeMarks(examQuestions[questionIndex].negativeMarks);
-        setQuestion(examQuestions[questionIndex].question);
-        setQuestionImage(examQuestions[questionIndex].questionImage);
-        setOptionA(examQuestions[questionIndex].optionA);
-        setOptionAImage(examQuestions[questionIndex].optionAImage);
-        setOptionB(examQuestions[questionIndex].optionB);
-        setOptionBImage(examQuestions[questionIndex].optionBImage);
-        setOptionC(examQuestions[questionIndex].optionC);
-        setOptionCImage(examQuestions[questionIndex].optionCImage);
-        setOptionD(examQuestions[questionIndex].optionD);
-        setOptionDImage(examQuestions[questionIndex].optionDImage);
-        setSolution(examQuestions[questionIndex].solution);
-        setSolutionImage(examQuestions[questionIndex].solutionImage);
+        setQuestion(examQuestions[questionIndex].questionStatement);
+        setQuestionImage((examQuestions[questionIndex].questionImageURL === "" ? null : examQuestions[questionIndex].questionImageURL));
+        setOptionA(examQuestions[questionIndex].optionAStatement);
+        setOptionAImage(examQuestions[questionIndex].optionAImageURL === "" ? null : examQuestions[questionIndex].optionAImageURL);
+        setOptionB(examQuestions[questionIndex].optionBStatement);
+        setOptionBImage(examQuestions[questionIndex].optionBImageURL === "" ? null : examQuestions[questionIndex].optionBImageURL);
+        setOptionC(examQuestions[questionIndex].optionCStatement);
+        setOptionCImage(examQuestions[questionIndex].optionCImageURL === "" ? null : examQuestions[questionIndex].optionCImageURL);
+        setOptionD(examQuestions[questionIndex].optionDStatement);
+        setOptionDImage(examQuestions[questionIndex].optionDImageURL === "" ? null : examQuestions[questionIndex].optionDImageURL);
+        setSolution(examQuestions[questionIndex].solutionStatement);
+        setSolutionImage(examQuestions[questionIndex].solutionImageURL === "" ? null : examQuestions[questionIndex].solutionImageURL);
         setCorrectAnswer(new Set(examQuestions[questionIndex].correctAnswer));
-        // updateImageStates(questionImage, "questionImage");
-        // updateImageStates(optionAImage, "optionAImage");
-        // updateImageStates(optionBImage, "optionBImage");
-        // updateImageStates(optionCImage, "optionCImage");
-        // updateImageStates(optionAImage, "optionDImage");
-        // updateImageStates(solutionImage, "solutionImage");
+        setQuestionImagePreview(examQuestions[questionIndex].questionImageURL);
+        setOptionAImagePreview(examQuestions[questionIndex].optionAImageURL);
+        setOptionBImagePreview(examQuestions[questionIndex].optionBImageURL);
+        setOptionCImagePreview(examQuestions[questionIndex].optionCImageURL);
+        setOptionDImagePreview(examQuestions[questionIndex].optionDImageURL);
+        setSolutionImagePreview(examQuestions[questionIndex].solutionImageURL);
     }, [questionIndex, examQuestions]);
 
     const updateImageStates = (file, baseID) => {
@@ -110,11 +111,12 @@ export default function RightDiv() {
         let isValid = true;
         let errorMsg = [];
 
-        if (subject === "") {
+        if (subject === null) {
             isValid = false;
+            console.log("in subject not selected");
             errorMsg.push("Please select subject");
         }
-        if (subtopic === "") {
+        if (subtopic === null) {
             isValid = false;
             errorMsg.push("Please select subtopic");
         }
@@ -162,27 +164,51 @@ export default function RightDiv() {
     }
 
     const saveQuestion = async () => {
-        const newExamQuestions = new Object(examQuestions);
+        const newExamQuestions = [...examQuestions];
         const data = {
             type: type,
             subject: subject,
+            subjectId: subject.subId,
             subtopic: subtopic,
+            subtopicId: subtopic.subtopicId,
             positiveMarks: positiveMarks,
             negativeMarks: negativeMarks,
-            question: question,
-            questionImage: questionImage,
-            optionA: optionA,
-            optionAImage: optionAImage,
-            optionB: optionB,
-            optionBImage: optionBImage,
-            optionC: optionC,
-            optionCImage: optionCImage,
-            optionD: optionD,
-            optionDImage: optionDImage,
-            solution: solution,
-            solutionImage: solutionImage,
+            questionStatement: question,
+            questionImageURL: "",
+            optionAStatement: optionA,
+            optionAImageURL: "",
+            optionBStatement: optionB,
+            optionBImageURL: "",
+            optionCStatement: optionC,
+            optionCImageURL: "",
+            optionDStatement: optionD,
+            optionDImageURL: "",
+            solutionStatement: solution,
+            solutionImageURL: "",
             correctAnswer: [...correctAnswer]
         };
+
+
+        if(typeof questionImage !== "string") data.questionImageURL = await uploadImage(questionImage);
+        else data.questionImageURL = questionImage;
+        if(typeof optionAImage !== "string") data.optionAImageURL = await uploadImage(optionAImage);
+        else data.optionAImageURL = optionAImage;
+        if(typeof optionBImage !== "string") data.optionBImageURL = await uploadImage(optionBImage);
+        else data.optionBImageURL = optionBImage;
+        if(typeof optionCImage !== "string") data.optionCImageURL = await uploadImage(optionCImage);
+        else data.optionCImageURL = optionCImage;
+        if(typeof optionDImage !== "string") data.optionDImageURL = await uploadImage(optionDImage);
+        else data.optionDImageURL = optionDImage;
+        if(typeof solutionImage !== "string") data.solutionImageURL = await uploadImage(solutionImage);
+        else data.solutionImageURL = solutionImage;
+
+        setQuestionImagePreview(data.questionImageURL);
+        setOptionAImagePreview(data.optionAImageURL);
+        setOptionBImagePreview(data.optionBImageURL);
+        setOptionCImagePreview(data.optionCImageURL);
+        setOptionDImagePreview(data.optionDImageURL);
+        setSolutionImagePreview(data.solutionImageURL);
+
         newExamQuestions[questionIndex] = data;
         setExamQuestions(newExamQuestions);
     }
@@ -194,9 +220,9 @@ export default function RightDiv() {
     }
 
     const handleSaveBtn = async () => {
-        // const {isValid, errorMsg} = validateData();
-        const isValid = true;
-        const errorMsg = '';
+        const {isValid, errorMsg} = validateData();
+        // const isValid = true;
+        // const errorMsg = '';
         if (!isValid) {
             let errorStr = "";
             errorMsg.forEach((msg, index) => {
@@ -204,9 +230,9 @@ export default function RightDiv() {
             });
             window.alert("Cannot save the question: \n" + errorStr);
         } else {
-            setSaving((saving) => (!saving));
+            setSaving((saving) => { return true; });
             await saveQuestion();
-            setSaving((saving) => (!saving));
+            setSaving((saving) => { return false; });
             setUnsaved(false);
             document.addEventListener("change", updateUnsavedState);
         }
@@ -336,7 +362,7 @@ export default function RightDiv() {
                         <label htmlFor='subjectSelect' className='font-bold'>Select subject:</label>
                         <select onChange={(e) => editSubject(e)}
                                 className='ms-5 px-3 py-1 bg-gray-200 cursor-pointer rounded-lg' id='subjectSelect'>
-                            <option selected={!subject} disabled={true}>Select a subject</option>
+                            <option selected={subject === null} disabled={true}>Select a subject</option>
                             {subjects.map((element, index) => {
                                 return (
                                     <option key={element.subId} name={element.subjectName} value={index}
@@ -350,14 +376,14 @@ export default function RightDiv() {
                         <select onChange={(e) => editSubtopic(e)}
                                 className='ms-5 px-3 py-1 bg-gray-200 cursor-pointer rounded-lg overflow-auto'
                                 id='subtopicSelect'>
-                            <option selected={!subtopic} disabled={true}>Select a subtopic</option>
+                            <option selected={subtopic === null} disabled={true}>Select a subtopic</option>
                             {
                                 subject &&
                                 subject.subtopics.map((element, index) => {
                                         return (
                                             <option key={element.subtopicId} name={element.subtopicName}
                                                     value={index}
-                                                    selected={subtopic === element.subtopicId}>{element.subtopicName}</option>
+                                                    selected={subtopic === element}>{element.subtopicName}</option>
                                         );
                                     }
                                 )

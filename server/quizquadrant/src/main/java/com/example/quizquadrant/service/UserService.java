@@ -35,7 +35,7 @@ public class UserService {
 
     public UserProfileDto getUserProfile(Long userId) {
 //        TODO fetch userID from JWT token ...
-        Long selfUserId = 1L;   // hardcoded temp ...
+        Long selfUserId = 2L;   // hardcoded temp ...
         Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
@@ -50,6 +50,7 @@ public class UserService {
                                 exam.getDuration(),
                                 exam.getTotalMarks(),
                                 -111,
+                                false,
                                 false,
                                 exam.getIsResultGenerated()
                         ));
@@ -77,6 +78,7 @@ public class UserService {
                                         exam.getTotalMarks(),
                                         result.getMarks(),
                                         result.getIsPresent(),
+                                        result.getIsFinished(),
                                         exam.getIsResultGenerated()
                                 )
                         );
@@ -91,6 +93,7 @@ public class UserService {
                                         exam.getTotalMarks(),
                                         -111,
                                         false,
+                                        result.getIsFinished(),
                                         false
                                 )
                         );
@@ -105,6 +108,7 @@ public class UserService {
                                     exam.getDuration(),
                                     exam.getTotalMarks(),
                                     -111,
+                                    false,
                                     false,
                                     false
                             )

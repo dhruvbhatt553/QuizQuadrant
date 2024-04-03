@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ExamContext from './examContext';
-import { data, q1, q2, q3, q4, q5, q6, q7, q8, q9 } from './../../dummy-data/examData';
+import { q1, q2, q3, q4, q5, q6, q7, q8, q9 } from './../../dummy-data/examData';
+import axios from "axios";
 
 const ExamState = (props) => {
 
@@ -33,72 +34,42 @@ const ExamState = (props) => {
         return arr;
     }
 
-    const fetchExamData = () => {
-        // TODO API call for fetching data ...
+    const fetchExamData = async (examId) => {
+        const userId = 2;
+        const response = await axios.get(`http://localhost:8080/api/exam/get-exam-by-id?userId=${userId}&examId=${examId}`)
+        console.log("response for exam:", response.data);
         const questionArray = [];
-        data.questionIds = rotateArray(data.questionIds);
-        data.questionIds.map((questionId) => {
+        response.data.questionIds = rotateArray(response.data.questionIds);
+        response.data.questionIds.map((questionId) => {
             questionArray.push(null);
         });
-        setExamData(data);
+        setExamData(response.data);
         setAllQuestions(questionArray);
-
-        return data;
+        return response.data;
     };
 
-    const fetchQuestionData = () => {
-        let tempData = allQuestions[currQuestionIndex];
-        if(tempData === null) {
+    const fetchQuestionData = async () => {
+        let userId = 2;
+        let data = allQuestions[currQuestionIndex];
+        if(data === null) {
             const questionId = examData.questionIds[currQuestionIndex];
-            // TODO API call for fetching data ...
-            // jugaadu logic ...
-            switch (questionId) {
-                case 1:
-                    tempData = q1;
-                    break;
-                case 2:
-                    tempData = q2;
-                    break;
-                case 3:
-                    tempData = q3;
-                    break;
-                case 4:
-                    tempData = q4;
-                    break;
-                case 5:
-                    tempData = q5;
-                    break;
-                case 6:
-                    tempData = q6;
-                    break;
-                case 7:
-                    tempData = q7;
-                    break;
-                case 8:
-                    tempData = q8;
-                    break;
-                case 9:
-                    tempData = q9;
-                    break;
-                default:
-                    tempData = q1;
-            }
-            tempData.options = rotateArray(tempData.options);
+            const response = await axios.get(`http://localhost:8080/api/exam/get-question-by-id?userId=${userId}&questionId=${questionId}`)
+            data = response.data;
+            console.log("response for question:", data)
+            data.options = rotateArray(data.options);
             const newArray = [...allQuestions];
-            newArray[currQuestionIndex] = tempData;
+            newArray[currQuestionIndex] = data;
             setAllQuestions(newArray);
             console.log("request to fetch question with id: " + questionId);
         }
-
-        setCurrQuestionData(tempData);
-
-        return tempData;
+        setCurrQuestionData(data);
+        return data;
     }
 
-    const finishExam = () => {
-        // TODO API call to submit exam data ...
-        const flag = true;
-        return flag;
+    const finishExam = async () => {
+        const userId = 2;
+        const response = await axios.get(`http://localhost:8080/api/exam/finish-exam?userId=${userId}&examId=${examData.id}`);
+        return response.data;
     }
 
     const handleInstructionRead = (e) => {
@@ -147,11 +118,11 @@ const ExamState = (props) => {
         document.addEventListener("visibilitychange", handleTabChangeViolation);
     }
 
-    const handleFinishExamBtn = () => {
+    const handleFinishExamBtn = async () => {
         // TODO issue: when confirm box shows up, full screen is exited ...
         const submitConfirm = window.confirm("Are you sure you want to SUBMIT the exam ?");
         if (submitConfirm) {
-            const flag = finishExam();
+            const flag = await finishExam();
             if (flag) {
                 setExamFinish(flag);
                 console.log("FINISH EXAM");
@@ -210,9 +181,16 @@ const ExamState = (props) => {
         }
     }
 
-    const handleSaveBtn = () => {
-        // TODO API call to save answer ...
-        console.log("save");
+    const handleSaveBtn = async () => {
+        let responsesArr = [];
+        currQuestionData.options.map((option) => {
+            if(option.isMarked) {
+                responsesArr.push(option.id);
+            }
+        });
+        const userId = 2;
+        const response = await axios.post(`http://localhost:8080/api/exam/store-response?userId=${userId}&privateQuestionId=${currQuestionData.id}`, { responses: responsesArr });
+        console.log("save response: ", response.data);
     }
 
     const handleSecRemaining = () => {

@@ -32,6 +32,14 @@ public class Result {
     )
     private Boolean isPresent;
 
+    @Column (
+            name = "isFinished",
+            nullable = false
+    )
+    private Boolean isFinished;
+
+
+
     @Column(
             name = "marks",
             nullable = false,
