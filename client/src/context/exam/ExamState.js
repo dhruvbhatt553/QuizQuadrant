@@ -6,6 +6,7 @@ import axios from "axios";
 const ExamState = (props) => {
 
     const maxViolation = 5;
+    const isMockTest=false;
     const [instructionRead, setInstructionRead] = useState(false);
     const [examStart, setExamStart] = useState(false);
     const [examFinish, setExamFinish] = useState(false);
@@ -66,10 +67,35 @@ const ExamState = (props) => {
         return data;
     }
 
+    // const fetchQuestionData = async () => {
+    //     let userId = 2;
+    //     let data = allQuestions[currQuestionIndex];
+    //     if(data === null) {
+    //         const questionId = examData.questionIds[currQuestionIndex];
+    //         let response;
+    //         if(!isMockTest)
+    //         response = await axios.get(`http://localhost:8080/api/exam/get-question-by-id?userId=${userId}&questionId=${questionId}`)
+    //         else{
+    //             response = await axios.get(`http://localhost:8080/api/question/get-question-by-id?questionId=${questionId}`)
+    //         }
+    //         data = response.data;
+    //         console.log("response for question:", data)
+    //         data.options = rotateArray(data.options);
+    //         const newArray = [...allQuestions];
+    //         newArray[currQuestionIndex] = data;
+    //         setAllQuestions(newArray);
+    //         console.log("request to fetch question with id: " + questionId);
+    //     }
+    //     setCurrQuestionData(data);
+    //     return data;
+    // }
+
     const finishExam = async () => {
         const userId = 2;
+        if(!isMockTest) {
         const response = await axios.get(`http://localhost:8080/api/exam/finish-exam?userId=${userId}&examId=${examData.id}`);
         return response.data;
+        }
     }
 
     const handleInstructionRead = (e) => {
