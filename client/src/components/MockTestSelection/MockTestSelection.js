@@ -3,6 +3,7 @@
 import React, {useContext, useState, useEffect} from 'react';
 import Topics from "./Topics";
 import subjectContext from '../../context/subject/subjectContext';
+import {Link, useNavigate} from "react-router-dom";
 
 
 
@@ -12,6 +13,7 @@ export default function MockTestSelection() {
     const [selection, changeSelection] = useState(null);
     const [isOpen, changeIsOpen] = useState(false);
     const { subjects } = useContext(subjectContext);
+    const navigate = useNavigate();
 
     console.log("subjects in starting",subjects);
     useEffect(() => {
@@ -25,12 +27,26 @@ export default function MockTestSelection() {
     }, [subjects]);
 
     function createMockTest() {
-        let subtopicArr = [];
-        for (let i = 0; i < selection.length; i++) {
-            for (let j = 0; j < selection[i].length; j++) {
-                if (selection[i][j])
-                    subtopicArr.push(subjects[i].subtopics[j]);
+
+            let subtopicArr = [];
+            for (let i = 0; i < selection.length; i++) {
+                for (let j = 0; j < selection[i].length; j++) {
+                    if (selection[i][j])
+                        subtopicArr.push(subjects[i].subtopics[j]);
+                }
             }
+
+        if(subtopicArr.length !== 0) {
+            const mockExam = {
+                title: "Mock Exam",
+                duration: 20,
+                total: 10,
+                subtopics: subtopicArr
+            };
+
+            navigate("/exam", { state: { examId:null ,isMockTest:true, mockExam: mockExam } });
+        } else {
+            window.alert("Please select all fields to continue.")
         }
     }
 
@@ -106,9 +122,14 @@ export default function MockTestSelection() {
                     isOpen && subjects.map((topic, index) => <Topics topic={ topic } selection={ selection } changeSelection={ changeSelection } index1={ index } allSelected={ allSelected } checkAllSelected={ checkChildren } />)
                 }
             </div>
-            <div onClick={ (e) => { console.log(selection); } } className="cursor-pointer">
+            <button
+                onClick={ (e) => { console.log(selection); createMockTest(); } }
+                className="cursor-pointer"
+                // to={"/mock-exam"}
+                // state={{ mockExam : createMockTest() }}
+            >
                 Create Mock test
-            </div>
+            </button>
         </div>
     );
 };

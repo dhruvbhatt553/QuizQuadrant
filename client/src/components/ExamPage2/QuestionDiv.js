@@ -18,6 +18,7 @@ export default function QuestionDiv() {
     const [optionsMarked, setOptionsMarked] = useState([false, false, false, false]);   // only for display purpose ...
 
     useEffect(() => {
+        console.log("kiara advani");
         const getQuestionData = async () => {
             const data = await fetchQuestionData();
             setOptionsMarked(
