@@ -1,17 +1,17 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, {useContext, useEffect, useState} from 'react';
+import {Link, useLocation} from 'react-router-dom';
 import profileContext from "../../context/profile/profileContext";
 import localStorageContext from '../../context/local-storage/localStorageContext';
 
 export default function Profile() {
 
     const location = useLocation();
-    const { userId } = location.state;
+    const {userId} = location.state;
     const [userProfile, setUserProfile] = useState(null);
     const [isGenerating, setIsGenerating] = useState(false);
     const [localSavedExams, setLocalSavedExams] = useState([]);
-    const { fetchProfile, generateResult } = useContext(profileContext);
-    const { setExams, getExams } = useContext(localStorageContext);
+    const {fetchProfile, generateResult} = useContext(profileContext);
+    const {setExams, getExams} = useContext(localStorageContext);
 
     const handleGenerateResult = async (index) => {
         setIsGenerating((isGenerating) => {
@@ -23,11 +23,9 @@ export default function Profile() {
         console.log("response: " + response);
         tempUser.examsCreated[index].isResultGenerated = true;
         setUserProfile(tempUser);
-        setTimeout(() => {
-            setIsGenerating((isGenerating) => {
-                return false;
-            });
-        }, 2000);
+        setIsGenerating((isGenerating) => {
+            return false;
+        });
     }
 
     const handleDeleteLocalSavedExam = (index) => {
@@ -162,7 +160,7 @@ export default function Profile() {
                                         </div>
                                         <div>
                                             <h1 className='text-xl font-bold text-start mt-10 mb-3'>
-                                                Exams saved to Local: ({localSavedExams.length}):
+                                                Exams saved to Local ({localSavedExams.length}):
                                             </h1>
                                             <div className='grid lg:grid-cols-3 md:grid-cols-2'>
                                                 {
@@ -171,7 +169,8 @@ export default function Profile() {
                                                             <div
                                                                 className='p-3 m-1 border-gray-500 border-2 rounded-lg bg-gray-100'
                                                             >
-                                                                <h1 className='font-semibold text-lg mb-3'>Local Saved Exam - {index + 1}</h1>
+                                                                <h1 className='font-semibold text-lg mb-3'>Local Saved
+                                                                    Exam - {index + 1}</h1>
                                                                 <div className=''>
                                                                     <div className='grid grid-cols-2 px-5'>
                                                                         <span className='text-start font-semibold'>
@@ -201,7 +200,9 @@ export default function Profile() {
                                                                     </Link>
                                                                     <button
                                                                         value={`localSavedExam-${index}`}
-                                                                        onClick={() => { handleDeleteLocalSavedExam(index) }}
+                                                                        onClick={() => {
+                                                                            handleDeleteLocalSavedExam(index)
+                                                                        }}
                                                                         className='inline-block bg-red-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 rounded-lg px-3 py-2 mt-3 mx-1 font-bold text-white'
                                                                     >
                                                                         Delete
@@ -333,17 +334,22 @@ export default function Profile() {
                                                                                     className='text-start'>{exam.totalMarks}</span>
                                                                             </div>
                                                                             {
-                                                                                !exam.isFinished &&
-                                                                                (
-                                                                                    <Link
-                                                                                        to={"/exam"}
-                                                                                        state={{ examId: exam.id }}
-                                                                                        value={exam.id}
-                                                                                        className='bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 rounded-lg px-3 py-2 mt-3 font-bold text-white'
-                                                                                    >
-                                                                                        Enter Exam
-                                                                                    </Link>
-                                                                                )
+                                                                                !exam.isFinished ?
+                                                                                    (
+                                                                                        <Link
+                                                                                            to={"/exam"}
+                                                                                            state={{examId: exam.id}}
+                                                                                            value={exam.id}
+                                                                                            className='inline-block bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 rounded-lg px-3 py-2 mt-3 font-bold text-white'
+                                                                                        >
+                                                                                            Enter Exam
+                                                                                        </Link>
+                                                                                    ) :
+                                                                                    (
+                                                                                        <span className='inline-block bg-green-700 rounded-lg px-3 py-2 mt-3 font-bold text-white'>
+                                                                                            Exam Finished
+                                                                                        </span>
+                                                                                    )
                                                                             }
                                                                         </div>
                                                                     </div>
@@ -408,7 +414,7 @@ export default function Profile() {
                     ) :
                     (
                         <div className='w-full h-full flex items-center grid justify-items-stretch'>
-                            <img src='images/loading.gif' className='justify-self-center' />
+                            <img src='images/loading.gif' className='justify-self-center'/>
                             <h1 className='text-xl'>Fetching user details ...</h1>
                         </div>
                     )

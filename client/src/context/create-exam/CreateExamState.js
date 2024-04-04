@@ -27,7 +27,8 @@ const CreateExamState = (props) => {
             optionDImageURL: null,
             solutionStatement: "",
             solutionImageURL: null,
-            correctAnswer: []
+            correctAnswer: [],
+            isSaved: false
         };
     }
 
@@ -41,7 +42,6 @@ const CreateExamState = (props) => {
     const [examTime, setExamTime] = useState("");
     const [examQuestions, setExamQuestions] = useState([createNewQuestionObject()]);
     const [questionIndex, setQuestionIndex] = useState(0);
-    const [unsaved, setUnsaved] = useState(true);
     const [candidateEmail, setCandidateEmail] = useState(new Set());
 
     const askBeforeReload = (e) => {
@@ -83,14 +83,16 @@ const CreateExamState = (props) => {
             isValid = false;
             errorMsg.push("Please enter Exam Start Time.");
         }
-        if (unsaved) {
-            isValid = false;
-            errorMsg.push(`Please save the unsaved question number: ${questionIndex + 1}.`);
-        }
         if (candidateEmail.size === 0) {
             isValid = false;
             errorMsg.push("Please enter Email address of allowed candidates.");
         }
+        examQuestions.map((question, index) => {
+            if(!question.isSaved) {
+                isValid = false;
+                errorMsg.push(`Please save question number ${index + 1}.`);
+            }
+        });
 
         return {
             isValid: isValid,
@@ -119,6 +121,16 @@ const CreateExamState = (props) => {
                 document.getElementById('main-div').classList.add('hidden');
                 document.getElementById('loading-div').classList.remove('hidden');
                 await createExam(data);
+                if(localStorageIndex !== null) {
+                    const allExams = getExams();
+                    const newExams = [];
+                    allExams.map((exam, i) => {
+                        if (i !== localStorageIndex) {
+                            newExams.push(exam);
+                        }
+                    });
+                    setExams(newExams);
+                }
                 navigate("/");
             }
         } else {
@@ -183,7 +195,6 @@ const CreateExamState = (props) => {
             examTime,
             examQuestions,
             questionIndex,
-            unsaved,
             candidateEmail,
             setExamTitle,
             setExamDuration,
@@ -191,7 +202,6 @@ const CreateExamState = (props) => {
             setExamTime,
             setExamQuestions,
             setQuestionIndex,
-            setUnsaved,
             setCandidateEmail,
             createNewQuestionObject,
             createExamObject,

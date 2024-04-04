@@ -5,7 +5,12 @@ import {uploadImage} from "../../../utils/firebase";
 
 export default function RightDiv() {
 
-    const {examQuestions, setExamQuestions, questionIndex, setQuestionIndex, unsaved, setUnsaved} = useContext(createExamContext);
+    const {
+        examQuestions,
+        setExamQuestions,
+        questionIndex,
+        setQuestionIndex
+    } = useContext(createExamContext);
     const {subjects} = useContext(subjectContext);
     const [type, setType] = useState(examQuestions[questionIndex].type);
     const [subject, setSubject] = useState(examQuestions[questionIndex].subject);
@@ -31,6 +36,7 @@ export default function RightDiv() {
     const [optionCImagePreview, setOptionCImagePreview] = useState(null);
     const [optionDImagePreview, setOptionDImagePreview] = useState(null);
     const [solutionImagePreview, setSolutionImagePreview] = useState(null);
+    const [isSaved, setIsSaved] = useState(examQuestions[questionIndex].isSaved);
     const [saving, setSaving] = useState(false);
     const [deleting, setDeleting] = useState(false);
 
@@ -59,6 +65,7 @@ export default function RightDiv() {
         setOptionCImagePreview(examQuestions[questionIndex].optionCImageURL);
         setOptionDImagePreview(examQuestions[questionIndex].optionDImageURL);
         setSolutionImagePreview(examQuestions[questionIndex].solutionImageURL);
+        setIsSaved(examQuestions[questionIndex].isSaved);
     }, [questionIndex, examQuestions]);
 
     const updateImageStates = (file, baseID) => {
@@ -93,11 +100,6 @@ export default function RightDiv() {
             }
         }
     };
-
-    const updateUnsavedState = () => {
-        setUnsaved(true);
-        document.removeEventListener("change", updateUnsavedState);
-    }
 
     const deleteQuestion = () => {
         const arr = examQuestions.filter((question, index) => (questionIndex !== index));
@@ -185,21 +187,22 @@ export default function RightDiv() {
             optionDImageURL: "",
             solutionStatement: solution,
             solutionImageURL: "",
-            correctAnswer: [...correctAnswer]
+            correctAnswer: [...correctAnswer],
+            isSaved: true
         };
 
 
-        if(typeof questionImage !== "string") data.questionImageURL = await uploadImage(questionImage);
+        if (typeof questionImage !== "string") data.questionImageURL = await uploadImage(questionImage);
         else data.questionImageURL = questionImage;
-        if(typeof optionAImage !== "string") data.optionAImageURL = await uploadImage(optionAImage);
+        if (typeof optionAImage !== "string") data.optionAImageURL = await uploadImage(optionAImage);
         else data.optionAImageURL = optionAImage;
-        if(typeof optionBImage !== "string") data.optionBImageURL = await uploadImage(optionBImage);
+        if (typeof optionBImage !== "string") data.optionBImageURL = await uploadImage(optionBImage);
         else data.optionBImageURL = optionBImage;
-        if(typeof optionCImage !== "string") data.optionCImageURL = await uploadImage(optionCImage);
+        if (typeof optionCImage !== "string") data.optionCImageURL = await uploadImage(optionCImage);
         else data.optionCImageURL = optionCImage;
-        if(typeof optionDImage !== "string") data.optionDImageURL = await uploadImage(optionDImage);
+        if (typeof optionDImage !== "string") data.optionDImageURL = await uploadImage(optionDImage);
         else data.optionDImageURL = optionDImage;
-        if(typeof solutionImage !== "string") data.solutionImageURL = await uploadImage(solutionImage);
+        if (typeof solutionImage !== "string") data.solutionImageURL = await uploadImage(solutionImage);
         else data.solutionImageURL = solutionImage;
 
         setQuestionImagePreview(data.questionImageURL);
@@ -213,6 +216,12 @@ export default function RightDiv() {
         setExamQuestions(newExamQuestions);
     }
 
+    const markQuestionUnsaved = () => {
+        const arr = [...examQuestions];
+        arr[questionIndex].isSaved = false;
+        setIsSaved((isSaved) => { return false; });
+    }
+
     const handleDeleteBtn = async () => {
         setDeleting((deleting) => (!deleting));
         deleteQuestion();
@@ -221,8 +230,6 @@ export default function RightDiv() {
 
     const handleSaveBtn = async () => {
         const {isValid, errorMsg} = validateData();
-        // const isValid = true;
-        // const errorMsg = '';
         if (!isValid) {
             let errorStr = "";
             errorMsg.forEach((msg, index) => {
@@ -230,15 +237,19 @@ export default function RightDiv() {
             });
             window.alert("Cannot save the question: \n" + errorStr);
         } else {
-            setSaving((saving) => { return true; });
+            setSaving((saving) => {
+                return true;
+            });
             await saveQuestion();
-            setSaving((saving) => { return false; });
-            setUnsaved(false);
-            document.addEventListener("change", updateUnsavedState);
+            setSaving((saving) => {
+                return false;
+            });
+            setIsSaved(true);
         }
     }
 
     const handleAddImage = (e, baseID) => {
+        markQuestionUnsaved();
         document.getElementById(baseID + "Add").classList.add("hidden");
         const file = e.target.files[0];
         console.log(file);
@@ -248,6 +259,7 @@ export default function RightDiv() {
     }
 
     const handleRemoveImage = async (baseID) => {
+        markQuestionUnsaved();
         document.getElementById(baseID + "Remove").classList.add("hidden");
         switch (baseID) {
             case "questionImage":
@@ -279,21 +291,25 @@ export default function RightDiv() {
     }
 
     const editQuestionType = (e) => {
+        markQuestionUnsaved();
         setType(e.target.value);
         setCorrectAnswer(new Set());
     }
 
     const editSubject = (e) => {
+        markQuestionUnsaved();
         setSubject(subjects[e.target.value]);
         console.log(subjects[e.target.value]);
     }
 
     const editSubtopic = (e) => {
+        markQuestionUnsaved();
         setSubtopic(subject.subtopics[e.target.value]);
         console.log(subject.subtopics[e.target.value]);
     }
 
     const editText = (e) => {
+        markQuestionUnsaved();
         switch (e.target.name) {
             case "positiveMarks":
                 setPositiveMarks(e.target.value);
@@ -323,6 +339,7 @@ export default function RightDiv() {
     }
 
     const editCorrectAnswer = (e) => {
+        markQuestionUnsaved();
         if (type === "mcq") {
             const temp = new Set();
             temp.add(e.target.value);
@@ -338,20 +355,46 @@ export default function RightDiv() {
     return (
         <>
             <div className='w-full grid grid-cols-3 items-center my-2'>
-                <button id='delete' onClick={handleDeleteBtn}
-                        className={`disabled:cursor-not-allowed justify-self-start text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center`}
-                        disabled={deleting || (examQuestions.length === 1)}>{deleting ? (<><span>Deleting...</span><img
-                    src='./images/loading.gif' className='inline h-5 ms-2'/></>) : "Delete"}</button>
+                <button
+                    id='delete' onClick={handleDeleteBtn}
+                    className={`disabled:cursor-not-allowed justify-self-start text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center`}
+                    disabled={deleting || (examQuestions.length === 1)}
+                >
+                    {
+                        deleting ?
+                            (
+                                <>
+                                    <span>Deleting...</span>
+                                    <img src='./images/loading.gif' className='inline h-5 ms-2'/>
+                                </>
+                            ) :
+                            "Delete"
+                    }
+                </button>
                 <span className='font-bold text-center'>Question - {questionIndex + 1}</span>
-                <button id='save' onClick={handleSaveBtn}
-                        className={`disabled:cursor-not-allowed justify-self-end text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center`}
-                        disabled={saving || !unsaved}>{saving ? (<><span>Saving...</span><img src='./images/loading.gif'
-                                                                                              className='inline h-5 ms-2'/></>) : "Save"}</button>
+                <button
+                    id='save' onClick={handleSaveBtn}
+                    className={`disabled:cursor-not-allowed disabled:pointer-events-none justify-self-end text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center`}
+                    disabled={saving || isSaved}
+                >
+                    {
+                        saving ?
+                            (
+                                <>
+                                    <span>Saving...</span>
+                                    <img src='./images/loading.gif' className='inline h-5 ms-2'/>
+                                </>
+                            ) :
+                            "Save"
+                    }
+                </button>
             </div>
             <div className='w-full my-2 text-center'>
                 <label htmlFor='questionTypeSelect' className='font-bold'>Select question type:</label>
                 <select onChange={(e) => editQuestionType(e)}
-                        className='mx-5 rounded-lg px-3 py-1 bg-gray-200 cursor-pointer' id='questionTypeSelect'>
+                        className='mx-5 rounded-lg px-3 py-1 bg-gray-200 cursor-pointer'
+                        id='questionTypeSelect'
+                >
                     <option name='mcq' value={"mcq"} selected={type === "mcq"}>MCQ</option>
                     <option name='msq' value={"msq"} selected={type === "msq"}>MSQ</option>
                 </select>
@@ -421,7 +464,7 @@ export default function RightDiv() {
                           className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-52 focus:shadow-xl'></textarea>
                 <p className='text-end mb-2 text-gray-600 text-sm'>{question.length} / {4294967295} characters</p>
                 <div className='flex justify-center'>
-                    <img id='questionImagePreview' src={questionImagePreview}/>
+                    <img id='questionImagePreview' src={questionImagePreview} draggable={false}/>
                 </div>
             </div>
             <div className='w-full my-2 p-3 bg-gray-200 rounded-lg border-gray-500 border-2'>
@@ -439,7 +482,7 @@ export default function RightDiv() {
                           className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
                 <p className='text-end mb-2 text-gray-600 text-sm'>{optionA.length} / {65535} characters</p>
                 <div className='flex justify-center'>
-                    <img id='optionAImagePreview' src={optionAImagePreview}/>
+                    <img id='optionAImagePreview' src={optionAImagePreview} draggable={false}/>
                 </div>
             </div>
             <div className='w-full my-2 p-3 bg-gray-200 rounded-lg border-gray-500 border-2'>
@@ -457,7 +500,7 @@ export default function RightDiv() {
                           className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
                 <p className='text-end mb-2 text-gray-600 text-sm'>{optionB.length} / {65535} characters</p>
                 <div className='flex justify-center'>
-                    <img id='optionBImagePreview' src={optionBImagePreview}/>
+                    <img id='optionBImagePreview' src={optionBImagePreview} draggable={false}/>
                 </div>
             </div>
             <div className='w-full my-2 p-3 bg-gray-200 rounded-lg border-gray-500 border-2'>
@@ -475,7 +518,7 @@ export default function RightDiv() {
                           className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
                 <p className='text-end mb-2 text-gray-600 text-sm'>{optionC.length} / {65535} characters</p>
                 <div className='flex justify-center'>
-                    <img id='optionCImagePreview' src={optionCImagePreview}/>
+                    <img id='optionCImagePreview' src={optionCImagePreview} draggable={false}/>
                 </div>
             </div>
             <div className='w-full my-2 p-3 bg-gray-200 rounded-lg border-gray-500 border-2'>
@@ -493,7 +536,7 @@ export default function RightDiv() {
                           className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
                 <p className='text-end mb-2 text-gray-600 text-sm'>{optionD.length} / {65535} characters</p>
                 <div className='flex justify-center'>
-                    <img id='optionDImagePreview' src={optionDImagePreview}/>
+                    <img id='optionDImagePreview' src={optionDImagePreview} draggable={false}/>
                 </div>
             </div>
             <div className='w-full my-2 p-3 bg-gray-200 rounded-lg border-gray-500 border-2'>
@@ -558,7 +601,7 @@ export default function RightDiv() {
                           className='w-full border-gray-400 border-2 rounded-lg p-2 my-1 min-h-32 focus:shadow-xl'></textarea>
                 <p className='text-end mb-2 text-gray-600 text-sm'>{solution.length} / {4294967295} characters</p>
                 <div className='flex justify-center'>
-                    <img id='solutionImagePreview' src={solutionImagePreview}/>
+                    <img id='solutionImagePreview' src={solutionImagePreview} draggable={false}/>
                 </div>
             </div>
         </>

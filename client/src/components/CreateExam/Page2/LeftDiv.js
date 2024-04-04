@@ -1,30 +1,26 @@
-import React, { useContext } from 'react';
+import React, {useContext} from 'react';
 import createExamContext from '../../../context/create-exam/createExamContext';
 
 export default function LeftDiv() {
 
-    const {examQuestions, setExamQuestions, questionIndex, setQuestionIndex, unsaved, setUnsaved, createNewQuestionObject} = useContext(createExamContext);
+    const {
+        examQuestions,
+        setExamQuestions,
+        questionIndex,
+        setQuestionIndex,
+        createNewQuestionObject
+    } = useContext(createExamContext);
 
     const addNewQuestion = () => {
-        if (!unsaved) {
-            const newQuestion = new Object(createNewQuestionObject());
-            const arr = [...examQuestions];
-            arr.push(newQuestion);
-
-            setExamQuestions(arr);
-            setQuestionIndex(arr.length - 1);
-            setUnsaved(true);
-        } else {
-            window.alert("You have some unsaved work on current question. Kindly save the question and try again...");
-        }
+        const newQuestion = new Object(createNewQuestionObject());
+        const arr = [...examQuestions];
+        arr.push(newQuestion);
+        setExamQuestions(arr);
+        setQuestionIndex(arr.length - 1);
     }
 
     const changeDisplayQuestion = (e) => {
-        if (!unsaved) {
-            setQuestionIndex(Number(e.target.value));
-        } else {
-            window.alert("You have some unsaved work on current question. Kindly save the question and try again...");
-        }
+        setQuestionIndex(Number(e.target.value));
     }
 
     return (
@@ -43,7 +39,10 @@ export default function LeftDiv() {
                                 key={index}
                                 value={index}
                                 onClick={(e) => changeDisplayQuestion(e)}
-                                className={`w - full aspect-square rounded-full text-lg font-bold text-white ${questionIndex === index ? "bg-black" : "bg-gray-500"}`}>{index + 1}</button>
+                                className={`w - full aspect-square rounded-full text-lg font-bold text-white ${questionIndex === index ? "bg-black" : "bg-gray-500"}`}
+                            >
+                                {index + 1}
+                            </button>
                         );
                     })
                 }

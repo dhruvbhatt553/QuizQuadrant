@@ -281,25 +281,25 @@ export default function CreateQuestion() {
 
     return (
         <>
-            {
-                isSaving &&
-                (
-                    <div id='loading-div' className='absolute w-full px-10 py-10 text-3xl text-center grid grid-cols-11'>
-                        <div className='col-start-6'>
-                            <img src='images/loading.gif'/>
-                            <h1 className='mt-10 text-red-700 font-medium'>Saving ...</h1>
-                        </div>
-                    </div>
-                )
-            }
-            <div id='main-div' className={`w - full h-screen px-10 py-2 text-lg ${isSaving ? "blur pointer-events-none" : ""}`}>
+            <div id='main-div' className={`w - full h-screen px-10 py-2 text-lg ${isSaving ? "pointer-events-none" : ""}`}>
                 <div className='w-full my-5 grid grid-cols-3 items-center'>
                     <button id='cancel' onClick={handleCancelBtn}
                             className='justify-self-start text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center'>Cancel
                     </button>
                     <span className='font-bold text-xl text-center'>Create New Question</span>
                     <button id='save' onClick={handleSaveBtn}
-                            className='justify-self-end text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center'>Save
+                            className='justify-self-end text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center'
+                    >
+                        {
+                            isSaving ?
+                                (
+                                    <>
+                                        <span>Saving...</span>
+                                        <img src='./images/loading.gif' className='inline h-5 ms-2'/>
+                                    </>
+                                ) :
+                                "Save"
+                        }
                     </button>
                 </div>
                 <div className='w-full my-2'>
