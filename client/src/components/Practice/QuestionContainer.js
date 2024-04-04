@@ -50,7 +50,6 @@ export default function QuestionContainer({question, number, shift, responses, r
 
     }
 
-    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa: " + question.hasImage)
 
     return (
         <>

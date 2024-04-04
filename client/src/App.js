@@ -34,8 +34,11 @@ function App() {
   const { fetchSubjects } = useContext(subjectContext);
 
   useEffect(() => {
+    const getSubjects = async () => {
+      await fetchSubjects();
+    }
+    getSubjects();
     console.log("Appsladnvljasbgf");
-    fetchSubjects();
   }, []);
 
   return (
