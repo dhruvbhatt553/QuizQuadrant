@@ -1,5 +1,3 @@
-
-
 export default function Subtopics({subtopic,selection,changeSelection,index1,index2,parentSelected,checkParent}) {
    
 
@@ -7,21 +5,16 @@ export default function Subtopics({subtopic,selection,changeSelection,index1,ind
         console.log("handel "+index1+" "+index2);
         let arr=[...selection];
         arr[index1][index2]=!arr[index1][index2];
-            changeSelection(arr);
- 
-           checkParent();
-          
+        changeSelection(arr);
+        checkParent();     
     }
 
    
-    
     return (
         <div className=' text-start ps-6 pe-4 py-0.5 flex justify-between items-center'>
             <div className='font-bold text-white'>
-
-            {subtopic}
+            {subtopic.subtopicName}
             </div>
-
             <input
                         type="checkbox"
                         id="all"
