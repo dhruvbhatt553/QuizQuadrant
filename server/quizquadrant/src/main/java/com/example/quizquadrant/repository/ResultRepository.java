@@ -17,7 +17,9 @@ import java.util.Optional;
 @Repository
 public interface ResultRepository extends JpaRepository<Result, ResultKey> {
 
-    List<Result> findTop10ByExamOrderByMarksDesc(Exam exam);
+    //List<Result> findTop10ByExamOrderByMarksDesc(Exam exam);
+
+    List<Result> findTop10ResultsByIsPresentAndExamOrderByMarksDesc(Boolean isPresent, Exam exam);
   
     List<Result> findByExamOrderByMarksDesc(Exam exam);
 

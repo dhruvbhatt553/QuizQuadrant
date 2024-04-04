@@ -89,7 +89,7 @@ export default function QuestionDiv() {
                                                                             setOptionsMarked(arr);
                                                                         }}
                                                                     />
-                                                                    {(option.isMarked).toString()}
+                                                                    {/*{(option.isMarked).toString()}*/}
                                                                 </div>
                                                                 <div className='grid items-center'>
                                                                     <label htmlFor={`option${index}`}>
@@ -126,23 +126,28 @@ export default function QuestionDiv() {
                                     >
                                         Clear
                                     </button>
-                                    <button
-                                        className={`bg-blue-700 hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-blue-300 rounded-lg px-3 py-2 mx-2 my-1 font-bold text-white lg:justify-self-center disabled:pointer-events-none`}
-                                        disabled={isSaving}
-                                        onClick={
-                                            async () => {
-                                                setIsSaving((isSaving) => {
-                                                    return true;
-                                                });
-                                                await handleSaveBtn();
-                                                setIsSaving((isSaving) => {
-                                                    return false;
-                                                });
-                                            }
-                                        }
-                                    >
-                                        {isSaving ? "Saving..." : "Save"}
-                                    </button>
+                                    {
+                                        !examData.isMockTest &&
+                                        (
+                                            <button
+                                                className={`bg-blue-700 hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-blue-300 rounded-lg px-3 py-2 mx-2 my-1 font-bold text-white lg:justify-self-center disabled:pointer-events-none`}
+                                                disabled={isSaving}
+                                                onClick={
+                                                    async () => {
+                                                        setIsSaving((isSaving) => {
+                                                            return true;
+                                                        });
+                                                        await handleSaveBtn();
+                                                        setIsSaving((isSaving) => {
+                                                            return false;
+                                                        });
+                                                    }
+                                                }
+                                            >
+                                                {isSaving ? "Saving..." : "Save"}
+                                            </button>
+                                        )
+                                    }
                                     <button
                                         className='bg-blue-700 hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-blue-300 rounded-lg px-3 py-2 mx-2 my-1 font-bold text-white lg:justify-self-end disabled:cursor-not-allowed disabled:bg-gray-600'
                                         onClick={handleNextBtn}

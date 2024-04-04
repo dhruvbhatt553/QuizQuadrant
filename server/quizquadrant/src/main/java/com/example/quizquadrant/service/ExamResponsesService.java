@@ -30,6 +30,7 @@ public class ExamResponsesService {
     }
 
     public ExamResponses storePrivateQuestionResponses(Long userId, Long privateQuestionId, PrivateQuestionResponsesDto privateQuestionResponsesDto) {
+
         User u = userRepository.findById(userId).get();
         PrivateQuestion q = privateQuestionRepository.findById(privateQuestionId).get();
 
@@ -49,25 +50,31 @@ public class ExamResponsesService {
             }
         }
 
-        Optional<ExamResponses> examResponsesOptional = examResponsesRepository.findById(examResponseKey);
-        if(examResponsesOptional.isPresent()) {
+        if(optionsMarked.get(0) || optionsMarked.get(1) || optionsMarked.get(2) || optionsMarked.get(3)) {
+            Optional<ExamResponses> examResponsesOptional = examResponsesRepository.findById(examResponseKey);
+            if (examResponsesOptional.isPresent()) {
 //            ExamResponses examResponses = examResponsesOptional.get();
 //            examResponses.setOptionAMarked(optionsMarked.get(0));
 //            examResponses.setOptionBMarked(optionsMarked.get(1));
 //            examResponses.setOptionCMarked(optionsMarked.get(2));
 //            examResponses.setOptionDMarked(optionsMarked.get(3));
-            examResponsesRepository.updateExamResponsesByUserAndPrivateQuestion(u,q,optionsMarked.get(0),optionsMarked.get(1),optionsMarked.get(2),optionsMarked.get(3));
-            return examResponsesRepository.findExamResponsesByUserAndPrivateQuestion(u,q);
-        } else {
-            ExamResponses examResponsesNew = new ExamResponses(
-                    u,
-                    q,
-                    optionsMarked.get(0),
-                    optionsMarked.get(1),
-                    optionsMarked.get(2),
-                    optionsMarked.get(3)
-            );
-            return examResponsesRepository.save(examResponsesNew);
+                examResponsesRepository.updateExamResponsesByUserAndPrivateQuestion(u, q, optionsMarked.get(0), optionsMarked.get(1), optionsMarked.get(2), optionsMarked.get(3));
+                return examResponsesRepository.findExamResponsesByUserAndPrivateQuestion(u, q);
+            } else {
+                ExamResponses examResponsesNew = new ExamResponses(
+                        u,
+                        q,
+                        optionsMarked.get(0),
+                        optionsMarked.get(1),
+                        optionsMarked.get(2),
+                        optionsMarked.get(3)
+                );
+                return examResponsesRepository.save(examResponsesNew);
+            }
+        }
+        else {
+            examResponsesRepository.deleteExamResponsesByUserAndPrivateQuestion(u,q);
+            return null;
         }
     }
 
@@ -76,6 +83,6 @@ public class ExamResponsesService {
     }
 
     public void removeResponses(User user, List<PrivateQuestion> privateQuestionList) {
-        examResponsesRepository.deleteExamResponsesByUserAndAndPrivateQuestion(user,privateQuestionList);
+        examResponsesRepository.deleteExamResponsesByUserAndPrivateQuestions(user, privateQuestionList);
     }
 }

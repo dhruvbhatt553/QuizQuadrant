@@ -6,7 +6,8 @@ import axios from "axios";
 const ExamState = (props) => {
 
     const maxViolation = 5;
-    const isMockTest=false;
+    //let isMockTest = false;
+  //  const [isMockTest, setIsMockTest] = useState(false);
     const [instructionRead, setInstructionRead] = useState(false);
     const [examStart, setExamStart] = useState(false);
     const [examFinish, setExamFinish] = useState(false);
@@ -21,7 +22,8 @@ const ExamState = (props) => {
     const rotateArray = (arr) => {
         const userId = 1;   // hardcoded temp ...
         const examId = 1;   // hardcoded temp ...
-        const rotationFactor = userId % examId;
+        // const rotationFactor = userId % examId;
+        const rotationFactor = 3;
         let count = rotationFactor % arr.length;
         let i = arr.length - 1;
         while (count > 0) {
@@ -46,25 +48,36 @@ const ExamState = (props) => {
         });
         setExamData(response.data);
         setAllQuestions(questionArray);
+        //setIsMockTest((isMockTest) => { return false; });
+        // isMockTest = false
         return response.data;
     };
 
-    const fetchQuestionData = async () => {
-        let userId = 2;
-        let data = allQuestions[currQuestionIndex];
-        if(data === null) {
-            const questionId = examData.questionIds[currQuestionIndex];
-            const response = await axios.get(`http://localhost:8080/api/exam/get-question-by-id?userId=${userId}&questionId=${questionId}`)
-            data = response.data;
-            console.log("response for question:", data)
-            data.options = rotateArray(data.options);
-            const newArray = [...allQuestions];
-            newArray[currQuestionIndex] = data;
-            setAllQuestions(newArray);
-            console.log("request to fetch question with id: " + questionId);
-        }
-        setCurrQuestionData(data);
-        return data;
+    const fetchMockExamData = async (mockExam) => {
+        const response = await axios.post(`http://localhost:8080/api/mock-test/get-question-Ids?total=${mockExam.total}`, { subtopicDtos: mockExam.subtopics });
+        console.log("response for mock exam:", response.data);
+        const questionArray = [];
+        const fetchedArray = rotateArray(response.data);
+        fetchedArray.map((questionId) => {
+            questionArray.push(null);
+        });
+        const currDate = new Date();
+        const mockExamData = {
+            id:null,
+            title: mockExam.title,
+            duration: mockExam.duration,
+            startDate: currDate.getFullYear() + "-" + currDate.getMonth() + "-" + currDate.getDay(),
+            startTime: currDate.getHours() + ":" + currDate.getMinutes(),
+            candidateName: "asasasasas",
+            candidateEmail: "ckncdhc",
+            questionIds: fetchedArray,
+            isMockTest: true
+        };
+        setExamData(mockExamData);
+        setAllQuestions(questionArray);
+       // setIsMockTest((isMockTest) => { return true; });
+       //  isMockTest = true
+        return mockExamData;
     }
 
     // const fetchQuestionData = async () => {
@@ -72,12 +85,7 @@ const ExamState = (props) => {
     //     let data = allQuestions[currQuestionIndex];
     //     if(data === null) {
     //         const questionId = examData.questionIds[currQuestionIndex];
-    //         let response;
-    //         if(!isMockTest)
-    //         response = await axios.get(`http://localhost:8080/api/exam/get-question-by-id?userId=${userId}&questionId=${questionId}`)
-    //         else{
-    //             response = await axios.get(`http://localhost:8080/api/question/get-question-by-id?questionId=${questionId}`)
-    //         }
+    //         const response = await axios.get(`http://localhost:8080/api/exam/get-question-by-id?userId=${userId}&questionId=${questionId}`)
     //         data = response.data;
     //         console.log("response for question:", data)
     //         data.options = rotateArray(data.options);
@@ -90,9 +98,35 @@ const ExamState = (props) => {
     //     return data;
     // }
 
+    const fetchQuestionData = async () => {
+        let userId = 2;
+        let data = allQuestions[currQuestionIndex];
+        if(data === null) {
+            const questionId = examData.questionIds[currQuestionIndex];
+            let response;
+            // console.log("dkcndhcbdbcd",isMockTest);
+            if(examData.isMockTest) {
+                response = await axios.get(`http://localhost:8080/api/question/get-question-by-id?questionID=${questionId}`)
+                console.log(`http://localhost:8080/api/question/get-question-by-id?questionID=${questionId}`);
+            } else {
+                console.log("private question api ...");
+                response = await axios.get(`http://localhost:8080/api/exam/get-question-by-id?userId=${userId}&questionId=${questionId}`);
+            }
+            data = response.data;
+            console.log("response for question:", data);
+            data.options = rotateArray(data.options);
+            const newArray = [...allQuestions];
+            newArray[currQuestionIndex] = data;
+            setAllQuestions(newArray);
+            console.log("request to fetch question with id: " + questionId);
+        }
+        setCurrQuestionData(data);
+        return data;
+    }
+
     const finishExam = async () => {
         const userId = 2;
-        if(!isMockTest) {
+        if(!examData.isMockTest) {
         const response = await axios.get(`http://localhost:8080/api/exam/finish-exam?userId=${userId}&examId=${examData.id}`);
         return response.data;
         }
@@ -259,6 +293,7 @@ const ExamState = (props) => {
                 remainingMin,
                 remainingSec,
                 fetchExamData,
+                fetchMockExamData,
                 fetchQuestionData,
                 finishExam,
                 handleInstructionRead,

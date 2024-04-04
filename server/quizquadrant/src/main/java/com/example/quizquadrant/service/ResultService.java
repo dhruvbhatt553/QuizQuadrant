@@ -30,7 +30,7 @@ public class ResultService {
     public List<Result> createResults(List<User> users, Exam exam) {
         List<Result> results = new ArrayList<>();
 
-        for(User user: users) {
+        for (User user : users) {
             Result result = new Result(
                     user,
                     exam,
@@ -49,24 +49,25 @@ public class ResultService {
     public void markUserPresent(User user, Exam exam) {
         resultRepository.updateIsPresentResultByUserAndExam(user, exam);
     }
+
     public void markExamFinished(User user, Exam exam) {
         resultRepository.updateIsFinishedResultByUserAndExam(user, exam);
     }
 
     public void updateMarksOfUser(User user, Exam exam, Integer marks) {
-        resultRepository.updateResultMarksByUserAndExam(user,exam,marks);
+        resultRepository.updateResultMarksByUserAndExam(user, exam, marks);
     }
 
     public Boolean calculateResult(Exam exam) {
-        if(exam != null) {
-            for(Result result : exam.getExamResults()) {
+        if (exam != null) {
+            for (Result result : exam.getExamResults()) {
                 User user = result.getUser();
                 int userMarks = 0;
 
 
-                for(PrivateQuestion privateQuestion : exam.getPrivateQuestions()) {
+                for (PrivateQuestion privateQuestion : exam.getPrivateQuestions()) {
                     ExamResponses examResponse = examResponsesService.getExamResponsesByUserAndQuestion(user, privateQuestion);
-                    if(examResponse != null) {
+                    if (examResponse != null) {
                         int questionMark = privateQuestion.getNegativeMarks();
                         privateOptionService.sortPrivateOptions(privateQuestion.getPrivateOptions());
 
@@ -92,32 +93,30 @@ public class ResultService {
         }
     }
 
-    public List<LeaderBoardDto> getLeaderBoard (Exam exam) {
-        List<Result> topResults = resultRepository.findTop10ByExamOrderByMarksDesc(exam);
+    public List<LeaderBoardDto> getLeaderBoard(Exam exam) {
+        List<Result> topResults = resultRepository.findTop10ResultsByIsPresentAndExamOrderByMarksDesc(true, exam);
         List<LeaderBoardDto> lds = new ArrayList<>();
-        for(Result result : topResults) {
-            if(result.getIsPresent()) {
-                LeaderBoardDto ld = new LeaderBoardDto(result.getUser().getId() , result.getUser().getName(), result.getMarks(), true);
-                lds.add(ld);
-            }
+        for (Result result : topResults) {
+            LeaderBoardDto ld = new LeaderBoardDto(result.getUser().getId(), result.getUser().getName(), result.getMarks(), result.getIsPresent());
+            lds.add(ld);
         }
         return lds;
 
     }
 
-    public List<LeaderBoardDto> getAllResult (Exam exam) {
+    public List<LeaderBoardDto> getAllResult(Exam exam) {
         List<Result> results = resultRepository.findByExamOrderByMarksDesc(exam);
         List<LeaderBoardDto> lds = new ArrayList<>();
-        for(Result result : results) {
-                LeaderBoardDto ld = new LeaderBoardDto(result.getUser().getId() , result.getUser().getName(), result.getMarks(), result.getIsPresent());
-                lds.add(ld);
+        for (Result result : results) {
+            LeaderBoardDto ld = new LeaderBoardDto(result.getUser().getId(), result.getUser().getName(), result.getMarks(), result.getIsPresent());
+            lds.add(ld);
         }
         return lds;
 
     }
 
-    public Boolean getIsFinished (User user, Exam exam) {
-        Result res = resultRepository.findResultsByExamAndUser(exam,user);
+    public Boolean getIsFinished(User user, Exam exam) {
+        Result res = resultRepository.findResultsByExamAndUser(exam, user);
         return res.getIsFinished();
     }
 
