@@ -43,7 +43,7 @@ return (<>
                 <img src='images/loading.gif' className='justify-self-center'/>
                 <h1 className='text-xl'>Fetching exam details ...</h1>
             </div>)}
-        {examFinish && (<ExamFinishDiv/>)}
+        {examFinish && (<ExamFinishDiv />)}
     </>);
 }
 ;

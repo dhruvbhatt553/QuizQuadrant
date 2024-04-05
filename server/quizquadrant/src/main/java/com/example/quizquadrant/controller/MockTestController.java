@@ -1,6 +1,7 @@
 package com.example.quizquadrant.controller;
 
 import com.example.quizquadrant.dto.CreateMockTestDto;
+import com.example.quizquadrant.dto.MockExamDto;
 import com.example.quizquadrant.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class MockTestController {
     }
 
     @PostMapping("/get-question-Ids")
-    public List<Long> getQuestionIds(@RequestBody CreateMockTestDto createMockTestDto, @RequestParam("total") Integer total) {
+    public MockExamDto getQuestionIds(@RequestBody CreateMockTestDto createMockTestDto, @RequestParam("total") Integer total) {
         return questionService.getQuestionIdsBySubtopics(createMockTestDto,total);
     }
 

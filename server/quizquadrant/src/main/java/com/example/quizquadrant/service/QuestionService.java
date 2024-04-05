@@ -203,7 +203,7 @@ public class QuestionService {
         return question;
     }
 
-    public List<Long> getQuestionIdsBySubtopics(CreateMockTestDto createMockTestDto, Integer total) {
+    public MockExamDto getQuestionIdsBySubtopics(CreateMockTestDto createMockTestDto, Integer total) {
         int pageSize = total;
         Pageable pageable = PageRequest.of(0, pageSize);
         List<Subtopic> subtopics = new ArrayList<>();
@@ -212,8 +212,13 @@ public class QuestionService {
             subtopics.add(subtopic);
         }
         Optional<List<Long>> Qids = questionRepository.findQuestionIdsBySubtopics(subtopics, pageable);
-        return Qids.orElse(null);
+        Long totalMarks = questionRepository.getSumOfPositiveMarks(Qids.orElse(null));
+
+        MockExamDto mock = new MockExamDto(Qids.orElse(null), totalMarks);
+        return mock;
     }
+
+
 
 
     //QUESTION BY ID
