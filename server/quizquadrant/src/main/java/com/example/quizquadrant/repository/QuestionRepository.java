@@ -22,4 +22,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     @Query("SELECT q.id FROM Question q WHERE q.subtopic in :subtopics")
     public Optional<List<Long>> findQuestionIdsBySubtopics(List<Subtopic> subtopics, Pageable pageable);
+
+    @Query("SELECT SUM(q.positiveMarks) from Question q where q.id in :questionIds")
+    public Long getSumOfPositiveMarks(List<Long> questionIds);
 }

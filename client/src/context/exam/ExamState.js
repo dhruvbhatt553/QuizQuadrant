@@ -7,7 +7,7 @@ const ExamState = (props) => {
 
     const maxViolation = 5;
     //let isMockTest = false;
-  //  const [isMockTest, setIsMockTest] = useState(false);
+    //  const [isMockTest, setIsMockTest] = useState(false);
     const [instructionRead, setInstructionRead] = useState(false);
     const [examStart, setExamStart] = useState(false);
     const [examFinish, setExamFinish] = useState(false);
@@ -18,6 +18,7 @@ const ExamState = (props) => {
     const [currQuestionData, setCurrQuestionData] = useState(null);
     const [remainingMin, setRemainingMin] = useState(0);
     const [remainingSec, setRemainingSec] = useState(0);
+    const [mockResult,changeMockResult] = useState(null);
 
     const rotateArray = (arr) => {
         const userId = 1;   // hardcoded temp ...
@@ -57,13 +58,13 @@ const ExamState = (props) => {
         const response = await axios.post(`http://localhost:8080/api/mock-test/get-question-Ids?total=${mockExam.total}`, { subtopicDtos: mockExam.subtopics });
         console.log("response for mock exam:", response.data);
         const questionArray = [];
-        const fetchedArray = rotateArray(response.data);
+        const fetchedArray = rotateArray(response.data.qids);
         fetchedArray.map((questionId) => {
             questionArray.push(null);
         });
         const currDate = new Date();
         const mockExamData = {
-            id:null,
+            id: null,
             title: mockExam.title,
             duration: mockExam.duration,
             startDate: currDate.getFullYear() + "-" + currDate.getMonth() + "-" + currDate.getDay(),
@@ -71,41 +72,25 @@ const ExamState = (props) => {
             candidateName: "asasasasas",
             candidateEmail: "ckncdhc",
             questionIds: fetchedArray,
-            isMockTest: true
+            isMockTest: true,
+            totalMarks: response.data.totalMarks
         };
         setExamData(mockExamData);
         setAllQuestions(questionArray);
-       // setIsMockTest((isMockTest) => { return true; });
-       //  isMockTest = true
+        // setIsMockTest((isMockTest) => { return true; });
+        //  isMockTest = true
         return mockExamData;
     }
 
-    // const fetchQuestionData = async () => {
-    //     let userId = 2;
-    //     let data = allQuestions[currQuestionIndex];
-    //     if(data === null) {
-    //         const questionId = examData.questionIds[currQuestionIndex];
-    //         const response = await axios.get(`http://localhost:8080/api/exam/get-question-by-id?userId=${userId}&questionId=${questionId}`)
-    //         data = response.data;
-    //         console.log("response for question:", data)
-    //         data.options = rotateArray(data.options);
-    //         const newArray = [...allQuestions];
-    //         newArray[currQuestionIndex] = data;
-    //         setAllQuestions(newArray);
-    //         console.log("request to fetch question with id: " + questionId);
-    //     }
-    //     setCurrQuestionData(data);
-    //     return data;
-    // }
-
+   
     const fetchQuestionData = async () => {
         let userId = 2;
         let data = allQuestions[currQuestionIndex];
-        if(data === null) {
+        if (data === null) {
             const questionId = examData.questionIds[currQuestionIndex];
             let response;
             // console.log("dkcndhcbdbcd",isMockTest);
-            if(examData.isMockTest) {
+            if (examData.isMockTest) {
                 response = await axios.get(`http://localhost:8080/api/question/get-question-by-id?questionID=${questionId}`)
                 console.log(`http://localhost:8080/api/question/get-question-by-id?questionID=${questionId}`);
             } else {
@@ -126,10 +111,11 @@ const ExamState = (props) => {
 
     const finishExam = async () => {
         const userId = 2;
-        if(!examData.isMockTest) {
-        const response = await axios.get(`http://localhost:8080/api/exam/finish-exam?userId=${userId}&examId=${examData.id}`);
-        return response.data;
+        if (!examData.isMockTest) {
+            const response = await axios.get(`http://localhost:8080/api/exam/finish-exam?userId=${userId}&examId=${examData.id}`);
+            return response.data;
         }
+        else return true;
     }
 
     const handleInstructionRead = (e) => {
@@ -182,7 +168,13 @@ const ExamState = (props) => {
         // TODO issue: when confirm box shows up, full screen is exited ...
         const submitConfirm = window.confirm("Are you sure you want to SUBMIT the exam ?");
         if (submitConfirm) {
-            const flag = await finishExam();
+            let flag = false;
+            if (!examData.isMockTest) {
+                flag = await finishExam();
+            } else {
+                flag = true;
+                console.log("path selected for claculate mock result -------------------------------------------------->>>>>>>")
+            }
             if (flag) {
                 setExamFinish(flag);
                 console.log("FINISH EXAM");
@@ -244,7 +236,7 @@ const ExamState = (props) => {
     const handleSaveBtn = async () => {
         let responsesArr = [];
         currQuestionData.options.map((option) => {
-            if(option.isMarked) {
+            if (option.isMarked) {
                 responsesArr.push(option.id);
             }
         });
@@ -280,9 +272,73 @@ const ExamState = (props) => {
         }, (startSec + 1) * 1000);
     }
 
+    const calculateMockTestResult = () => {
+        let achievedMarks = 0, corrects = 0, incorrects = 0, concernedSubtopics = [],totalMarks = 0 ;
+
+        allQuestions.map((question)=> {
+            if (question !== null) {
+                console.log("ALL OPTIONS",question.options);
+                if (question.options[0].isMarked ||
+                    question.options[1].isMarked ||
+                    question.options[2].isMarked ||
+                    question.options[3].isMarked) {
+                    let temp = true;
+                    for (let option in question.options) {
+                        temp = (option.isMarked === option.isCorrect);
+                        if (!temp) break;
+                    }
+                    if (temp) {
+                        corrects++;
+                        achievedMarks += question.positiveMarks;
+                        console.log(achievedMarks);
+                    }
+                    else {
+                        incorrects++;
+                        achievedMarks += question.negativeMarks;
+                        console.log(achievedMarks);
+                        if(!concernedSubtopics.includes(question.subtopic))
+                        concernedSubtopics.push(question.subtopic);
+                    }
+                }
+            }
+            console.log("mnshbdhbsdbhdfhjbdfbhdjbfjdhbf",achievedMarks);
+        });
+
+        const tempMockResult =  {
+
+            achievedMarks : achievedMarks,
+            corrects : corrects,
+            incorrects : incorrects,
+            totalMarks: examData.totalMarks,
+            concernedSubtopics : concernedSubtopics,
+            totalQuestions : allQuestions.length
+        }
+
+        changeMockResult(tempMockResult);
+    }
+
+     // const fetchQuestionData = async () => {
+    //     let userId = 2;
+    //     let data = allQuestions[currQuestionIndex];
+    //     if(data === null) {
+    //         const questionId = examData.questionIds[currQuestionIndex];
+    //         const response = await axios.get(`http://localhost:8080/api/exam/get-question-by-id?userId=${userId}&questionId=${questionId}`)
+    //         data = response.data;
+    //         console.log("response for question:", data)
+    //         data.options = rotateArray(data.options);
+    //         const newArray = [...allQuestions];
+    //         newArray[currQuestionIndex] = data;
+    //         setAllQuestions(newArray);
+    //         console.log("request to fetch question with id: " + questionId);
+    //     }
+    //     setCurrQuestionData(data);
+    //     return data;
+    // }
+
+
     return (
         <ExamContext.Provider
-            value={{
+            value={ {
                 instructionRead,
                 examStart,
                 examFinish,
@@ -305,10 +361,12 @@ const ExamState = (props) => {
                 handlePrevBtn,
                 handleNextBtn,
                 handleSaveBtn,
-                startTimer
-            }}
+                startTimer,
+                mockResult,
+                calculateMockTestResult
+            } }
         >
-            {props.children}
+            { props.children }
         </ExamContext.Provider>
     );
 };
