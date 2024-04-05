@@ -5,8 +5,8 @@ import java.util.List;
 public record PracticeQuestionDto(
 
         Long id,
-        Integer positiveMark,
-        Integer negativeMark,
+        Integer positiveMarks,
+        Integer negativeMarks,
         String statement,
         String type,
         String subtopic,
