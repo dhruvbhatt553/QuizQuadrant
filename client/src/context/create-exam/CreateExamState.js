@@ -3,8 +3,12 @@ import CreateExamContext from "./createExamContext";
 import { useNavigate } from 'react-router-dom';
 import localStorageContext from '../local-storage/localStorageContext';
 import axios from "axios";
+import authContext from "../auth/authContext";
 
 const CreateExamState = (props) => {
+
+    const {getToken} = useContext(localStorageContext);
+    const {user} = useContext(authContext);
 
     const createNewQuestionObject = () => {
         return {
@@ -50,15 +54,20 @@ const CreateExamState = (props) => {
     window.addEventListener("beforeunload", askBeforeReload);
 
     const createExam = async (data) => {
-        const userID = 1;
-        const response = await axios.post(`http://localhost:8080/api/exam/create-exam?userId=${userID}`, {
+        const userID = user.userId;
+        const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/exam/create-exam?userId=${userID}`, {
             title: data.examTitle,
             duration: data.examDuration,
             startDate: data.examDate,
             startTime: data.examTime,
             questionDtos: data.examQuestions,
             emailIds: data.candidateEmail
-        });
+        }, {
+                headers: {
+                    'Authorization': `Bearer ${getToken()}`
+                }
+            }
+        );
         console.log("response: ", response.data);
         return response.data;
     }

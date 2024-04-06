@@ -23,6 +23,8 @@ export default function QuestionContainer({ question, number, shift, responses, 
     };
 
 
+
+
     const handelCheckAnswers = (event) => {
         let attemptedArray = [...attempted];
         attemptedArray[number - 1] = true;
@@ -103,7 +105,7 @@ export default function QuestionContainer({ question, number, shift, responses, 
 
                             <div className='px-4 mb-3 cursor-pointer'>
                                 <div
-                                    className={ `border  ps-2 py-1  rounded flex items-center gap-x-3  ${responses[number - 1][0] ? "border-blue-500 font-bold border-2" : "border-black border-0.5"} ` }
+                                    className={`border  ps-2 py-1  rounded flex items-center gap-x-3  ${responses[number - 1][0] ? "border-blue-500 font-bold border-2" : "border-black border-0.5"} ` }
                                     onClick={ (event) => handleResponseChange(0, event) }>
                                     <div
                                         className={ `text-[15px] border border-black w-fit px-3 py-1.5 ${question.type === 'mcq' ? 'rounded-full' : 'rounded'}` }>

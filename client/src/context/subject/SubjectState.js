@@ -7,7 +7,7 @@ const SubjectState = (props) => {
     const [subjects, setSubjects] = useState([]);
 
     const fetchSubjects = async () => {
-        axios.get(`http://localhost:8080/api/homepage/get-home-page`, {
+        axios.get(`${process.env.REACT_APP_API_BASE_URL}/homepage/get-home-page`, {
             headers: { "Access-Control-Allow-Origin": "*" }
         })
             .then((response) => {
