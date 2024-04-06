@@ -26,7 +26,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/auth/**", "/api/homepage/**", "/api/question/get-questions-by-subject","/api/question/get-questions-by-subtopic")
+                        .requestMatchers("/api/auth/**", "/api/homepage/**", "/api/question/get-questions-by-subject","/api/question/get-questions-by-subtopic", "/api/**")
                         .permitAll()
                         .anyRequest()
                         .authenticated()

@@ -18,7 +18,7 @@ const ExamState = (props) => {
     const [currQuestionData, setCurrQuestionData] = useState(null);
     const [remainingMin, setRemainingMin] = useState(0);
     const [remainingSec, setRemainingSec] = useState(0);
-    const [mockResult,changeMockResult] = useState(null);
+    const [mockResult, changeMockResult] = useState(null);
 
     const rotateArray = (arr) => {
         const userId = 1;   // hardcoded temp ...
@@ -40,7 +40,7 @@ const ExamState = (props) => {
 
     const fetchExamData = async (examId) => {
         const userId = 2;
-        const response = await axios.get(`http://localhost:8080/api/exam/get-exam-by-id?userId=${userId}&examId=${examId}`)
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/exam/get-exam-by-id?userId=${userId}&examId=${examId}`)
         console.log("response for exam:", response.data);
         const questionArray = [];
         response.data.questionIds = rotateArray(response.data.questionIds);
@@ -55,7 +55,7 @@ const ExamState = (props) => {
     };
 
     const fetchMockExamData = async (mockExam) => {
-        const response = await axios.post(`http://localhost:8080/api/mock-test/get-question-Ids?total=${mockExam.total}`, { subtopicDtos: mockExam.subtopics });
+        const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/mock-test/get-question-Ids?total=${mockExam.total}`, { subtopicDtos: mockExam.subtopics });
         console.log("response for mock exam:", response.data);
         const questionArray = [];
         const fetchedArray = rotateArray(response.data.qids);
@@ -82,7 +82,7 @@ const ExamState = (props) => {
         return mockExamData;
     }
 
-   
+
     const fetchQuestionData = async () => {
         let userId = 2;
         let data = allQuestions[currQuestionIndex];
@@ -91,11 +91,11 @@ const ExamState = (props) => {
             let response;
             // console.log("dkcndhcbdbcd",isMockTest);
             if (examData.isMockTest) {
-                response = await axios.get(`http://localhost:8080/api/question/get-question-by-id?questionID=${questionId}`)
+                response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/question/get-question-by-id?questionID=${questionId}`)
                 console.log(`http://localhost:8080/api/question/get-question-by-id?questionID=${questionId}`);
             } else {
                 console.log("private question api ...");
-                response = await axios.get(`http://localhost:8080/api/exam/get-question-by-id?userId=${userId}&questionId=${questionId}`);
+                response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/exam/get-question-by-id?userId=${userId}&questionId=${questionId}`);
             }
             data = response.data;
             console.log("response for question:", data);
@@ -109,44 +109,57 @@ const ExamState = (props) => {
         return data;
     }
 
-    const finishExam = async () => {
+    const finishExam = async (examId) => {
         const userId = 2;
-        if (!examData.isMockTest) {
-            const response = await axios.get(`http://localhost:8080/api/exam/finish-exam?userId=${userId}&examId=${examData.id}`);
-            return response.data;
-        }
-        else return true;
+        const response = await axios.get(`http://localhost:8080/api/exam/finish-exam?userId=${userId}&examId=${examId}`);
+        setExamFinish((examFinish) => { return true; });
+        document.removeEventListener("fullscreenchange", handleFullScreenViolation);
+        document.removeEventListener("visibilitychange", handleTabChangeViolation);
+        // if (document.exitFullscreen) {
+        //     document.exitFullscreen();
+        // } else if (document.webkitExitFullscreen) { /* Safari */
+        //     document.webkitExitFullscreen();
+        // } else if (document.msExitFullscreen) { /* IE11 */
+        //     document.msExitFullscreen();
+        // }
+        return response.data;
     }
 
     const handleInstructionRead = (e) => {
         setInstructionRead((instructionRead) => (!instructionRead));
     }
 
-    const checkViolationLimit = () => {
-        // TODO issue: immediate changed state value of violation ...
-        if (violationCount < maxViolation) {
-            // window.alert(`You have violated the examination rules.If your violation count exceeds ${maxViolation}, your examination will end & you will not be able to resume your exam again !!!`);
-        } else {
-            let flag = false;
-            while (!flag) {
-                flag = finishExam();
-            }
-            setExamFinish(flag);
-        }
+    const handleViolationLimitExceed = async (examId) => {
+        console.log("violation limit exceed ...");
+        const resData = await finishExam(examId);
+        console.log("VIOLATION EXP:", resData);
     }
 
-    const handleFullScreenViolation = () => {
+    const handleFullScreenViolation = async (examId) => {
         if (document.fullscreenElement === null) {
-            setViolationCount((violationCount) => (violationCount + 1));
-            window.alert(`You have attempted to leave the full screen mode. This will violate the exam rules. Your current violation count is: ${violationCount + 1}. Press OK to resume the exam.`);
-            checkViolationLimit();
+            setViolationCount((violationCount) => {
+                if(violationCount >= maxViolation) {
+                    const tempFunc = async () => {
+                        await handleViolationLimitExceed(examId);
+                    }
+                    tempFunc();
+                }
+                return (violationCount + 1);
+            });
         }
     }
 
-    const handleTabChangeViolation = () => {
+    const handleTabChangeViolation = async (examId) => {
         if (document.hidden) {
-            setViolationCount((violation) => (violation + 1));
-            checkViolationLimit();
+            setViolationCount((violationCount) => {
+                if(violationCount >= maxViolation) {
+                    const tempFunc = async () => {
+                        await handleViolationLimitExceed(examId);
+                    }
+                    tempFunc();
+                }
+                return (violationCount + 1);
+            });
         }
     }
 
@@ -160,8 +173,6 @@ const ExamState = (props) => {
         } else if (screen.msRequestFullscreen) { /* IE11 */
             screen.msRequestFullscreen();
         }
-        document.addEventListener("fullscreenchange", handleFullScreenViolation);
-        document.addEventListener("visibilitychange", handleTabChangeViolation);
     }
 
     const handleFinishExamBtn = async () => {
@@ -170,7 +181,7 @@ const ExamState = (props) => {
         if (submitConfirm) {
             let flag = false;
             if (!examData.isMockTest) {
-                flag = await finishExam();
+                flag = await finishExam(examData.id);
             } else {
                 flag = true;
                 console.log("path selected for claculate mock result -------------------------------------------------->>>>>>>")
@@ -246,7 +257,9 @@ const ExamState = (props) => {
     }
 
     const handleSecRemaining = () => {
-        setRemainingSec((remainingSec) => { return (remainingSec === 0 ? 59 : remainingSec - 1) });
+        setRemainingSec((remainingSec) => {
+            return (remainingSec === 0 ? 59 : remainingSec - 1)
+        });
         // console.log(remainingMin, remainingSec);
     }
 
@@ -255,12 +268,15 @@ const ExamState = (props) => {
         console.log(remainingMin, remainingSec);
     }
 
-    const startTimer = (examStartTime, duration) => {
-        const examStartTimeSplit = examStartTime.split(":");
+    const startTimer = (data) => {
+        const examStartTimeSplit = data.startTime.split(":");
         const currDate = new Date(Date.now());
         const minutesElapsed = ((currDate.getHours() - parseInt(examStartTimeSplit[0])) * 60) + (currDate.getMinutes() - parseInt(examStartTimeSplit[1]));
-        const startMin = duration - minutesElapsed - 1;
-        const startSec = 60 - currDate.getSeconds();
+        const startMin = data.duration - minutesElapsed - 1;
+        let startSec = 59;
+        if(!data.isMockTest) {
+            startSec = 60 - currDate.getSeconds();
+        }
         setRemainingMin((remainingMin) => { return startMin });
         setRemainingSec((remainingSec) => { return startSec });
         console.log("timer start ...");
@@ -270,14 +286,23 @@ const ExamState = (props) => {
             setRemainingMin((remainingMin) => { return remainingMin - 1 });
             setInterval(handleMinRemaining, 60000);
         }, (startSec + 1) * 1000);
+        setTimeout(async () => {
+            const resData = await finishExam(data.id);
+            console.log("TIMER EXP:", resData);
+        }, ((startMin * 60 * 1000) + (startSec * 1000)));
+    }
+
+    const addEventListeners = (examId) => {
+        document.addEventListener("fullscreenchange", async () => { await handleFullScreenViolation(examId) });
+        document.addEventListener("visibilitychange", async () => { await handleTabChangeViolation(examId) });
     }
 
     const calculateMockTestResult = () => {
-        let achievedMarks = 0, corrects = 0, incorrects = 0, concernedSubtopics = [],totalMarks = 0 ;
+        let achievedMarks = 0, corrects = 0, incorrects = 0, concernedSubtopics = [];
 
-        allQuestions.map((question)=> {
+        allQuestions.map((question) => {
             if (question !== null) {
-                console.log("ALL OPTIONS",question.options);
+                console.log("ALL OPTIONS", question.options);
                 if (question.options[0].isMarked ||
                     question.options[1].isMarked ||
                     question.options[2].isMarked ||
@@ -296,49 +321,31 @@ const ExamState = (props) => {
                         incorrects++;
                         achievedMarks += question.negativeMarks;
                         console.log(achievedMarks);
-                        if(!concernedSubtopics.includes(question.subtopic))
-                        concernedSubtopics.push(question.subtopic);
+                        if (!concernedSubtopics.includes(question.subtopic))
+                            concernedSubtopics.push(question.subtopic);
                     }
                 }
             }
-            console.log("mnshbdhbsdbhdfhjbdfbhdjbfjdhbf",achievedMarks);
+            console.log("mnshbdhbsdbhdfhjbdfbhdjbfjdhbf", achievedMarks);
         });
 
-        const tempMockResult =  {
+        const tempMockResult = {
 
-            achievedMarks : achievedMarks,
-            corrects : corrects,
-            incorrects : incorrects,
+            achievedMarks: achievedMarks,
+            corrects: corrects,
+            incorrects: incorrects,
             totalMarks: examData.totalMarks,
-            concernedSubtopics : concernedSubtopics,
-            totalQuestions : allQuestions.length
+            concernedSubtopics: concernedSubtopics,
+            totalQuestions: allQuestions.length
         }
 
         changeMockResult(tempMockResult);
     }
 
-     // const fetchQuestionData = async () => {
-    //     let userId = 2;
-    //     let data = allQuestions[currQuestionIndex];
-    //     if(data === null) {
-    //         const questionId = examData.questionIds[currQuestionIndex];
-    //         const response = await axios.get(`http://localhost:8080/api/exam/get-question-by-id?userId=${userId}&questionId=${questionId}`)
-    //         data = response.data;
-    //         console.log("response for question:", data)
-    //         data.options = rotateArray(data.options);
-    //         const newArray = [...allQuestions];
-    //         newArray[currQuestionIndex] = data;
-    //         setAllQuestions(newArray);
-    //         console.log("request to fetch question with id: " + questionId);
-    //     }
-    //     setCurrQuestionData(data);
-    //     return data;
-    // }
-
 
     return (
         <ExamContext.Provider
-            value={ {
+            value={{
                 instructionRead,
                 examStart,
                 examFinish,
@@ -363,10 +370,11 @@ const ExamState = (props) => {
                 handleSaveBtn,
                 startTimer,
                 mockResult,
-                calculateMockTestResult
-            } }
+                calculateMockTestResult,
+                addEventListeners
+            }}
         >
-            { props.children }
+            {props.children}
         </ExamContext.Provider>
     );
 };
