@@ -25,4 +25,9 @@ public class MockTestController {
         return questionService.getQuestionIdsBySubtopics(createMockTestDto,total);
     }
 
+//    @PostMapping("/get-total-question")
+//    public Long getTotalQuestions(@RequestBody CreateMockTestDto createMockTestDto) {
+//        return questionService.totalNumberOfQuestions(createMockTestDto);
+//    }
+
 }

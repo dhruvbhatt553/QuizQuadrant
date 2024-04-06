@@ -25,4 +25,9 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     @Query("SELECT SUM(q.positiveMarks) from Question q where q.id in :questionIds")
     public Long getSumOfPositiveMarks(List<Long> questionIds);
+
+//    @Query("SELECT COUNT(*) from Question q where q.subtopic in :subtopics")
+//    public Long countAllBySubtopic(List<Subtopic> subtopics);
+
+
 }

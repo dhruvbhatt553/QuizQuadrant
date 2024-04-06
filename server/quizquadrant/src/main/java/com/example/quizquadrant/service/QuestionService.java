@@ -219,6 +219,15 @@ public class QuestionService {
     }
 
 
+//    public Long totalNumberOfQuestions (CreateMockTestDto createMockTestDto) {
+//        List<Subtopic> subtopics = new ArrayList<>();
+//        for(SubtopicDto subtopicDto : createMockTestDto.subtopicDtos()) {
+//            Subtopic subtopic = subtopicService.getSubtopicById(subtopicDto.subId(), subtopicDto.subtopicId());
+//            subtopics.add(subtopic);
+//        }
+//        return questionRepository.countAllBySubtopic(subtopics);
+//    }
+
 
 
     //QUESTION BY ID
