@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, {useContext, useState} from 'react';
 import ExamContext from './examContext';
 import { q1, q2, q3, q4, q5, q6, q7, q8, q9 } from './../../dummy-data/examData';
 import axios from "axios";
+import localStorageContext from "../local-storage/localStorageContext";
+import authContext from "../auth/authContext";
 
 const ExamState = (props) => {
 
+    const {getToken} = useContext(localStorageContext);
     const maxViolation = 5;
     const [instructionRead, setInstructionRead] = useState(false);
     const [examStart, setExamStart] = useState(false);
@@ -17,6 +20,7 @@ const ExamState = (props) => {
     const [remainingMin, setRemainingMin] = useState(0);
     const [remainingSec, setRemainingSec] = useState(0);
     const [mockResult, changeMockResult] = useState(null);
+    const {user} = useContext(authContext);
 
     const rotateArray = (arr) => {
         const userId = 1;   // hardcoded temp ...
@@ -37,8 +41,13 @@ const ExamState = (props) => {
     }
 
     const fetchExamData = async (examId) => {
-        const userId = 2;
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/exam/get-exam-by-id?userId=${userId}&examId=${examId}`)
+        const userId = user.userId;
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/exam/get-exam-by-id?userId=${userId}&examId=${examId}`, {
+                headers: {
+                    'Authorization': `Bearer ${getToken()}`
+                }
+            }
+        )
         console.log("response for exam:", response.data);
         const questionArray = [];
         response.data.questionIds = rotateArray(response.data.questionIds);
@@ -53,7 +62,14 @@ const ExamState = (props) => {
     };
 
     const fetchMockExamData = async (mockExam) => {
-        const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/mock-test/get-question-Ids?total=${mockExam.total}`, { subtopicDtos: mockExam.subtopics });
+        const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/mock-test/get-question-Ids?total=${mockExam.total}`, {
+            subtopicDtos: mockExam.subtopics
+        }, {
+                headers: {
+                    'Authorization': `Bearer ${getToken()}`
+                }
+            }
+        );
         console.log("response for mock exam:", response.data);
         const questionArray = [];
         const fetchedArray = rotateArray(response.data.qids);
@@ -81,18 +97,28 @@ const ExamState = (props) => {
     }
 
     const fetchQuestionData = async () => {
-        let userId = 2;
+        let userId = user.userId;
         let data = allQuestions[currQuestionIndex];
         if (data === null) {
             const questionId = examData.questionIds[currQuestionIndex];
             let response;
             // console.log("dkcndhcbdbcd",isMockTest);
             if (examData.isMockTest) {
-                response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/question/get-question-by-id?questionID=${questionId}`)
-                console.log(`http://localhost:8080/api/question/get-question-by-id?questionID=${questionId}`);
+                response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/question/get-question-by-id?questionID=${questionId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}`
+                        }
+                    }
+                )
+                console.log(`${process.env.REACT_APP_API_BASE_URL}/question/get-question-by-id?questionID=${questionId}`);
             } else {
                 console.log("private question api ...");
-                response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/exam/get-question-by-id?userId=${userId}&questionId=${questionId}`);
+                response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/exam/get-question-by-id?userId=${userId}&questionId=${questionId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}`
+                        }
+                    }
+                );
             }
             data = response.data;
             console.log("response for question:", data);
@@ -106,9 +132,17 @@ const ExamState = (props) => {
         return data;
     }
 
-    const finishExam = async (examId) => {
-        const userId = 2;
-        const response = await axios.get(`http://localhost:8080/api/exam/finish-exam?userId=${userId}&examId=${examId}`);
+    const finishExam = async (data) => {
+        if (!data.isMockTest) {
+            const userId = user.userId;
+            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/exam/finish-exam?userId=${userId}&examId=${data.id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${getToken()}`
+                    }
+                }
+            );
+            console.log(response.data);
+        }
         setExamFinish((examFinish) => { return true; });
         document.removeEventListener("fullscreenchange", handleFullScreenViolation);
         document.removeEventListener("visibilitychange", handleTabChangeViolation);
@@ -119,25 +153,23 @@ const ExamState = (props) => {
         // } else if (document.msExitFullscreen) { /* IE11 */
         //     document.msExitFullscreen();
         // }
-        return response.data;
     }
 
     const handleInstructionRead = (e) => {
         setInstructionRead((instructionRead) => (!instructionRead));
     }
 
-    const handleViolationLimitExceed = async (examId) => {
+    const handleViolationLimitExceed = async (data) => {
         console.log("violation limit exceed ...");
-        const resData = await finishExam(examId);
-        console.log("VIOLATION EXP:", resData);
+        await finishExam(data);
     }
 
-    const handleFullScreenViolation = async (examId) => {
+    const handleFullScreenViolation = async (data) => {
         if (document.fullscreenElement === null) {
             setViolationCount((violationCount) => {
                 if(violationCount >= maxViolation) {
                     const tempFunc = async () => {
-                        await handleViolationLimitExceed(examId);
+                        await handleViolationLimitExceed(data);
                     }
                     tempFunc();
                 }
@@ -146,12 +178,12 @@ const ExamState = (props) => {
         }
     }
 
-    const handleTabChangeViolation = async (examId) => {
+    const handleTabChangeViolation = async (data) => {
         if (document.hidden) {
             setViolationCount((violationCount) => {
                 if(violationCount >= maxViolation) {
                     const tempFunc = async () => {
-                        await handleViolationLimitExceed(examId);
+                        await handleViolationLimitExceed(data);
                     }
                     tempFunc();
                 }
@@ -196,6 +228,7 @@ const ExamState = (props) => {
 
     const handleOptionSelection = (index) => {
         const newData = new Object(currQuestionData);
+        console.log("marked: ",newData.options[index]);
         if (currQuestionData.type === "mcq") {
             newData.options.map((option, i) => {
                 option.isMarked = false;
@@ -248,8 +281,15 @@ const ExamState = (props) => {
                 responsesArr.push(option.id);
             }
         });
-        const userId = 2;
-        const response = await axios.post(`http://localhost:8080/api/exam/store-response?userId=${userId}&privateQuestionId=${currQuestionData.id}`, { responses: responsesArr });
+        const userId = user.userId;
+        const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/exam/store-response?userId=${userId}&privateQuestionId=${currQuestionData.id}`, {
+            responses: responsesArr
+        }, {
+                headers: {
+                    'Authorization': `Bearer ${getToken()}`
+                }
+            }
+        );
         console.log("save response: ", response.data);
     }
 
@@ -284,14 +324,13 @@ const ExamState = (props) => {
             setInterval(handleMinRemaining, 60000);
         }, (startSec + 1) * 1000);
         setTimeout(async () => {
-            const resData = await finishExam(data.id);
-            console.log("TIMER EXP:", resData);
+            await finishExam(data);
         }, ((startMin * 60 * 1000) + (startSec * 1000)));
     }
 
-    const addEventListeners = (examId) => {
-        document.addEventListener("fullscreenchange", async () => { await handleFullScreenViolation(examId) });
-        document.addEventListener("visibilitychange", async () => { await handleTabChangeViolation(examId) });
+    const addEventListeners = (data) => {
+        document.addEventListener("fullscreenchange", async () => { await handleFullScreenViolation(data) });
+        document.addEventListener("visibilitychange", async () => { await handleTabChangeViolation(data) });
     }
 
     const calculateMockTestResult = () => {
@@ -305,10 +344,10 @@ const ExamState = (props) => {
                     question.options[2].isMarked ||
                     question.options[3].isMarked) {
                     let temp = true;
-                    for (let option in question.options) {
-                        temp = (option.isMarked === option.isCorrect);
-                        if (!temp) break;
-                    }
+                    question.options.map((option) => {
+                      //  console.log("ckmdjckujnducjnidciujdvu",option,option.isCorrect === option.isMarked );
+                        temp = (option.isCorrect === option.isMarked);
+                    });
                     if (temp) {
                         corrects++;
                         achievedMarks += question.positiveMarks;

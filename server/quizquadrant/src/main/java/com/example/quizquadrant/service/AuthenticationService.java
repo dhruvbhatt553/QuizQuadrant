@@ -9,6 +9,9 @@ import com.example.quizquadrant.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +28,7 @@ public class AuthenticationService {
 
     public AuthenticationResponseDto register(RegisterRequestDto request) {
         Optional<User> userOptional = userRepository.findByEmail(request.email());
-        if(userOptional.isEmpty()) {
+        if (userOptional.isEmpty()) {
             var user = User.builder()
                     .type(request.type())
                     .name(request.name())
@@ -34,7 +37,7 @@ public class AuthenticationService {
                     .build();
             user = userRepository.save(user);
             var jwtToken = jwtService.generateToken(user);
-            return new AuthenticationResponseDto(jwtToken, user.getName(), user.getEmail(), user.getId());
+            return new AuthenticationResponseDto(jwtToken, user.getType(), user.getName(), user.getEmail(), user.getId());
         } else {
             return null;
         }
@@ -49,6 +52,14 @@ public class AuthenticationService {
         );
         var user = userRepository.findByEmail(request.email()).orElseThrow();
         var jwtToken = jwtService.generateToken(user);
-        return new AuthenticationResponseDto(jwtToken,user.getName(),user.getEmail(), user.getId());
+        return new AuthenticationResponseDto(jwtToken, user.getType(), user.getName(), user.getEmail(), user.getId());
+    }
+
+    public AuthenticationResponseDto authenticate() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails authenticatedUser = (UserDetails) authentication.getPrincipal();
+        var user = userRepository.findByEmail(authenticatedUser.getUsername()).orElseThrow();
+        var jwtToken = jwtService.generateToken(user);
+        return new AuthenticationResponseDto(jwtToken, user.getType(), user.getName(), user.getEmail(), user.getId());
     }
 }

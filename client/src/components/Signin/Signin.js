@@ -63,7 +63,6 @@ function SignInForm() {
             onChange={handleChange}
         />
         <p className="text-sm">Password (Min length 8 and atleast 1 letter,1 number,1 special character</p>
-        <a href="#">Forgot your password?</a>
         <button>Sign In</button>
       </form>
     </div>

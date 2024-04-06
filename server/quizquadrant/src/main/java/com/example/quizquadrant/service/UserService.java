@@ -7,6 +7,9 @@ import com.example.quizquadrant.model.Result;
 import com.example.quizquadrant.model.User;
 import com.example.quizquadrant.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -34,8 +37,10 @@ public class UserService {
     }
 
     public UserProfileDto getUserProfile(Long userId) {
-//        TODO fetch userID from JWT token ...
-        Long selfUserId = 2L;   // hardcoded temp ...
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails authenticatedUser = (UserDetails) authentication.getPrincipal();
+        var selfUser = userRepository.findByEmail(authenticatedUser.getUsername()).orElseThrow();
+        Long selfUserId = selfUser.getId();
         Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
