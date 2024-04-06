@@ -11,7 +11,7 @@ export default function ExamPage() {
 
     const location = useLocation();
     const {examId, isMockTest, mockExam} = location.state;
-    const {examStart, examFinish, examData, fetchExamData, fetchMockExamData, startTimer} = useContext(examContext);
+    const {examStart, examFinish, examData, fetchExamData, fetchMockExamData, startTimer, addEventListeners} = useContext(examContext);
 
     useEffect(() => {
         const getExamData = async () => {
@@ -21,7 +21,8 @@ export default function ExamPage() {
             } else {
                 data = await fetchMockExamData(mockExam);
             }
-            startTimer(data.startTime, data.duration);
+            startTimer(data);
+            addEventListeners(data.id);
         }
         getExamData();
         console.log("exam div rendered ...");
