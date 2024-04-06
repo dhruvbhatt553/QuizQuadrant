@@ -67,12 +67,13 @@ export default function PracticePage() {
 
     function requestQuestionSet(p) {
         if (p) {
+            console.log("CUUUUUUUUUUUUUUUUUUURRENT"+current);
             let y = current - 1;
             changeCurrent(y);
             extra3 = [...curr_set];
             extra2 = [...prev_set];
 
-            if (y === 1) {
+            if (y === 2) {
                 extra1 = [];
             } else {
                 extra1 = [];
@@ -166,6 +167,7 @@ export default function PracticePage() {
 
     console.log("extra3 : "+next_set.length);
     return (
+        
         <div className='flex flex-col gap-y-6 pt-2 pb-6'>
 
             {
@@ -200,7 +202,7 @@ export default function PracticePage() {
                     Next set
                 </div>
             </div>
-            <div onClick={() => console.log(responses)}>
+            <div onClick={() => {console.log(responses);}}>
                 submit
             </div>
         </div>

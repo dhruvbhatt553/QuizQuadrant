@@ -6,8 +6,6 @@ import axios from "axios";
 const ExamState = (props) => {
 
     const maxViolation = 5;
-    //let isMockTest = false;
-    //  const [isMockTest, setIsMockTest] = useState(false);
     const [instructionRead, setInstructionRead] = useState(false);
     const [examStart, setExamStart] = useState(false);
     const [examFinish, setExamFinish] = useState(false);
@@ -81,7 +79,6 @@ const ExamState = (props) => {
         //  isMockTest = true
         return mockExamData;
     }
-
 
     const fetchQuestionData = async () => {
         let userId = 2;
@@ -341,7 +338,6 @@ const ExamState = (props) => {
 
         changeMockResult(tempMockResult);
     }
-
 
     return (
         <ExamContext.Provider
