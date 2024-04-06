@@ -25,12 +25,17 @@ const LocalStorageState = (props) => {
         return token;
     }
 
+    const removeToken = () => {
+        Cookies.remove("authToken");
+    }
+
     return (
         <LocalStorageContext.Provider value={{
             setExams, 
             getExams,
             setToken,
-            getToken
+            getToken,
+            removeToken
         }}>
             {props.children}
         </LocalStorageContext.Provider>

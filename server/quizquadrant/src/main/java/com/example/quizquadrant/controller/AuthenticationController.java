@@ -37,4 +37,9 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.login(request));
     }
 
+    @GetMapping("/authenticate")
+    public ResponseEntity<AuthenticationResponseDto> authenticate() {
+        return ResponseEntity.ok(authenticationService.authenticate());
+    }
+
 }

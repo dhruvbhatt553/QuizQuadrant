@@ -3,19 +3,22 @@ import Page1 from './Page1/Page1';
 import Page2 from './Page2/Page2';
 import Page3 from './Page3/Page3';
 import createExamContext from '../../context/create-exam/createExamContext';
-import { useLocation } from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 
 export default function CreateExam() {
 
     const location = useLocation();
-    const {localIndex} = location.state;
+    const navigate = useNavigate();
     const { page, handlePrevPageBtn, handleNextPageBtn, handleSaveToLocal, handleSubmitBtn, setLocalStorageIndex, fetchFromLocalStorage } = useContext(createExamContext);
 
 
     useEffect(() => {
-        if(localIndex !== null) {
-            setLocalStorageIndex(localIndex);
-            fetchFromLocalStorage(localIndex);
+        if(location.state) {
+            const {localIndex} = location.state;
+            if (localIndex !== null) {
+                setLocalStorageIndex(localIndex);
+                fetchFromLocalStorage(localIndex);
+            }
         }
     }, []);
 

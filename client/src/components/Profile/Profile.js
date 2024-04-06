@@ -2,17 +2,17 @@ import React, {useContext, useEffect, useState} from 'react';
 import {Link, useLocation} from 'react-router-dom';
 import profileContext from "../../context/profile/profileContext";
 import localStorageContext from '../../context/local-storage/localStorageContext';
+import authContext from "../../context/auth/authContext";
 
 export default function Profile() {
 
     const location = useLocation();
-    const {userId} = location.state;
     const [userProfile, setUserProfile] = useState(null);
     const [isGenerating, setIsGenerating] = useState(false);
     const [localSavedExams, setLocalSavedExams] = useState([]);
     const {fetchProfile, generateResult} = useContext(profileContext);
     const {setExams, getExams} = useContext(localStorageContext);
-
+    const {user} = useContext(authContext);
     const handleGenerateResult = async (index) => {
         setIsGenerating((isGenerating) => {
             return true;
@@ -41,6 +41,12 @@ export default function Profile() {
     }
 
     useEffect(() => {
+        let userId = -1;
+        if(location.state) {
+            userId = location.state.userId;
+        } else {
+            userId = user.userId;
+        }
         const fetchData = async () => {
             const data = await fetchProfile(userId);
             const allExams = getExams();

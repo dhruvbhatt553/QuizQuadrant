@@ -24,6 +24,7 @@ export default function PracticePage() {
         const fetchData = async () => {
             console.log("current page:", current);
             if (bySubject) {
+                console.log("by subject");
                 const q2 = await fetchPracticeQuestionsBySubject(subject.subId, current);
                 console.log("first call: ", q2.length);
                 if (current === 1) {
@@ -33,6 +34,7 @@ export default function PracticePage() {
                 }
 
             } else {
+                console.log("by subtopic");
                 const q2 = await fetchPracticeQuestionsBySubtopic(subtopic.subId, subtopic.subtopicId, current);
                 if (current === 1) {
                     const q1 = await fetchPracticeQuestionsBySubtopic(subtopic.subId, subtopic.subtopicId, current - 1);
@@ -152,8 +154,9 @@ export default function PracticePage() {
             extra6.push(false);
             extra.push([false, false, false, false]);
             extra4.push(Math.floor(Math.random() * 4));
-            changeCurrent(current+1);
         }
+        changeCurrent(current+1);
+
     }
 
     const [responses, changeResponses] = useState(extra);
@@ -202,9 +205,7 @@ export default function PracticePage() {
                     Next set
                 </div>
             </div>
-            <div onClick={() => {console.log(responses);}}>
-                submit
-            </div>
+
         </div>
 
     )
