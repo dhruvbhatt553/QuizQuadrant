@@ -18,7 +18,7 @@ export default function Sign() {
             <div className={`${containerClass}`} id="container">
                 <SignUpForm screenSize={window.screen.width >= 1280 ? "" : "mobile"} type={type} handleOnClick={handleOnClick} />
                 <SignInForm screenSize={window.screen.width >= 1280 ? "" : "mobile"} type={type} handleOnClick={handleOnClick} />
-                <div className="overlay-container hidden xl:block">
+                <div className="overlay-container hidden xl:block lg:block">
                     <div className="overlay">
                         <div className="overlay-panel overlay-left">
                             <h1>Welcome Back!</h1>

@@ -20,7 +20,7 @@ export default function NavBar() {
                     Quiz Quadrant
                 </Link>
             </p>
-            <div className="hidden xl:block">
+            <div className="hidden xl:block lg:block">
                 {
                     isAuthenticated ?
                         (
@@ -86,7 +86,7 @@ export default function NavBar() {
                         )
                 }
             </div>
-            <div className="xl:hidden">
+            <div className="xl:hidden lg:hidden">
                 <button type="button"
                         className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 border-2 border-gray-500"
                         onClick={handleMenuVisiblity}
