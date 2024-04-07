@@ -2,7 +2,8 @@ import React, {useContext, useState} from "react";
 import authContext from "../../context/auth/authContext";
 import {useNavigate} from "react-router-dom";
 
-function SignUpForm() {
+function SignUpForm(props) {
+    const {screenSize, type, handleOnClick} = props;
     const navigate = useNavigate();
     const {register} = useContext(authContext);
     const [state, setState] = React.useState({
@@ -26,13 +27,13 @@ function SignUpForm() {
     const handleOnSubmit = async (evt) => {
         evt.preventDefault();
         const {name, email, password, type} = state;
-        if(name.length >= 3) {
+        if (name.length >= 3) {
             if (emailRegex.test(email)) {
                 if (passwordRegex.test(password)) {
                     const flag = await register(name, type, password, email);
-                    if(!flag) {
+                    if (!flag) {
                         alert("Some problem occured !!!");
-                    } else  {
+                    } else {
                         navigate("/");
                     }
                 } else {
@@ -47,65 +48,78 @@ function SignUpForm() {
     };
 
     return (
-        <div className="form-container sign-up-container">
-            <form onSubmit={handleOnSubmit}>
-                <h1>Create Account</h1>
+        <>
+            <div
+                className={`form-container ${screenSize === "mobile" ? "" : "sign-up-container"} ${type === "signIn" ? "hidden" : ""}`}>
+                <form onSubmit={handleOnSubmit}>
+                    <h1 className={`${screenSize === "mobile" ? "hidden" : ""}`}>Create Account</h1>
+                    <div className="flex justify-between w-full px-12 my-2">
+                        <div className="flex">
+                            <input
+                                type="radio"
+                                name="type"
+                                value="T"
+                                id={"Teacher"}
+                                onChange={handleChange}
+                                checked={state.type === "T"}
+                            />
+                            <label htmlFor="Teacher" className="ms-1">Teacher</label>
+                        </div>
+                        <div className="flex">
+                            <input
+                                type="radio"
+                                name="type"
+                                value="S"
+                                id={"Student"}
+                                onChange={handleChange}
+                                checked={state.type === "S"}
 
-                <span>or use your email for registration</span>
-                <input
-                    type="text"
-                    name="name"
-                    value={state.name}
-                    onChange={handleChange}
-                    placeholder="Name"
-                    maxLength={20}
-                />
-                <input
-                    type="email"
-                    name="email"
-                    value={state.email}
-                    onChange={handleChange}
-                    placeholder="Email"
-                    maxLength={50}
-                />
-                <input
-                    type="password"
-                    name="password"
-                    value={state.password}
-                    onChange={handleChange}
-                    placeholder={"password"}
-                />
-                <p className="text-sm">Password (Min length 8 and atleast 1 letter,1 number,1 special character</p>
-                <div className="flex justify-between w-full px-12">
-                    <div className="flex">
-                        <input
-                            type="radio"
-                            name="type"
-                            value="T"
-                            id={"Teacher"}
-                            onChange={handleChange}
-                            checked={state.type === "T"}
-                        />
-                        <label htmlFor="Teacher" className="ms-1">Teacher</label>
+                            />
+                            <label htmlFor="Student" className="ms-1">Student</label>
+                        </div>
                     </div>
-                    <div className="flex">
-                        <input
-                            type="radio"
-                            name="type"
-                            value="S"
-                            id={"Student"}
-                            onChange={handleChange}
-                            checked={state.type === "S"}
-
-                        />
-                        <label htmlFor="Student" className="ms-1">Student</label>
+                    <input
+                        type="text"
+                        name="name"
+                        value={state.name}
+                        onChange={handleChange}
+                        placeholder="Name"
+                        maxLength={20}
+                    />
+                    <input
+                        type="email"
+                        name="email"
+                        value={state.email}
+                        onChange={handleChange}
+                        placeholder="Email"
+                        maxLength={50}
+                    />
+                    <input
+                        type="password"
+                        name="password"
+                        value={state.password}
+                        onChange={handleChange}
+                        placeholder={"Password"}
+                    />
+                    <p className="text-sm">NOTE: Password must contain atleast 1 letter, 1 number, 1 special character
+                        and
+                        minimum length of 8 characters.</p>
+                    <button>Sign Up</button>
+                    <div
+                        className={`text-center mt-5 w-full ${screenSize === "mobile" ? "" : "hidden"} ${type === "signIn" ? "hidden" : ""}`}
+                    >
+                        <span>Already have an Account ?</span>
+                        <span
+                            className="ms-5 font-semibold text-blue-600 underline"
+                            id="signUp"
+                            onClick={() => handleOnClick("signIn")}
+                        >
+                            Sign In
+                        </span>
                     </div>
-                </div>
-
-                <button>Sign Up</button>
-
-            </form>
-        </div>
+                </form>
+            </div>
+        </>
     );
 }
 

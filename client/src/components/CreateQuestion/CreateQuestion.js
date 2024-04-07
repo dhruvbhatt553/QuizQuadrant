@@ -281,12 +281,12 @@ export default function CreateQuestion() {
 
     return (
         <>
-            <div id='main-div' className={`w - full h-screen px-10 py-2 text-lg ${isSaving ? "pointer-events-none" : ""}`}>
-                <div className='w-full my-5 grid grid-cols-3 items-center'>
+            <div id='main-div' className={`w-full h-screen px-10 py-2 text-lg ${isSaving ? "pointer-events-none" : ""}`}>
+                <div className='w-full my-5 grid xl:grid-cols-3 grid-cols-2 items-center'>
                     <button id='cancel' onClick={handleCancelBtn}
                             className='justify-self-start text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center'>Cancel
                     </button>
-                    <span className='font-bold text-xl text-center'>Create New Question</span>
+                    <span className='font-bold text-xl text-center hidden xl:block'>Create New Question</span>
                     <button id='save' onClick={handleSaveBtn}
                             className='justify-self-end text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center'
                     >
@@ -310,7 +310,7 @@ export default function CreateQuestion() {
                         <option name='msq' value={"msq"} selected={questionType === "msq"}>MSQ</option>
                     </select>
                 </div>
-                <div className='w-full my-2 grid grid-cols-4 items-center text-start'>
+                <div className='w-full my-2 grid xl:grid-cols-4 items-center text-start'>
                     <div className='col-start-1 col-span-3 grid grid-rows-2'>
                         <div className='my-1'>
                             <label htmlFor='subjectSelect' className='font-bold'>Select subject:</label>
@@ -345,7 +345,7 @@ export default function CreateQuestion() {
                             </select>
                         </div>
                     </div>
-                    <div className='col-start-4 col-span-1 text-end'>
+                    <div className='xl:col-start-4 xl:col-span-1 xl:text-end'>
                         <div className='my-1'>
                             <label className='font-bold'>Positive Marks:</label>
                             <input type='number' name='positiveMarks' id='positiveMarks' value={positiveMarks} min={0}
@@ -461,44 +461,44 @@ export default function CreateQuestion() {
                         <div className='w-full'>
                             <input type='radio' value={"A"} name='correctAnswer' id='mcqCorrectOptionA'
                                    checked={correctAnswer.has("A")} onChange={(e) => editCorrectAnswer(e)}/>
-                            <label htmlFor='mcqCorrectOptionA' className='ms-2'>Option - A</label>
+                            <label htmlFor='mcqCorrectOptionA' className='ms-2'>Option - A ({optionA.toString().substring(0, 15)}...)</label>
                         </div>
                         <div className='w-full'>
                             <input type='radio' value={"B"} name='correctAnswer' id='mcqCorrectOptionB'
                                    checked={correctAnswer.has("B")} onChange={(e) => editCorrectAnswer(e)}/>
-                            <label htmlFor='mcqCorrectOptionB' className='ms-2'>Option - B</label>
+                            <label htmlFor='mcqCorrectOptionB' className='ms-2'>Option - B ({optionB.toString().substring(0, 15)}...)</label>
                         </div>
                         <div className='w-full'>
                             <input type='radio' value={"C"} name='correctAnswer' id='mcqCorrectOptionC'
                                    checked={correctAnswer.has("C")} onChange={(e) => editCorrectAnswer(e)}/>
-                            <label htmlFor='mcqCorrectOptionC' className='ms-2'>Option - C</label>
+                            <label htmlFor='mcqCorrectOptionC' className='ms-2'>Option - C ({optionC.toString().substring(0, 15)}...)</label>
                         </div>
                         <div className='w-full'>
                             <input type='radio' value={"D"} name='correctAnswer' id='mcqCorrectOptionD'
                                    checked={correctAnswer.has("D")} onChange={(e) => editCorrectAnswer(e)}/>
-                            <label htmlFor='mcqCorrectOptionD' className='ms-2'>Option - D</label>
+                            <label htmlFor='mcqCorrectOptionD' className='ms-2'>Option - D ({optionD.toString().substring(0, 15)}...)</label>
                         </div>
                     </div>
                     <div className={`${questionType === "msq" ? "" : "hidden"}`}>
                         <div className='w-full'>
                             <input type='checkbox' value={"A"} name='correctAnswer' id='msqCorrectOptionA'
                                    checked={correctAnswer.has("A")} onChange={(e) => editCorrectAnswer(e)}/>
-                            <label htmlFor='msqCorrectOptionA' className='ms-2'>Option - A</label>
+                            <label htmlFor='msqCorrectOptionA' className='ms-2'>Option - A ({optionA.toString().substring(0, 15)}...)</label>
                         </div>
                         <div className='w-full'>
                             <input type='checkbox' value={"B"} name='correctAnswer' id='msqCorrectOptionB'
                                    checked={correctAnswer.has("B")} onChange={(e) => editCorrectAnswer(e)}/>
-                            <label htmlFor='msqCorrectOptionB' className='ms-2'>Option - B</label>
+                            <label htmlFor='msqCorrectOptionB' className='ms-2'>Option - B ({optionB.toString().substring(0, 15)}...)</label>
                         </div>
                         <div className='w-full'>
                             <input type='checkbox' value={"C"} name='correctAnswer' id='msqCorrectOptionC'
                                    checked={correctAnswer.has("C")} onChange={(e) => editCorrectAnswer(e)}/>
-                            <label htmlFor='msqCorrectOptionC' className='ms-2'>Option - C</label>
+                            <label htmlFor='msqCorrectOptionC' className='ms-2'>Option - C ({optionC.toString().substring(0, 15)}...)</label>
                         </div>
                         <div className='w-full'>
                             <input type='checkbox' value={"D"} name='correctAnswer' id='msqCorrectOptionD'
                                    checked={correctAnswer.has("D")} onChange={(e) => editCorrectAnswer(e)}/>
-                            <label htmlFor='msqCorrectOptionD' className='ms-2'>Option - D</label>
+                            <label htmlFor='msqCorrectOptionD' className='ms-2'>Option - D ({optionD.toString().substring(0, 15)}...)</label>
                         </div>
                     </div>
                 </div>

@@ -545,44 +545,60 @@ export default function RightDiv() {
                     <div className='w-full'>
                         <input type='radio' value={"A"} name='correctAnswer' id='mcqCorrectOptionA'
                                checked={correctAnswer.has("A")} onChange={(e) => editCorrectAnswer(e)}/>
-                        <label htmlFor='mcqCorrectOptionA' className='ms-2'>Option - A</label>
+                        <label htmlFor='mcqCorrectOptionA' className='ms-2'>
+                            Option - A: ({optionA.toString().substring(0, 15)}...)
+                        </label>
                     </div>
                     <div className='w-full'>
                         <input type='radio' value={"B"} name='correctAnswer' id='mcqCorrectOptionB'
                                checked={correctAnswer.has("B")} onChange={(e) => editCorrectAnswer(e)}/>
-                        <label htmlFor='mcqCorrectOptionB' className='ms-2'>Option - B</label>
+                        <label htmlFor='mcqCorrectOptionB' className='ms-2'>
+                            Option - B: ({optionB.toString().substring(0, 15)}...)
+                        </label>
                     </div>
                     <div className='w-full'>
                         <input type='radio' value={"C"} name='correctAnswer' id='mcqCorrectOptionC'
                                checked={correctAnswer.has("C")} onChange={(e) => editCorrectAnswer(e)}/>
-                        <label htmlFor='mcqCorrectOptionC' className='ms-2'>Option - C</label>
+                        <label htmlFor='mcqCorrectOptionC' className='ms-2'>
+                            Option - C: ({optionC.toString().substring(0, 15)}...)
+                        </label>
                     </div>
                     <div className='w-full'>
                         <input type='radio' value={"D"} name='correctAnswer' id='mcqCorrectOptionD'
                                checked={correctAnswer.has("D")} onChange={(e) => editCorrectAnswer(e)}/>
-                        <label htmlFor='mcqCorrectOptionD' className='ms-2'>Option - D</label>
+                        <label htmlFor='mcqCorrectOptionD' className='ms-2'>
+                            Option - D: ({optionD.toString().substring(0, 15)}...)
+                        </label>
                     </div>
                 </div>
                 <div className={`${type === "msq" ? "" : "hidden"}`}>
                     <div className='w-full'>
                         <input type='checkbox' value={"A"} name='correctAnswer' id='msqCorrectOptionA'
                                checked={correctAnswer.has("A")} onChange={(e) => editCorrectAnswer(e)}/>
-                        <label htmlFor='msqCorrectOptionA' className='ms-2'>Option - A</label>
+                        <label htmlFor='msqCorrectOptionA' className='ms-2'>
+                            Option - A: ({optionA.toString().substring(0, 15)}...)
+                        </label>
                     </div>
                     <div className='w-full'>
                         <input type='checkbox' value={"B"} name='correctAnswer' id='msqCorrectOptionB'
                                checked={correctAnswer.has("B")} onChange={(e) => editCorrectAnswer(e)}/>
-                        <label htmlFor='msqCorrectOptionB' className='ms-2'>Option - B</label>
+                        <label htmlFor='msqCorrectOptionB' className='ms-2'>
+                            Option - B: ({optionB.toString().substring(0, 15)}...)
+                        </label>
                     </div>
                     <div className='w-full'>
                         <input type='checkbox' value={"C"} name='correctAnswer' id='msqCorrectOptionC'
                                checked={correctAnswer.has("C")} onChange={(e) => editCorrectAnswer(e)}/>
-                        <label htmlFor='msqCorrectOptionC' className='ms-2'>Option - C</label>
+                        <label htmlFor='msqCorrectOptionC' className='ms-2'>
+                            Option - C: ({optionC.toString().substring(0, 15)}...)
+                        </label>
                     </div>
                     <div className='w-full'>
                         <input type='checkbox' value={"D"} name='correctAnswer' id='msqCorrectOptionD'
                                checked={correctAnswer.has("D")} onChange={(e) => editCorrectAnswer(e)}/>
-                        <label htmlFor='msqCorrectOptionD' className='ms-2'>Option - D</label>
+                        <label htmlFor='msqCorrectOptionD' className='ms-2'>
+                            Option - D: ({optionD.toString().substring(0, 15)}...)
+                        </label>
                     </div>
                 </div>
             </div>

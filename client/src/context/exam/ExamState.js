@@ -1,6 +1,6 @@
 import React, {useContext, useState} from 'react';
 import ExamContext from './examContext';
-import { q1, q2, q3, q4, q5, q6, q7, q8, q9 } from './../../dummy-data/examData';
+import {q1, q2, q3, q4, q5, q6, q7, q8, q9} from './../../dummy-data/examData';
 import axios from "axios";
 import localStorageContext from "../local-storage/localStorageContext";
 import authContext from "../auth/authContext";
@@ -22,11 +22,9 @@ const ExamState = (props) => {
     const [mockResult, changeMockResult] = useState(null);
     const {user} = useContext(authContext);
 
-    const rotateArray = (arr) => {
-        const userId = 1;   // hardcoded temp ...
-        const examId = 1;   // hardcoded temp ...
-        // const rotationFactor = userId % examId;
-        const rotationFactor = 3;
+    const rotateArray = (examId, arr) => {
+        console.log("rotate: ", arr);
+        const rotationFactor = user.userId + examId + 1157;
         let count = rotationFactor % arr.length;
         let i = arr.length - 1;
         while (count > 0) {
@@ -48,23 +46,21 @@ const ExamState = (props) => {
                 }
             }
         )
-        console.log("response for exam:", response.data);
+        console.log("response for exam:", response);
         const questionArray = [];
-        response.data.questionIds = rotateArray(response.data.questionIds);
+        response.data.questionIds = rotateArray(response.data.id, response.data.questionIds);
         response.data.questionIds.map((questionId) => {
             questionArray.push(null);
         });
         setExamData(response.data);
         setAllQuestions(questionArray);
-        //setIsMockTest((isMockTest) => { return false; });
-        // isMockTest = false
         return response.data;
     };
 
     const fetchMockExamData = async (mockExam) => {
         const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/mock-test/get-question-Ids?total=${mockExam.total}`, {
-            subtopicDtos: mockExam.subtopics
-        }, {
+                subtopicDtos: mockExam.subtopics
+            }, {
                 headers: {
                     'Authorization': `Bearer ${getToken()}`
                 }
@@ -72,7 +68,7 @@ const ExamState = (props) => {
         );
         console.log("response for mock exam:", response.data);
         const questionArray = [];
-        const fetchedArray = rotateArray(response.data.qids);
+        const fetchedArray = rotateArray(89, response.data.qids);
         fetchedArray.map((questionId) => {
             questionArray.push(null);
         });
@@ -91,8 +87,6 @@ const ExamState = (props) => {
         };
         setExamData(mockExamData);
         setAllQuestions(questionArray);
-        // setIsMockTest((isMockTest) => { return true; });
-        //  isMockTest = true
         return mockExamData;
     }
 
@@ -122,7 +116,7 @@ const ExamState = (props) => {
             }
             data = response.data;
             console.log("response for question:", data);
-            data.options = rotateArray(data.options);
+            data.options = rotateArray(response.data.id ? response.data.id : 89 , data.options);
             const newArray = [...allQuestions];
             newArray[currQuestionIndex] = data;
             setAllQuestions(newArray);
@@ -143,16 +137,20 @@ const ExamState = (props) => {
             );
             console.log(response.data);
         }
-        setExamFinish((examFinish) => { return true; });
+        setExamFinish((examFinish) => {
+            return true;
+        });
         document.removeEventListener("fullscreenchange", handleFullScreenViolation);
         document.removeEventListener("visibilitychange", handleTabChangeViolation);
-        // if (document.exitFullscreen) {
-        //     document.exitFullscreen();
-        // } else if (document.webkitExitFullscreen) { /* Safari */
-        //     document.webkitExitFullscreen();
-        // } else if (document.msExitFullscreen) { /* IE11 */
-        //     document.msExitFullscreen();
-        // }
+        if (document.fullscreenElement) {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) { /* Safari */
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) { /* IE11 */
+                document.msExitFullscreen();
+            }
+        }
     }
 
     const handleInstructionRead = (e) => {
@@ -167,7 +165,7 @@ const ExamState = (props) => {
     const handleFullScreenViolation = async (data) => {
         if (document.fullscreenElement === null) {
             setViolationCount((violationCount) => {
-                if(violationCount >= maxViolation) {
+                if (violationCount >= maxViolation) {
                     const tempFunc = async () => {
                         await handleViolationLimitExceed(data);
                     }
@@ -181,7 +179,7 @@ const ExamState = (props) => {
     const handleTabChangeViolation = async (data) => {
         if (document.hidden) {
             setViolationCount((violationCount) => {
-                if(violationCount >= maxViolation) {
+                if (violationCount >= maxViolation) {
                     const tempFunc = async () => {
                         await handleViolationLimitExceed(data);
                     }
@@ -210,7 +208,7 @@ const ExamState = (props) => {
         if (submitConfirm) {
             let flag = false;
             if (!examData.isMockTest) {
-                flag = await finishExam(examData.id);
+                flag = await finishExam(examData);
             } else {
                 flag = true;
                 console.log("path selected for claculate mock result -------------------------------------------------->>>>>>>")
@@ -228,7 +226,7 @@ const ExamState = (props) => {
 
     const handleOptionSelection = (index) => {
         const newData = new Object(currQuestionData);
-        console.log("marked: ",newData.options[index]);
+        console.log("marked: ", newData.options[index]);
         if (currQuestionData.type === "mcq") {
             newData.options.map((option, i) => {
                 option.isMarked = false;
@@ -283,8 +281,8 @@ const ExamState = (props) => {
         });
         const userId = user.userId;
         const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/exam/store-response?userId=${userId}&privateQuestionId=${currQuestionData.id}`, {
-            responses: responsesArr
-        }, {
+                responses: responsesArr
+            }, {
                 headers: {
                     'Authorization': `Bearer ${getToken()}`
                 }
@@ -301,7 +299,9 @@ const ExamState = (props) => {
     }
 
     const handleMinRemaining = () => {
-        setRemainingMin((remainingMin) => { return remainingMin - 1 });
+        setRemainingMin((remainingMin) => {
+            return remainingMin - 1
+        });
         console.log(remainingMin, remainingSec);
     }
 
@@ -311,16 +311,22 @@ const ExamState = (props) => {
         const minutesElapsed = ((currDate.getHours() - parseInt(examStartTimeSplit[0])) * 60) + (currDate.getMinutes() - parseInt(examStartTimeSplit[1]));
         const startMin = data.duration - minutesElapsed - 1;
         let startSec = 59;
-        if(!data.isMockTest) {
+        if (!data.isMockTest) {
             startSec = 60 - currDate.getSeconds();
         }
-        setRemainingMin((remainingMin) => { return startMin });
-        setRemainingSec((remainingSec) => { return startSec });
+        setRemainingMin((remainingMin) => {
+            return startMin
+        });
+        setRemainingSec((remainingSec) => {
+            return startSec
+        });
         console.log("timer start ...");
         setInterval(handleSecRemaining, 1000);
         setTimeout(() => {
             console.log("start min timer ...");
-            setRemainingMin((remainingMin) => { return remainingMin - 1 });
+            setRemainingMin((remainingMin) => {
+                return remainingMin - 1
+            });
             setInterval(handleMinRemaining, 60000);
         }, (startSec + 1) * 1000);
         setTimeout(async () => {
@@ -329,8 +335,12 @@ const ExamState = (props) => {
     }
 
     const addEventListeners = (data) => {
-        document.addEventListener("fullscreenchange", async () => { await handleFullScreenViolation(data) });
-        document.addEventListener("visibilitychange", async () => { await handleTabChangeViolation(data) });
+        document.addEventListener("fullscreenchange", async () => {
+            await handleFullScreenViolation(data)
+        });
+        document.addEventListener("visibilitychange", async () => {
+            await handleTabChangeViolation(data)
+        });
     }
 
     const calculateMockTestResult = () => {
@@ -345,15 +355,14 @@ const ExamState = (props) => {
                     question.options[3].isMarked) {
                     let temp = true;
                     question.options.map((option) => {
-                      //  console.log("ckmdjckujnducjnidciujdvu",option,option.isCorrect === option.isMarked );
+                        //  console.log("ckmdjckujnducjnidciujdvu",option,option.isCorrect === option.isMarked );
                         temp = (option.isCorrect === option.isMarked);
                     });
                     if (temp) {
                         corrects++;
                         achievedMarks += question.positiveMarks;
                         console.log(achievedMarks);
-                    }
-                    else {
+                    } else {
                         incorrects++;
                         achievedMarks += question.negativeMarks;
                         console.log(achievedMarks);
