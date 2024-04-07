@@ -23,7 +23,7 @@ export default function CreateExam() {
 
     return (
         <>
-            <div className='xl:hidden text-lg px-5 w-full h-full flex items-center text-red-600 font-bold'>
+            <div className='xl:hidden lg:hidden text-lg px-5 w-full h-full flex items-center text-red-600 font-bold'>
                 <div>
                     <h1>This service is not available in Mobile phones and Tablets. Please try to sign in using your PC
                         or Laptop.</h1>
@@ -41,7 +41,7 @@ export default function CreateExam() {
                     <h1 className='mt-10 text-red-700 font-medium'>Saving ...</h1>
                 </div>
             </div>
-            <div id='main-div' className='w-full h-full hidden xl:block'>
+            <div id='main-div' className='w-full h-full hidden xl:block lg:block'>
                 <div id='page-1'
                      className={`w-full h-[calc(90%)] flex justify-center overflow-auto ${page === 1 ? "" : "hidden"}`}>
                     <Page1/>

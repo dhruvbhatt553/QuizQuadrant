@@ -33,7 +33,8 @@ export default function Topics({topic, selection, changeSelection, index1, allSe
     const [subjectSelected, changeSubjectSelected] = useState(checkSubject());
     const [isOpen, changeIsOpen] = useState(false);
     return (
-        <div>
+        <>
+       {(topic.subtopics.length!==0) && (<div>
             <div className='border border-y-black text-start px-4 py-0.5 flex justify-between items-center'>
                 <div className={`font-bold cursor-pointer ${isOpen ? 'text-blue-500 ' : 'text-white'}`} onClick={() => {
                     console.log("nnn");
@@ -58,6 +59,7 @@ export default function Topics({topic, selection, changeSelection, index1, allSe
                                                                               parentSelected={allSelected || subjectSelected}
                                                                               checkParent={checkChildren}/>)
             }
-        </div>
+        </div> )}
+        </>
     );
 };

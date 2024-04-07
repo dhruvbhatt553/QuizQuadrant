@@ -43,7 +43,7 @@ export default function ExamPage() {
 
     return (
         <>
-            <div className='xl:hidden text-lg px-5 w-full h-full flex items-center text-red-600 font-bold'>
+            <div className='xl:hidden lg:hidden text-lg px-5 w-full h-full flex items-center text-red-600 font-bold'>
                 <div>
                     <h1>This service is not available in Mobile phones and Tablets. Please try to sign in using your PC
                         or Laptop.</h1>
@@ -60,7 +60,7 @@ export default function ExamPage() {
                     (
                         !examFinish &&
                         (
-                            <div className='w-full h-screen absolute top-0 prevent-select hidden xl:block'>
+                            <div className='w-full h-screen absolute top-0 prevent-select hidden xl:block lg:block'>
                                 <div id='leftDiv' className='w-full lg:w-3/4 h-full float-start'>
                                     <TitleDiv/>
                                     {!examStart && (<InstructionDiv/>)}

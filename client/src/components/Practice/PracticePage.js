@@ -1,17 +1,23 @@
 import React, {useContext, useEffect, useState} from 'react'
 // import questions from '../../dummy-data/questions';
 import QuestionContainer from './QuestionContainer';
-import {useLocation} from "react-router-dom";
+import {useLocation,useNavigate} from "react-router-dom";
 import practicequestionContext from "../../context/practiceQuestions/practicequestionContext";
 
 export default function PracticePage() {
 
     const location = useLocation();
+    const navigate = useNavigate();
 
-    const {bySubject, subject, subtopic, total} = location.state;
+
+    //const {bySubject, subject, subtopic, total} = location.state;
 
     const [current, changeCurrent] = useState(1);
     const [isImageEnlarged, setIsImageEnlarged] = useState(false);
+    const [bySubject, setBySubject] = useState(false);
+    const [subject, setSubject] = useState(null);
+    const [subtopic, setSubtopic] = useState(null);
+    const [total, setTotal] = useState(0);
 
     const {
         fetchPracticeQuestionsBySubject,
@@ -29,40 +35,54 @@ export default function PracticePage() {
     }
 
     useEffect(() => {
-        console.log("total questions: ", total)
-        const fetchData = async () => {
-            console.log("current page:", current);
-            if (bySubject) {
-                console.log("by subject");
-                const q2 = await fetchPracticeQuestionsBySubject(subject.subId, current);
-                console.log("first call: ", q2.length);
-                if (current === 1) {
-                    const q1 = await fetchPracticeQuestionsBySubject(subject.subId, current - 1);
-                    initialFetch(q1, q2);
-                    console.log("second call: ", q1.length);
-                }
 
-            } else {
-                console.log("by subtopic");
-                const q2 = await fetchPracticeQuestionsBySubtopic(subtopic.subId, subtopic.subtopicId, current);
-                if (current === 1) {
-                    const q1 = await fetchPracticeQuestionsBySubtopic(subtopic.subId, subtopic.subtopicId, current - 1);
-                    initialFetch(q1, q2);
-                }
-
-            }
-
-            console.log("qqqq", questions.length);
+        if(!location.state)
+        {
+            navigate("/");
+            return;
         }
+        else {
+            setBySubject(location.state.bySubject);
+            setSubject(location.state.subject);
+            setSubtopic(location.state.subtopic);
+            setTotal(location.state.total);
 
-        fetchData();
+            console.log("total questions: ", location.state.total)
+            const fetchData = async () => {
+                console.log("current page:", current);
+                if (location.state.bySubject) {
+                    console.log("by subject");
+                    const q2 = await fetchPracticeQuestionsBySubject(location.state.subject.subId, current);
+                    console.log("first call: ", q2.length);
+                    if (current === 1) {
+                        const q1 = await fetchPracticeQuestionsBySubject(location.state.subject.subId, current - 1);
+                        initialFetch(q1, q2);
+                        console.log("second call: ", q1.length);
+                    }
+    
+                } else {
+                    console.log("by subtopic");
+                    const q2 = await fetchPracticeQuestionsBySubtopic(location.state.subtopic.subId, location.state.subtopic.subtopicId, current);
+                    if (current === 1) {
+                        const q1 = await fetchPracticeQuestionsBySubtopic(location.state.subtopic.subId, location.state.subtopic.subtopicId, current - 1);
+                        initialFetch(q1, q2);
+                    }
+    
+                }
+    
+                console.log("qqqq", questions.length);
+            }
+    
+            fetchData();
+
+        }
+      
 
     }, [current]);
 
 
     function requestQuestionSet(p) {
         if (p) {
-            console.log("CUUUUUUUUUUUUUUUUUUURRENT"+current);
             let y = current - 1;
             changeCurrent(y);
             extra3 = [...curr_set];
