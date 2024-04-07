@@ -20,7 +20,11 @@ export default function LeftDiv() {
     }
 
     const changeDisplayQuestion = (e) => {
-        setQuestionIndex(Number(e.target.value));
+        if(examQuestions[questionIndex].isSaved) {
+            setQuestionIndex(Number(e.target.value));
+        } else {
+            alert("Please current question or else its data may be lost ...");
+        }
     }
 
     return (

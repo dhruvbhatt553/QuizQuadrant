@@ -1,52 +1,52 @@
 .Sign {
     font-family: sans-serif;
     text-align: center;
-  }
-  
-  @import url("https://fonts.googleapis.com/css?family=Montserrat:400,800");
-  
-  * {
+}
+
+@import url("https://fonts.googleapis.com/css?family=Montserrat:400,800");
+
+* {
     box-sizing: border-box;
-  }
-  
-  .Sign {
+}
+
+.Sign {
     background: #ffffff;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     font-family: "Montserrat", sans-serif;
-  }
-  
-  .Sign h1 {
+}
+
+.Sign h1 {
     font-weight: bold;
     margin: 0;
-  }
-  
- .Sign h2 {
+}
+
+.Sign h2 {
     text-align: center;
-  }
-  
-  .Sign p {
+}
+
+.Sign p {
     font-size: 14px;
     font-weight: 100;
     line-height: 20px;
     letter-spacing: 0.5px;
     margin: 20px 0 30px;
-  }
-  
- .Sign span {
+}
+
+.Sign span {
     font-size: 12px;
-  }
-  
-  .Sign a {
+}
+
+.Sign a {
     color: #333;
     font-size: 14px;
     text-decoration: none;
     margin: 15px 0;
-  }
-  
- .Sign button {
+}
+
+.Sign button {
     border-radius: 20px;
     border: 1px solid #ff4b2b;
     background-color: #ff4b2b;
@@ -57,22 +57,22 @@
     letter-spacing: 1px;
     text-transform: uppercase;
     transition: transform 80ms ease-in;
-  }
-  
-  button:active {
+}
+
+button:active {
     transform: scale(0.95);
-  }
-  
-  button:focus {
+}
+
+button:focus {
     outline: none;
-  }
-  
-  button.ghost {
+}
+
+button.ghost {
     background-color: transparent;
     border-color: #ffffff;
-  }
-  
-  .Sign form {
+}
+
+.Sign form {
     background-color: #ffffff;
     display: flex;
     align-items: center;
@@ -81,17 +81,17 @@
     padding: 0 50px;
     height: 100%;
     text-align: center;
-  }
-  
-  .Sign input {
+}
+
+.Sign input {
     background-color: #eee;
     border: none;
     padding: 12px 15px;
     margin: 8px 0;
     width: 100%;
-  }
-  
-  .Sign .container {
+}
+
+.Sign .container {
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
@@ -100,54 +100,54 @@
     width: 768px;
     max-width: 100%;
     min-height: 480px;
-  }
-  
-  .Sign .form-container {
+}
+
+.Sign .form-container {
     position: absolute;
     top: 0;
     height: 100%;
     transition: all 0.6s ease-in-out;
-  }
-  
-  .Sign .sign-in-container {
+}
+
+.Sign .sign-in-container {
     left: 0;
     width: 50%;
     z-index: 2;
-  }
-  
-  .Sign .container.right-panel-active .sign-in-container {
+}
+
+.Sign .container.right-panel-active .sign-in-container {
     transform: translateX(100%);
-  }
-  
-  .Sign .sign-up-container {
+}
+
+.Sign .sign-up-container {
     left: 0;
-    width: 50%;
     opacity: 0;
+    width: 50%;
     z-index: 1;
-  }
-  
-  .Sign .container.right-panel-active .sign-up-container {
+}
+
+.Sign .container.right-panel-active .sign-up-container {
     transform: translateX(100%);
     opacity: 1;
     z-index: 5;
     animation: show 0.6s;
-  }
-  
-  @keyframes show {
+}
+
+@keyframes show {
     0%,
     49.99% {
-      opacity: 0;
-      z-index: 1;
+        opacity: 0;
+        z-index: 1;
     }
-  
+
     50%,
     100% {
-      opacity: 1;
-      z-index: 5;
+        opacity: 1;
+        z-index: 5;
     }
-  }
-  
-  .Sign .overlay-container {
+}
+
+.Sign .overlay-container {
     position: absolute;
     top: 0;
     left: 50%;
@@ -156,13 +156,13 @@
     overflow: hidden;
     transition: transform 0.6s ease-in-out;
     z-index: 100;
-  }
-  
-  .Sign .container.right-panel-active .overlay-container {
+}
+
+.Sign .container.right-panel-active .overlay-container {
     transform: translateX(-100%);
-  }
-  
-  .Sign .overlay {
+}
+
+.Sign .overlay {
     background: #ff416c;
     background: -webkit-linear-gradient(to right, #ff4b2b, #ff416c);
     background: linear-gradient(to right, #ff4b2b, #ff416c);
@@ -176,13 +176,13 @@
     width: 200%;
     transform: translateX(0);
     transition: transform 0.6s ease-in-out;
-  }
-  
-  .Sign .container.right-panel-active .overlay {
+}
+
+.Sign .container.right-panel-active .overlay {
     transform: translateX(50%);
-  }
-  
-  .Sign .overlay-panel {
+}
+
+.Sign .overlay-panel {
     position: absolute;
     display: flex;
     align-items: center;
@@ -195,30 +195,30 @@
     width: 50%;
     transform: translateX(0);
     transition: transform 0.6s ease-in-out;
-  }
-  
-  .Sign .overlay-left {
+}
+
+.Sign .overlay-left {
     transform: translateX(-20%);
-  }
-  
-  .Sign .container.right-panel-active .overlay-left {
+}
+
+.Sign .container.right-panel-active .overlay-left {
     transform: translateX(0);
-  }
-  
-  .Sign .overlay-right {
+}
+
+.Sign .overlay-right {
     right: 0;
     transform: translateX(0);
-  }
-  
-  .Sign .container.right-panel-active .overlay-right {
+}
+
+.Sign .container.right-panel-active .overlay-right {
     transform: translateX(20%);
-  }
-  
-  .Sign .social-container {
+}
+
+.Sign .social-container {
     margin: 20px 0;
-  }
-  
-  .Sign .social-container a {
+}
+
+.Sign .social-container a {
     border: 1px solid #dddddd;
     border-radius: 50%;
     display: inline-flex;
@@ -227,9 +227,9 @@
     margin: 0 5px;
     height: 40px;
     width: 40px;
-  }
-  
-  .Sign footer {
+}
+
+.Sign footer {
     background-color: #222;
     color: #fff;
     font-size: 14px;
@@ -239,18 +239,17 @@
     right: 0;
     text-align: center;
     z-index: 999;
-  }
-  
-  .Sign footer p {
+}
+
+.Sign footer p {
     margin: 10px 0;
-  }
-  
-  .Sign footer i {
+}
+
+.Sign footer i {
     color: red;
-  }
-  
-  .Sign footer a {
+}
+
+.Sign footer a {
     color: #3c97bf;
     text-decoration: none;
-  }
-  
+}

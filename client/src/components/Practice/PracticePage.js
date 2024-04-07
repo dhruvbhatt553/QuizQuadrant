@@ -11,14 +11,23 @@ export default function PracticePage() {
     const {bySubject, subject, subtopic, total} = location.state;
 
     const [current, changeCurrent] = useState(1);
+    const [isImageEnlarged, setIsImageEnlarged] = useState(false);
 
     const {
         fetchPracticeQuestionsBySubject,
         fetchPracticeQuestionsBySubtopic,
         questions
     } = useContext(practicequestionContext);
-   // let q2;
-//    let makeRequest=current;
+
+    const closeImageEnlarged = () => {
+        setIsImageEnlarged((isImageEnlarged) => { return false; });
+    }
+
+    const enlargeImage = (e) => {
+        setIsImageEnlarged((isImageEnlarged) => { return true; });
+        document.getElementById("imageEnlarged").src = e.target.src;
+    }
+
     useEffect(() => {
         console.log("total questions: ", total)
         const fetchData = async () => {
@@ -49,22 +58,6 @@ export default function PracticePage() {
         fetchData();
 
     }, [current]);
-
-    // const requestData = async (cr) => {
-    //     console.log("cr :", cr);
-    //     if (bySubject) {
-    //         const q2 = await fetchPracticeQuestionsBySubject(subject.subId, cr);
-    //         console.log("first call: ", q2.length);
-            
-
-    //     } else {
-    //         const q2 = await fetchPracticeQuestionsBySubtopic(subtopic.subId, subtopic.subtopicId, current);
-          
-    //     }
-
-    //     console.log("qqqq", questions.length);
-    // }
-
 
 
     function requestQuestionSet(p) {
@@ -170,43 +163,51 @@ export default function PracticePage() {
 
     console.log("extra3 : "+next_set.length);
     return (
-        
-        <div className='flex flex-col gap-y-6 pt-2 pb-6'>
-
-            {
-                curr_set && curr_set.length>0 &&
-                curr_set.map((question, index) => (
-                        <QuestionContainer  key = {index}
-                                            question = {question}
-                                            number = {5 * (current - 2) + (index + 1)}
-                                            shift = {skips[5 * (current - 2) + (index)]}
-                                            responses = {responses}
-                                            resHandler = {changeResponses}
-                                            attempted = {attempted}
-                                            setAttempted = {setAttempted}
-                        />
+        <>
+            <div className="w-full h-full absolute start-0 top-0 backdrop-blur"
+                 hidden={!isImageEnlarged}>
+                <button className="px-3 py-2 m-5 bg-blue-700 text-xl text-white font-bold rounded-full"
+                        onClick={closeImageEnlarged}>Close
+                </button>
+                <img id="imageEnlarged" src=""/>
+            </div>
+            <div className={`flex flex-col gap-y-6 pt-5 pb-6 ${isImageEnlarged ? "hidden" : ""}`}>
+                {
+                    curr_set && curr_set.length > 0 &&
+                    curr_set.map((question, index) => (
+                            <QuestionContainer key={index}
+                                               question={question}
+                                               number={5 * (current - 2) + (index + 1)}
+                                               shift={skips[5 * (current - 2) + (index)]}
+                                               responses={responses}
+                                               resHandler={changeResponses}
+                                               attempted={attempted}
+                                               setAttempted={setAttempted}
+                                               enlargeImage={(e) => {
+                                                   enlargeImage(e);
+                                               }}
+                            />
+                        )
                     )
-                )
-            }
-            <div className='flex mx-4 border-black border-2'>
-                <div
-                    className={`w-1/3 border-e-2 border-black ${prev_set.length !== 0 ? 'font-bold cursor-pointer pointer-events-auto' : 'font-thin cursor-none pointer-events-none'} `}
-                    onClick={() => requestQuestionSet(true)}
-                >
-                    Previous set
-                </div>
-                <div className='w-1/3 border-e-2 border-black font-extrabold'>
-                    {current-1}
-                </div>
-                <div
-                    className={`w-1/3  ${next_set.length !== 0 ? 'font-bold cursor-pointer pointer-events-auto' : 'font-thin cursor-none pointer-events-none'} `}
-                    onClick={() => requestQuestionSet(false)}
-                >
-                    Next set
+                }
+                <div className='w-full'>
+                    <button
+                        className={`mx-3 px-3 py-2 rounded-full font-bold text-white ${prev_set.length !== 0 ? 'bg-blue-600 cursor-pointer pointer-events-auto' : 'bg-gray-600 cursor-none pointer-events-none'} `}
+                        onClick={() => requestQuestionSet(true)}
+                    >
+                        Previous set
+                    </button>
+                    <span className='mx-3 font-bold'>
+                    {current - 1}
+                </span>
+                    <button
+                        className={`mx-3 px-3 py-2 rounded-full font-bold text-white ${next_set.length !== 0 ? 'bg-blue-600 cursor-pointer pointer-events-auto' : 'bg-gray-600 cursor-none pointer-events-none'} `}
+                        onClick={() => requestQuestionSet(false)}
+                    >
+                        Next set
+                    </button>
                 </div>
             </div>
-
-        </div>
-
+        </>
     )
 };
