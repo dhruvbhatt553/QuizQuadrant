@@ -12,7 +12,7 @@ const AuthState = (props) => {
 
     const authenticate = async () => {
         console.log("auth ...");
-        if(getToken()) {
+        if (getToken()) {
             console.log("token present ...");
             try {
                 const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/auth/authenticate`, {
@@ -58,7 +58,9 @@ const AuthState = (props) => {
                     email: response.data.email
                 }
                 setUser(newUser);
-                setIsAuthenticated((isAuthenticated) => { return true; });
+                setIsAuthenticated((isAuthenticated) => {
+                    return true;
+                });
                 console.log(response.data);
                 return true;
             } else {
@@ -85,7 +87,9 @@ const AuthState = (props) => {
                     email: response.data.email
                 }
                 setUser(newUser);
-                setIsAuthenticated((isAuthenticated) => { return true; });
+                setIsAuthenticated((isAuthenticated) => {
+                    return true;
+                });
                 console.log(response.data);
                 return true;
             } else {
@@ -99,7 +103,9 @@ const AuthState = (props) => {
     const logout = () => {
         removeToken();
         localStorage.clear();
-        setIsAuthenticated((isAuthenticated) => { return false; });
+        setIsAuthenticated((isAuthenticated) => {
+            return false;
+        });
         setUser(null);
     }
 

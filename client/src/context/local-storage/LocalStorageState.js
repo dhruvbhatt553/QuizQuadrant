@@ -14,13 +14,10 @@ const LocalStorageState = (props) => {
     }
 
     const setToken = (token) => {
-        // localStorage.setItem("authToken", token);
-        Cookies.set("authToken", token, { expires: 7 });
+        Cookies.set("authToken", token, { expires: 1 });
     }
 
     const getToken = () => {
-        // const data = localStorage.getItem("authToken");
-        // return data;
         const token = Cookies.get("authToken");
         return token;
     }

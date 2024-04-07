@@ -18,7 +18,7 @@ import java.util.function.Function;
 public class JwtService {
 
     private static final String SECRET_KEY = "264F93A6EB2EAE29F8C1556A5124264E61E295AD9A12ED75E3C9F3BF76";
-    private static final Integer TOKEN_LIFE = 60 * 1000 * 24;
+    private static final Integer TOKEN_LIFE = 24 * 60 * 60 * 1000;
 
     public String extractUserEmail(String jwtToken) {
         return extractClaim(jwtToken, Claims::getSubject);
