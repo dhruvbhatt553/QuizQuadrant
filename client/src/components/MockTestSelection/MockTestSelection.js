@@ -24,11 +24,23 @@ export default function MockTestSelection() {
     console.log("subjects in starting", subjects);
     useEffect(() => {
         console.log("in use effect", subjects);
-        const arr = subjects.map(topic => {
-            const subtopicsLength = topic.subtopics.length;
-            return Array(subtopicsLength).fill(false);
+        let arr = [];
+
+            subjects.map(topic => {
+            if (topic.noq > 0) {
+                let subtopicsLength = 0;
+                topic.subtopics.map((subtopic) => {
+                    if (subtopic.noq > 0) {
+                        subtopicsLength++;
+                    }
+                }
+                )
+                if(subtopicsLength != 0 )
+                arr.push(Array(subtopicsLength).fill(false));
+            }
+            
         });
-        console.log("arr 0 ", arr[0], subjects);
+        console.log("arr 0 ", arr[0], subjects, arr);
         changeSelection(() => {
             return arr;
         });
@@ -223,12 +235,13 @@ export default function MockTestSelection() {
                             {
 
                                 isOpen && subjects.map((topic, index) =>
-                                    <Topics topic={ topic } selection={ selection }
+                                 topic.noq>0 ? <Topics topic={ topic } selection={ selection }
                                         changeSelection={ changeSelection }
                                         index1={ index }
                                         allSelected={ allSelected }
                                         checkAllSelected={ checkChildren }
-                                    />
+                                    /> : <></>
+                                
                                 )
                             }
 
