@@ -53,7 +53,7 @@ export default function Topics({topic, selection, changeSelection, index1, allSe
                 </div>
             </div>
             {
-                isOpen && topic.subtopics.map((subtopic, index) => subtopic.noq>0 ? <Subtopics subtopic={subtopic} selection={selection}
+                isOpen && topic.subtopics.map((subtopic, index) => <Subtopics subtopic={subtopic} selection={selection}
                                                                               changeSelection={changeSelection}
                                                                               index1={index1} index2={index}
                                                                               parentSelected={allSelected || subjectSelected}
