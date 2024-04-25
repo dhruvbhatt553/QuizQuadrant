@@ -14,7 +14,7 @@ export default function Subject({ subject }) {
                 </Link>
             </div>
             <div className='mt-6 ps-6 text-start'>
-                <ul style={{ listStyleType: "circle" }}>
+                <ul style={{ listStyleType: "circle"}}>
                     {
                         subject.subtopics.map((subtopic) => <li><Subtopics subtopic={subtopic} /></li>)
                     }

@@ -21,7 +21,7 @@ export default function Topics({topic, selection, changeSelection, index1, allSe
 
         let check = topic.subtopics.length !== 0;
 
-        console.log("Selection", selection);
+        console.log("Selection", selection, index1, topic);
         for (let j = 0; j < selection[index1].length; j++) {
             check = check && selection[index1][j];
             if (!check)
@@ -53,11 +53,11 @@ export default function Topics({topic, selection, changeSelection, index1, allSe
                 </div>
             </div>
             {
-                isOpen && topic.subtopics.map((subtopic, index) => subtopic.noq>0 ? <Subtopics subtopic={subtopic} selection={selection}
+                isOpen && topic.subtopics.map((subtopic, index) => <Subtopics subtopic={subtopic} selection={selection}
                                                                               changeSelection={changeSelection}
                                                                               index1={index1} index2={index}
                                                                               parentSelected={allSelected || subjectSelected}
-                                                                              checkParent={checkChildren}/> :  <></>  )
+                                                                              checkParent={checkChildren}/>  )
             }
         </div> )}
         </>
