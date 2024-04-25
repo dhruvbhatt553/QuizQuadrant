@@ -21,7 +21,7 @@ export default function Topics({topic, selection, changeSelection, index1, allSe
 
         let check = topic.subtopics.length !== 0;
 
-        console.log("Selection", selection);
+        console.log("Selection", selection, index1, topic);
         for (let j = 0; j < selection[index1].length; j++) {
             check = check && selection[index1][j];
             if (!check)
@@ -57,7 +57,7 @@ export default function Topics({topic, selection, changeSelection, index1, allSe
                                                                               changeSelection={changeSelection}
                                                                               index1={index1} index2={index}
                                                                               parentSelected={allSelected || subjectSelected}
-                                                                              checkParent={checkChildren}/>)
+                                                                              checkParent={checkChildren}/>  )
             }
         </div> )}
         </>
