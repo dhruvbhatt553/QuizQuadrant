@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, { useContext } from 'react';
 import createExamContext from '../../../context/create-exam/createExamContext';
 
 export default function LeftDiv() {
@@ -12,15 +12,19 @@ export default function LeftDiv() {
     } = useContext(createExamContext);
 
     const addNewQuestion = () => {
-        const newQuestion = new Object(createNewQuestionObject());
-        const arr = [...examQuestions];
-        arr.push(newQuestion);
-        setExamQuestions(arr);
-        setQuestionIndex(arr.length - 1);
+        if (examQuestions[questionIndex].isSaved) {
+            const newQuestion = new Object(createNewQuestionObject());
+            const arr = [...examQuestions];
+            arr.push(newQuestion);
+            setExamQuestions(arr);
+            setQuestionIndex(arr.length - 1);
+        } else {
+            alert("Please current question or else its data may be lost ...");
+        }
     }
 
     const changeDisplayQuestion = (e) => {
-        if(examQuestions[questionIndex].isSaved) {
+        if (examQuestions[questionIndex].isSaved) {
             setQuestionIndex(Number(e.target.value));
         } else {
             alert("Please current question or else its data may be lost ...");
@@ -31,7 +35,7 @@ export default function LeftDiv() {
         <>
             <div className='w-full mb-2'>
                 <button onClick={addNewQuestion}
-                        className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center'>Add
+                    className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center'>Add
                     More
                 </button>
             </div>

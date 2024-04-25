@@ -31,7 +31,7 @@ export default function ExamPage() {
                     data = await fetchExamData(location.state.examId);
                 }
                 startTimer(data);
-                addEventListeners(data);
+                // addEventListeners(data);
             }
             getExamData();
             console.log("exam div rendered ...");

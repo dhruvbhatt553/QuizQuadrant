@@ -13,6 +13,8 @@ export default function MockTestSelection() {
 
     const [allSelected, changeAllSelected] = useState(false);
     const [selection, changeSelection] = useState(null);
+    const [subject1, changeSubject1] = useState(null);
+
     const [isOpen, changeIsOpen] = useState(false);
     const [noq, setNoq] = useState(1);
     const [totalQuestions, setTotalQuestions] = useState(1);
@@ -24,25 +26,34 @@ export default function MockTestSelection() {
     console.log("subjects in starting", subjects);
     useEffect(() => {
         console.log("in use effect", subjects);
-        let arr = [];
+        let arr = [], arr2 = [];
 
             subjects.map(topic => {
             if (topic.noq > 0) {
                 let subtopicsLength = 0;
+                let xyz = {...topic};
+                xyz.subtopics = [];
                 topic.subtopics.map((subtopic) => {
                     if (subtopic.noq > 0) {
                         subtopicsLength++;
+                        xyz.subtopics.push(subtopic);
                     }
                 }
                 )
                 if(subtopicsLength != 0 )
-                arr.push(Array(subtopicsLength).fill(false));
+                {
+                    arr.push(Array(subtopicsLength).fill(false));
+                    arr2.push(xyz);
+                }
             }
             
         });
-        console.log("arr 0 ", arr[0], subjects, arr);
+        console.log("arr 0 ", arr[0], subjects, arr, arr2);
         changeSelection(() => {
             return arr;
+        });
+        changeSubject1(() => {
+            return arr2;
         });
     }, [subjects]);
 
@@ -231,16 +242,16 @@ export default function MockTestSelection() {
                                 />
 
                             </div>
-                            { console.log("selection in mcselction", selection) }
+                            { console.log("selection in mcselction", selection, subject1) }
                             {
 
-                                isOpen && subjects.map((topic, index) =>
-                                 topic.noq>0 ? <Topics topic={ topic } selection={ selection }
+                                isOpen && subject1.map((topic, index) =>
+                                 <Topics topic={ topic } selection={ selection }
                                         changeSelection={ changeSelection }
                                         index1={ index }
                                         allSelected={ allSelected }
                                         checkAllSelected={ checkChildren }
-                                    /> : <></>
+                                    /> 
                                 
                                 )
                             }
